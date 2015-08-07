@@ -1,8 +1,6 @@
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp.Core import _OptixMaterialWrapper
-
 from PyOptix.objects.commons.optix_object import OptixObject
+
 
 class OptixMaterial(_OptixMaterialWrapper, OptixObject):
 

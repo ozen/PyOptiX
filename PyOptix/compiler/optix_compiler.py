@@ -1,5 +1,3 @@
-__author__ = 'vizera-ubuntu'
-
 from PyOptix import config
 
 class OptixCompiler(object):

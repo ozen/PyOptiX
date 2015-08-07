@@ -1,11 +1,8 @@
 from PyOptix.objects.optix_acceleration import OptixAcceleration
-
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp.Core import _OptixGeometryGroupWrapper
-
 from PyOptix.objects.commons.optix_has_child import OptixHasChild
 from PyOptix.objects.commons.optix_object import OptixObject
+
 
 class OptixGeometryGroup(_OptixGeometryGroupWrapper, OptixObject, OptixHasChild):
     _acceleration = None

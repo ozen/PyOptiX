@@ -1,5 +1,3 @@
-__author__ = 'vizera-ubuntu'
-
 class OptixObject(object):
     _context = None
     _native = None

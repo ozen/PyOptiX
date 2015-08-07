@@ -1,0 +1,1 @@
+git+https://git@bitbucket.org/imcom/vizera_setup_tools.git

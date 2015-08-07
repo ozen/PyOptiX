@@ -1,7 +1,6 @@
-__author__ = 'vizera-ubuntu'
-
 from PyOptix.objects.commons.optix_object import OptixObject
 from PyOptixCpp.Core import _OptixAccelerationWrapper
+
 
 class OptixAcceleration(_OptixAccelerationWrapper, OptixObject):
 

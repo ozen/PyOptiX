@@ -1,10 +1,7 @@
 from PyOptix.objects.commons.optix_scoped_object import OptixScopedObject
-
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp.Core import _OptixGeometryWrapper
-
 from PyOptix.objects.commons.optix_object import OptixObject
+
 
 class OptixGeometry(_OptixGeometryWrapper, OptixObject, OptixScopedObject):
 

@@ -1,5 +1,3 @@
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp import test_sum
 
 def test_connection():

@@ -1,8 +1,5 @@
 import numpy
 from PyOptix.objects.commons.optix_object import OptixObject
-
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp.Core import _OptixBufferWrapper
 from PyOptixCpp.Enums import RTformat
 

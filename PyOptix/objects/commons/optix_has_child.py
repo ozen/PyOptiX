@@ -1,6 +1,3 @@
-__author__ = 'vizera-ubuntu'
-
-
 class OptixHasChild(object):
     _children = None
     _allowed_children = None

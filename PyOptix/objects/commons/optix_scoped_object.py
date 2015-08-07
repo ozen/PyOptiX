@@ -1,7 +1,4 @@
 import numpy
-
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp.Enums import RTobjecttype
 
 dict_for_optix_to_numpy_one_dtype = {

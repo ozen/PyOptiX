@@ -1,10 +1,7 @@
-
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp.Core import _OptixGroupWrapper
-
 from PyOptix.objects.commons.optix_has_child import OptixHasChild
 from PyOptix.objects.commons.optix_object import OptixObject
+
 
 class OptixGroup(_OptixGroupWrapper, OptixObject, OptixHasChild):
 

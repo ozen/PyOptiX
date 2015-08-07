@@ -1,10 +1,7 @@
 from PyOptix.objects.commons.optix_object import OptixObject
-
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp.Core import _OptixTransformWrapper
-
 from PyOptix.objects.commons.optix_has_child import OptixHasChild
+
 
 class OptixTransform(_OptixTransformWrapper, OptixObject, OptixHasChild):
 

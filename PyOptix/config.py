@@ -1,5 +1,3 @@
-__author__ = 'vizera-ubuntu'
-
 compiler = {
     'include_paths': ["/usr/local/optix/include/"],
     'arch': 'sm_21',

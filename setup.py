@@ -1,5 +1,3 @@
-__author__ = 'vizera-ubuntu'
-
 from distutils.core import setup, Extension
 
 from vizera_setup_tools.includer import get_include_paths_lib_paths_and_lib_names

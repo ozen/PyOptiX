@@ -1,8 +1,7 @@
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp.Core import _OptixContextWrapper
 from PyOptixCpp.Enums import RTbuffertype
 from PyOptix.objects.commons.optix_scoped_object import OptixScopedObject
+
 
 class OptixContext(_OptixContextWrapper, OptixScopedObject):
     _ray_generators = None

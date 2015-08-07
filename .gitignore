@@ -1,7 +1,18 @@
+*.DS_Store
+*.pyc
+*~
+*.log
+.idea
+pip-log.txt
 test.py
 build
 PyOptixCppProject-build
 tests
 PyOptix/compiler/compiled_ptxs
 **/CMakeLists.txt.user
-.idea
+
+# virtual environment
+venv
+bin
+include
+lib

@@ -1,8 +1,6 @@
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp.Core import _OptixTextureSamplerWrapper
-
 from PyOptix.objects.commons.optix_object import OptixObject
+
 
 class OptixTexture(_OptixTextureSamplerWrapper, OptixObject):
 

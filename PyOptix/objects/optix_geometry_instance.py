@@ -1,9 +1,7 @@
-__author__ = 'vizera-ubuntu'
-
 from PyOptixCpp.Core import _OptixGeometryInstanceWrapper
-
 from PyOptix.objects.commons.optix_has_child import OptixHasChild
 from PyOptix.objects.commons.optix_object import OptixObject
+
 
 class OptixGeometryInstance(_OptixGeometryInstanceWrapper, OptixObject):
 
