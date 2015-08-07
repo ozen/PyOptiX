@@ -2,7 +2,9 @@
 *.pyc
 *~
 *.log
+*.egg-info/
 .idea
+dist
 pip-log.txt
 test.py
 build

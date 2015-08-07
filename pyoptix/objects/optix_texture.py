@@ -1,5 +1,5 @@
-from PyOptixCpp.Core import _OptixTextureSamplerWrapper
-from PyOptix.objects.commons.optix_object import OptixObject
+from pyoptix.driver.Core import _OptixTextureSamplerWrapper
+from pyoptix.objects.commons.optix_object import OptixObject
 
 
 class OptixTexture(_OptixTextureSamplerWrapper, OptixObject):

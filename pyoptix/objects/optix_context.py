@@ -1,6 +1,6 @@
-from PyOptixCpp.Core import _OptixContextWrapper
-from PyOptixCpp.Enums import RTbuffertype
-from PyOptix.objects.commons.optix_scoped_object import OptixScopedObject
+from pyoptix.driver.Core import _OptixContextWrapper
+from pyoptix.driver.Enums import RTbuffertype
+from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
 
 
 class OptixContext(_OptixContextWrapper, OptixScopedObject):
@@ -19,7 +19,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         self._set_ray_type_count(ray_type_count)
 
     def add_ray_generator(self, ray_generator):
-        from PyOptix.objects.optix_program import OptixProgram
+        from pyoptix.objects.optix_program import OptixProgram
         if not isinstance(ray_generator, OptixProgram):
             raise ValueError("Ray generator must be Optix Program not" + str(type(ray_generator)))
 
@@ -42,12 +42,12 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         :rtype : OptixProgram
         """
         # Compile it
-        from PyOptix.compiler.optix_compiler import OptixCompiler
+        from pyoptix.compiler.optix_compiler import OptixCompiler
         compiler = OptixCompiler()
         compiled_file_path = compiler.compile(file_name)
 
         # Create program from compiled files
-        from PyOptix.objects.optix_program import OptixProgram
+        from pyoptix.objects.optix_program import OptixProgram
         native = self._create_program_from_file(compiled_file_path, function_name)
         return OptixProgram(native, context=self)
 
@@ -66,7 +66,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         if buffer_type_enum is None:
             raise ValueError("Buffer type must be 'i' 'o' or 'io'")
 
-        from PyOptix.objects.optix_buffer import OptixBuffer
+        from pyoptix.objects.optix_buffer import OptixBuffer
         native = self._create_buffer(buffer_type_enum)
         return OptixBuffer(native, context=self)
 
@@ -74,7 +74,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixTexture
         """
-        from PyOptix.objects.optix_texture import OptixTexture
+        from pyoptix.objects.optix_texture import OptixTexture
         native = self._create_texture_sampler()
         return OptixTexture(native, context=self)
 
@@ -82,7 +82,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixGeometry
         """
-        from PyOptix.objects.optix_geometry import OptixGeometry
+        from pyoptix.objects.optix_geometry import OptixGeometry
         native = self._create_geometry()
         return OptixGeometry(native, context=self)
 
@@ -90,7 +90,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixMaterial
         """
-        from PyOptix.objects.optix_material import OptixMaterial
+        from pyoptix.objects.optix_material import OptixMaterial
         native = self._create_material()
         return OptixMaterial(native, context=self)
 
@@ -98,7 +98,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixGeometryInstance
         """
-        from PyOptix.objects.optix_geometry_instance import OptixGeometryInstance
+        from pyoptix.objects.optix_geometry_instance import OptixGeometryInstance
         native = self._create_geometry_instance()
         return OptixGeometryInstance(native, context=self)
 
@@ -106,7 +106,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixGroup
         """
-        from PyOptix.objects.optix_group import OptixGroup
+        from pyoptix.objects.optix_group import OptixGroup
         native = self._create_group()
         return OptixGroup(native, context=self)
 
@@ -114,7 +114,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixGeometryGroup
         """
-        from PyOptix.objects.optix_geometry_group import OptixGeometryGroup
+        from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
         native = self._create_geometry_group()
         return OptixGeometryGroup(native, context=self)
 
@@ -122,7 +122,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixTransform
         """
-        from PyOptix.objects.optix_transform import OptixTransform
+        from pyoptix.objects.optix_transform import OptixTransform
         native = self._create_transform()
         return OptixTransform(native, context=self)
 
@@ -130,7 +130,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixSelector
         """
-        from PyOptix.objects.optix_selector import OptixSelector
+        from pyoptix.objects.optix_selector import OptixSelector
         native = self._create_selector()
         return OptixSelector(native, context=self)
 
@@ -138,7 +138,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixAcceleration
         """
-        from PyOptix.objects.optix_acceleration import OptixAcceleration
+        from pyoptix.objects.optix_acceleration import OptixAcceleration
         native = self._create_accelerator(builder, traverser)
         return OptixAcceleration(native, context=self)
 

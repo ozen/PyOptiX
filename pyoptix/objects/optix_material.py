@@ -1,5 +1,5 @@
-from PyOptixCpp.Core import _OptixMaterialWrapper
-from PyOptix.objects.commons.optix_object import OptixObject
+from pyoptix.driver.Core import _OptixMaterialWrapper
+from pyoptix.objects.commons.optix_object import OptixObject
 
 
 class OptixMaterial(_OptixMaterialWrapper, OptixObject):

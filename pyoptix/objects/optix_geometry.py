@@ -1,6 +1,6 @@
-from PyOptix.objects.commons.optix_scoped_object import OptixScopedObject
-from PyOptixCpp.Core import _OptixGeometryWrapper
-from PyOptix.objects.commons.optix_object import OptixObject
+from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
+from pyoptix.driver.Core import _OptixGeometryWrapper
+from pyoptix.objects.commons.optix_object import OptixObject
 
 
 class OptixGeometry(_OptixGeometryWrapper, OptixObject, OptixScopedObject):

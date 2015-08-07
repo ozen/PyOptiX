@@ -1,16 +1,25 @@
-from PyOptix import config
+try:
+    import configparser
+except ImportError:
+    import ConfigParser as configparser
+
 
 class OptixCompiler(object):
 
     def __init__(self):
-        pass
+        config = configparser.ConfigParser()
+        config.read('pyoptix.conf')
+        self.ptx_path = config.get('compiler', 'ptx_path')
+        self.arch = config.get('compiler', 'arch')
+        self.use_fast_math = config.get('compiler', 'use_fast_math')
+        self.include_paths = config.get('compiler', 'use_fast_math').split(':')
 
     def compile(self, cu_file_path):
 
         compile_required = True
-        output_path = config.compiler["output_temp_path"]
+        output_path = self.ptx_path
 
-        import os.path, time
+        import os.path
         # Check if it is compiled before
         cu_file_name = os.path.basename(cu_file_path)
 
@@ -30,15 +39,15 @@ class OptixCompiler(object):
             bashCommand += " "
             bashCommand += "-ptx"
             bashCommand += " "
-            bashCommand += "-arch=" + config.compiler["arch"]
+            bashCommand += "-arch=" + self.arch
             bashCommand += " "
-            if config.compiler["use_fast_math"]:
+            if self.use_fast_math:
                 bashCommand += "--use_fast_math"
                 bashCommand += " "
-            include_paths = config.compiler["include_paths"]
-            for include_path in include_paths:
-                bashCommand += "--include-path="
-                bashCommand += include_path + " "
+            for include_path in self.include_paths:
+                if os.path.exists(include_path):
+                    bashCommand += "--include-path="
+                    bashCommand += include_path + " "
 
             bashCommand += "--output-file=" + output_file_path
             bashCommand += " "

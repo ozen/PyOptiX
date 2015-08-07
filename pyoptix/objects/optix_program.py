@@ -1,6 +1,6 @@
-from PyOptixCpp.Core import _OptixProgramWrapper
-from PyOptix.objects.commons.optix_object import OptixObject
-from PyOptix.objects.commons.optix_scoped_object import OptixScopedObject
+from pyoptix.driver.Core import _OptixProgramWrapper
+from pyoptix.objects.commons.optix_object import OptixObject
+from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
 
 
 class OptixProgram(_OptixProgramWrapper, OptixObject, OptixScopedObject):

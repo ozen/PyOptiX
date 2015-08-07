@@ -1,6 +1,6 @@
-from PyOptixCpp.Core import _OptixGeometryInstanceWrapper
-from PyOptix.objects.commons.optix_has_child import OptixHasChild
-from PyOptix.objects.commons.optix_object import OptixObject
+from pyoptix.driver.Core import _OptixGeometryInstanceWrapper
+from pyoptix.objects.commons.optix_has_child import OptixHasChild
+from pyoptix.objects.commons.optix_object import OptixObject
 
 
 class OptixGeometryInstance(_OptixGeometryInstanceWrapper, OptixObject):

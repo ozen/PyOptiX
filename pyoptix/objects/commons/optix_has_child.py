@@ -24,14 +24,14 @@ class OptixHasChild(object):
         total_child_count = self.get_child_count()
         self._set_child_count(total_child_count + 1)
 
-        from PyOptix.objects.optix_acceleration import OptixAcceleration
-        from PyOptix.objects.optix_geometry import OptixGeometry
-        from PyOptix.objects.optix_geometry_group import OptixGeometryGroup
-        from PyOptix.objects.optix_geometry_instance import OptixGeometryInstance
-        from PyOptix.objects.optix_group import OptixGroup
-        from PyOptix.objects.optix_material import OptixMaterial
-        from PyOptix.objects.optix_selector import OptixSelector
-        from PyOptix.objects.optix_transform import OptixTransform
+        from pyoptix.objects.optix_acceleration import OptixAcceleration
+        from pyoptix.objects.optix_geometry import OptixGeometry
+        from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
+        from pyoptix.objects.optix_geometry_instance import OptixGeometryInstance
+        from pyoptix.objects.optix_group import OptixGroup
+        from pyoptix.objects.optix_material import OptixMaterial
+        from pyoptix.objects.optix_selector import OptixSelector
+        from pyoptix.objects.optix_transform import OptixTransform
 
         # add here to children
         if isinstance(child, OptixAcceleration):

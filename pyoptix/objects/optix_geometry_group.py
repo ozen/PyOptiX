@@ -1,7 +1,7 @@
-from PyOptix.objects.optix_acceleration import OptixAcceleration
-from PyOptixCpp.Core import _OptixGeometryGroupWrapper
-from PyOptix.objects.commons.optix_has_child import OptixHasChild
-from PyOptix.objects.commons.optix_object import OptixObject
+from pyoptix.objects.optix_acceleration import OptixAcceleration
+from pyoptix.driver.Core import _OptixGeometryGroupWrapper
+from pyoptix.objects.commons.optix_has_child import OptixHasChild
+from pyoptix.objects.commons.optix_object import OptixObject
 
 
 class OptixGeometryGroup(_OptixGeometryGroupWrapper, OptixObject, OptixHasChild):
@@ -11,8 +11,8 @@ class OptixGeometryGroup(_OptixGeometryGroupWrapper, OptixObject, OptixHasChild)
         OptixObject.__init__(self, context, native)
         _OptixGeometryGroupWrapper.__init__(self, native)
 
-        from PyOptix.objects.optix_geometry_instance import OptixGeometryInstance
-        from PyOptix.objects.optix_acceleration import OptixAcceleration
+        from pyoptix.objects.optix_geometry_instance import OptixGeometryInstance
+        from pyoptix.objects.optix_acceleration import OptixAcceleration
         allowed_children = [OptixGeometryInstance, OptixAcceleration]
 
         OptixHasChild.__init__(self, allowed_children)

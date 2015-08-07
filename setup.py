@@ -1,32 +1,34 @@
-from distutils.core import setup, Extension
-
-from vizera_setup_tools.includer import get_include_paths_lib_paths_and_lib_names
-include_paths, library_paths, libraries = get_include_paths_lib_paths_and_lib_names('Optix', 'BoostNumpy', 'BoostPython')
-
-from vizera_setup_tools.cpp_project import get_include_paths_and_source_files
-cpp_project_include_dirs, cpp_project_source_files = get_include_paths_and_source_files('PyOptixCppProject')
+import os
+import sys
+import fnmatch
+from setuptools import setup, Extension, find_packages
 
 
-include_dirs = include_paths + cpp_project_include_dirs
-library_dirs = library_paths
+def glob_recursive(path, pattern):
+    matches = []
+    for root, dirnames, filenames in os.walk(path):
+        for filename in fnmatch.filter(filenames, pattern):
+            matches.append(os.path.join(root, filename))
+    return matches
 
-# define the libraries to link with the boost python library
-libraries = libraries
+
+PYTHON_VERSION_SUFFIX = "-py%s%s" % (sys.version_info.major, sys.version_info.minor)
+LIBRARIES = ['optix', 'optixu', 'cudart', 'boost_numpy%s' % PYTHON_VERSION_SUFFIX,
+             'boost_python%s' % PYTHON_VERSION_SUFFIX]
+LIBRARY_DIRS = ['/usr/local/optix/lib64', '/usr/local/cuda/lib64', '/usr/lib']
+LIBRARY_INCLUDE = ['/usr/local/optix/include', '/usr/local/cuda/include', '/usr/local/include', '/usr/include']
+DRIVER_INCLUDE = [x[0] for x in os.walk('driver')]
+DRIVER_SOURCES = glob_recursive('driver', '*.cpp')
 
 
-PyOptixCpp_module = Extension('PyOptixCpp',
-                              define_macros=[('MAJOR_VERSION', '0'),
-                                             ('MINOR_VERSION', '1')],
-                              include_dirs=include_dirs,
-                              libraries=libraries,
-                              library_dirs=library_dirs,
-                              sources=cpp_project_source_files)
-
-# create the extension and add it to the python distribution
 setup(
-    name='PyOptix',
+    name='pyoptix',
     version='0.0.1',
-    author='Mert Kucuk',
-    author_email='mertkucuk@gmail.com',
-    ext_modules=[PyOptixCpp_module]
+    packages=find_packages(),
+    # ext_package="pyoptix",
+    ext_modules=[Extension('pyoptixcpp',
+                           include_dirs=LIBRARY_INCLUDE+DRIVER_INCLUDE,
+                           library_dirs=LIBRARY_DIRS,
+                           libraries=LIBRARIES,
+                           sources=DRIVER_SOURCES)]
 )

@@ -1,5 +1,5 @@
 import numpy
-from PyOptixCpp.Enums import RTobjecttype
+from pyoptix.driver.Enums import RTobjecttype
 
 dict_for_optix_to_numpy_one_dtype = {
     0: None,
@@ -64,17 +64,17 @@ class OptixScopedObject(object):
         if value_type is not RTobjecttype.RT_OBJECTTYPE_UNKNOWN and value_type is not RTobjecttype.RT_OBJECTTYPE_USER:
             is_optix_given_type = True
 
-        from PyOptix.objects.optix_buffer import OptixBuffer
-        from PyOptix.objects.optix_texture import OptixTexture
-        from PyOptix.objects.optix_program import OptixProgram
+        from pyoptix.objects.optix_buffer import OptixBuffer
+        from pyoptix.objects.optix_texture import OptixTexture
+        from pyoptix.objects.optix_program import OptixProgram
 
-        from PyOptix.objects.optix_group import OptixGroup
+        from pyoptix.objects.optix_group import OptixGroup
 
-        from PyOptix.objects.optix_geometry_group import OptixGeometryGroup
+        from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
 
-        from PyOptix.objects.optix_selector import OptixSelector
+        from pyoptix.objects.optix_selector import OptixSelector
 
-        from PyOptix.objects.optix_transform import OptixTransform
+        from pyoptix.objects.optix_transform import OptixTransform
 
         if isinstance(value, OptixBuffer):
             if is_optix_given_type and value_type is not RTobjecttype.RT_OBJECTTYPE_BUFFER:
