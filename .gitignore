@@ -1,7 +1,7 @@
-# Created by .ignore support plugin (hsz.mobi)
 test.py
 build
 PyOptixCppProject-build
 tests
 PyOptix/compiler/compiled_ptxs
-PyOptixCppProject/CMakeLists.txt.user
+**/CMakeLists.txt.user
+.idea
