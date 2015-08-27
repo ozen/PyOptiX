@@ -1,5 +1,5 @@
-from pyoptix.driver.Core import _OptixContextWrapper
-from pyoptix.driver.Enums import RTbuffertype
+from pyoptix._driver import _OptixContextWrapper
+from pyoptix._driver import RTbuffertype
 from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
 
 

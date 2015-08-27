@@ -1,5 +1,5 @@
+from pyoptix._driver import _OptixGeometryWrapper
 from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
-from pyoptix.driver.Core import _OptixGeometryWrapper
 from pyoptix.objects.commons.optix_object import OptixObject
 
 

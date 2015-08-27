@@ -1,7 +1,7 @@
 import numpy
+from pyoptix._driver import _OptixBufferWrapper
+from pyoptix._driver import RTformat
 from pyoptix.objects.commons.optix_object import OptixObject
-from pyoptix.driver.Core import _OptixBufferWrapper
-from pyoptix.driver.Enums import RTformat
 
 
 class OptixBuffer(_OptixBufferWrapper, OptixObject):

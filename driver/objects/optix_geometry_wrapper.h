@@ -1,7 +1,7 @@
 #ifndef OPTIX_GEOMETRY_WRAPPER_H
 #define OPTIX_GEOMETRY_WRAPPER_H
 
-#include "optix_shared_includes.h"
+#include "shared_includes.h"
 
 #include "optix_program_wrapper.h"
 #include "optix_scoped_object_wrapper.h"

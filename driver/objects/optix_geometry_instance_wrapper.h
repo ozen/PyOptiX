@@ -3,7 +3,7 @@
 
 
 
-#include "optix_shared_includes.h"
+#include "shared_includes.h"
 
 #include "optix_geometry_wrapper.h"
 #include "optix_material_wrapper.h"

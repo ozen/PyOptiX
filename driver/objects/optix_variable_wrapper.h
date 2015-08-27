@@ -1,7 +1,7 @@
 #ifndef OPTIX_VARIABLE_WRAPPER_H
 #define OPTIX_VARIABLE_WRAPPER_H
 
-#include "optix_shared_includes.h"
+#include "shared_includes.h"
 #include "boost/python.hpp"
 #include "boost/numpy.hpp"
 

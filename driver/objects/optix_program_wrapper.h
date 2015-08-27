@@ -1,7 +1,7 @@
 #ifndef OPTIX_PROGRAM_WRAPPER_H
 #define OPTIX_PROGRAM_WRAPPER_H
 
-#include "optix_shared_includes.h"
+#include "shared_includes.h"
 
 #include "optix_scoped_object_wrapper.h"
 

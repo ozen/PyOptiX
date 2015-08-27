@@ -1,5 +1,4 @@
-from pyoptix.driver.Core import _OptixGeometryInstanceWrapper
-from pyoptix.objects.commons.optix_has_child import OptixHasChild
+from pyoptix._driver import _OptixGeometryInstanceWrapper
 from pyoptix.objects.commons.optix_object import OptixObject
 
 

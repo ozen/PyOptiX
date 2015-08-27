@@ -1,4 +1,4 @@
-from pyoptix.driver.Core import _OptixGroupWrapper
+from pyoptix._driver import _OptixGroupWrapper
 from pyoptix.objects.commons.optix_has_child import OptixHasChild
 from pyoptix.objects.commons.optix_object import OptixObject
 

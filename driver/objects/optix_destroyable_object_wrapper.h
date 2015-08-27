@@ -2,7 +2,7 @@
 #define OPTIX_DESTROYABLE_OBJECT_H
 
 
-#include "optix_shared_includes.h"
+#include "shared_includes.h"
 
 class OptixDestroyableObject
 {

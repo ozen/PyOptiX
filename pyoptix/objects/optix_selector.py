@@ -1,4 +1,4 @@
-from pyoptix.driver.Core import _OptixSelectorWrapper
+from pyoptix._driver import _OptixSelectorWrapper
 from pyoptix.objects.commons.optix_has_child import OptixHasChild
 from pyoptix.objects.commons.optix_object import OptixObject
 

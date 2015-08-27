@@ -1,4 +1,4 @@
-from pyoptix.driver.Core import _OptixMaterialWrapper
+from pyoptix._driver import _OptixMaterialWrapper
 from pyoptix.objects.commons.optix_object import OptixObject
 
 

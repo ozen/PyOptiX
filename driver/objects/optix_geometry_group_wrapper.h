@@ -1,7 +1,7 @@
 #ifndef OPTIX_GEOMETRY_GROUP_WRAPPER_H
 #define OPTIX_GEOMETRY_GROUP_WRAPPER_H
 
-#include "optix_shared_includes.h"
+#include "shared_includes.h"
 
 #include "optix_acceleration_wrapper.h"
 #include "optix_geometry_instance_wrapper.h"

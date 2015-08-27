@@ -1,5 +1,5 @@
+from pyoptix._driver import _OptixAccelerationWrapper
 from pyoptix.objects.commons.optix_object import OptixObject
-from pyoptix.driver.Core import _OptixAccelerationWrapper
 
 
 class OptixAcceleration(_OptixAccelerationWrapper, OptixObject):

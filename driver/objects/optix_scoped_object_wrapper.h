@@ -1,7 +1,7 @@
 #ifndef OPTIX_SCOPED_OBJECT_WRAPPER_H
 #define OPTIX_SCOPED_OBJECT_WRAPPER_H
 
-#include "optix_shared_includes.h"
+#include "shared_includes.h"
 #include "optix_variable_wrapper.h"
 
 #include "optix_destroyable_object_wrapper.h"

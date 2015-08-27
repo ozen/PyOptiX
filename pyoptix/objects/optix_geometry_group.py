@@ -1,5 +1,5 @@
+from pyoptix._driver import _OptixGeometryGroupWrapper
 from pyoptix.objects.optix_acceleration import OptixAcceleration
-from pyoptix.driver.Core import _OptixGeometryGroupWrapper
 from pyoptix.objects.commons.optix_has_child import OptixHasChild
 from pyoptix.objects.commons.optix_object import OptixObject
 

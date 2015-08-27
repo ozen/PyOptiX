@@ -1,4 +1,4 @@
-from pyoptix.driver.Core import _OptixProgramWrapper
+from pyoptix._driver import _OptixProgramWrapper
 from pyoptix.objects.commons.optix_object import OptixObject
 from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
 

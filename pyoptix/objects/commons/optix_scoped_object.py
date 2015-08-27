@@ -1,5 +1,5 @@
 import numpy
-from pyoptix.driver.Enums import RTobjecttype
+from pyoptix._driver import RTobjecttype
 
 dict_for_optix_to_numpy_one_dtype = {
     0: None,

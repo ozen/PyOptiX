@@ -17,18 +17,16 @@ LIBRARIES = ['optix', 'optixu', 'cudart', 'boost_numpy%s' % PYTHON_VERSION_SUFFI
              'boost_python%s' % PYTHON_VERSION_SUFFIX]
 LIBRARY_DIRS = ['/usr/local/optix/lib64', '/usr/local/cuda/lib64', '/usr/lib']
 LIBRARY_INCLUDE = ['/usr/local/optix/include', '/usr/local/cuda/include', '/usr/local/include', '/usr/include']
-DRIVER_INCLUDE = [x[0] for x in os.walk('driver')]
-DRIVER_SOURCES = glob_recursive('driver', '*.cpp')
+EXTENSION_INCLUDE = [x[0] for x in os.walk('driver')]
+EXTENSION_SOURCES = glob_recursive('driver', '*.cpp')
 
 
 setup(
     name='pyoptix',
     version='0.0.1',
     packages=find_packages(),
-    # ext_package="pyoptix",
-    ext_modules=[Extension('pyoptixcpp',
-                           include_dirs=LIBRARY_INCLUDE+DRIVER_INCLUDE,
+    ext_modules=[Extension('pyoptix._driver', EXTENSION_SOURCES,
+                           include_dirs=LIBRARY_INCLUDE+EXTENSION_INCLUDE,
                            library_dirs=LIBRARY_DIRS,
-                           libraries=LIBRARIES,
-                           sources=DRIVER_SOURCES)]
+                           libraries=LIBRARIES)]
 )

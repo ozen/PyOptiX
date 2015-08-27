@@ -2,7 +2,7 @@
 #define OPTIX_BUFFER_WRAPPER_H
 
 
-#include "optix_shared_includes.h"
+#include "shared_includes.h"
 
 #include "Python.h"
 #include <boost/python.hpp>

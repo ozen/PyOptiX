@@ -1,5 +1,5 @@
+from pyoptix._driver import _OptixTransformWrapper
 from pyoptix.objects.commons.optix_object import OptixObject
-from pyoptix.driver.Core import _OptixTransformWrapper
 from pyoptix.objects.commons.optix_has_child import OptixHasChild
 
 
