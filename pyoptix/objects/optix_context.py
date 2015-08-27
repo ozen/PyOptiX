@@ -13,7 +13,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
 
     def launch(self, ray_generator, width, height):
         index = self._ray_generators.index(ray_generator)
-        self._lauch_2d(index, width, height)
+        self._launch_2d(index, width, height)
 
     def set_ray_type_count(self, ray_type_count):
         self._set_ray_type_count(ray_type_count)
