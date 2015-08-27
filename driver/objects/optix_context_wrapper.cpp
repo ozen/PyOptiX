@@ -50,7 +50,7 @@ void OptixContextWrapper::compile()
     this->context->compile();
 }
 
-void OptixContextWrapper::lauch_2d(unsigned int entry_point_index, int width, int height)
+void OptixContextWrapper::launch_2d(unsigned int entry_point_index, int width, int height)
 {
     this->context->launch(entry_point_index, width, height);
 }
@@ -256,7 +256,7 @@ void OptixContextWrapper::export_for_python()
             .def("_set_entry_point_count", &OptixContextWrapper::set_entry_point_count)
             .def("_set_ray_generation_program", &OptixContextWrapper::set_ray_generation_program)
             .def("_compile", &OptixContextWrapper::compile)
-            .def("_lauch_2d", &OptixContextWrapper::lauch_2d)
+            .def("_launch_2d", &OptixContextWrapper::launch_2d)
             .def("_set_miss_program", &OptixContextWrapper::set_miss_program);
 
 }

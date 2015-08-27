@@ -36,7 +36,7 @@ public:
     void set_entry_point_count(unsigned int entry_point_count);
     void set_ray_generation_program(unsigned int entry_point_index, OptixProgramWrapper* ray_generation_program);
     void compile();
-    void lauch_2d(unsigned int entry_point_index, int width, int height);
+    void launch_2d(unsigned int entry_point_index, int width, int height);
 
     void set_miss_program(unsigned int ray_type_index, OptixProgramWrapper* miss_program);
 
