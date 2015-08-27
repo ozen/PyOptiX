@@ -1,5 +1,5 @@
-import os
 import sys
+import os
 import fnmatch
 from setuptools import setup, Extension, find_packages
 
@@ -20,13 +20,13 @@ LIBRARY_INCLUDE = ['/usr/local/optix/include', '/usr/local/cuda/include', '/usr/
 EXTENSION_INCLUDE = [x[0] for x in os.walk('driver')]
 EXTENSION_SOURCES = glob_recursive('driver', '*.cpp')
 
-
 setup(
     name='pyoptix',
     version='0.0.1',
     packages=find_packages(),
     ext_modules=[Extension('pyoptix._driver', EXTENSION_SOURCES,
-                           include_dirs=LIBRARY_INCLUDE+EXTENSION_INCLUDE,
+                           include_dirs=LIBRARY_INCLUDE + EXTENSION_INCLUDE,
                            library_dirs=LIBRARY_DIRS,
-                           libraries=LIBRARIES)]
+                           libraries=LIBRARIES)],
+    install_requires=['numpy']
 )
