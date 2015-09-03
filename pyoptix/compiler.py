@@ -1,5 +1,5 @@
 import re
-import os.path
+import os
 import subprocess
 
 try:
@@ -42,6 +42,9 @@ class OptixCompiler(object):
         self.arch = config.get('compiler', 'arch')
         self.use_fast_math = config.getboolean('compiler', 'use_fast_math')
         self.include_paths = config.get('compiler', 'include_paths').split(':')
+
+        if not os.path.exists(self.ptx_path):
+            os.makedirs(self.ptx_path)
 
     def compile(self, cu_file_path):
         output_path = self.ptx_path
