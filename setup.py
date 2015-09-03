@@ -22,11 +22,12 @@ EXTENSION_SOURCES = glob_recursive('driver', '*.cpp')
 
 setup(
     name='pyoptix',
-    version='0.0.1',
+    version='0.0.2',
     packages=find_packages(),
     ext_modules=[Extension('pyoptix._driver', EXTENSION_SOURCES,
                            include_dirs=LIBRARY_INCLUDE + EXTENSION_INCLUDE,
                            library_dirs=LIBRARY_DIRS,
                            libraries=LIBRARIES)],
-    install_requires=['numpy']
+    install_requires=['numpy'],
+    package_data={'pyoptix': ['pyoptix.conf']},
 )

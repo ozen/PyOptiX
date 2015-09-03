@@ -10,3 +10,4 @@ from .objects import OptixProgram
 from .objects import OptixSelector
 from .objects import OptixTexture
 from .objects import OptixTransform
+from .compiler import OptixCompiler

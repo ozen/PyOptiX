@@ -1,1 +1,2 @@
+include pyoptix/pyoptix.conf
 graft driver
