@@ -2,10 +2,13 @@ import re
 import os
 import subprocess
 
-try:
-    import configparser
-except ImportError:
-    import ConfigParser as configparser
+
+defaults = {
+    'output_path': '/tmp/pyoptix/ptx',
+    'include_paths': ['/usr/local/optix/include'],
+    'arch': 'sm_21',
+    'use_fast_math': True,
+}
 
 
 def _compile_required(cu_file_path, output_file_path):
@@ -35,21 +38,19 @@ def _compile_required(cu_file_path, output_file_path):
 
 class OptixCompiler(object):
 
-    def __init__(self):
-        config = configparser.ConfigParser()
-        config.read(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'pyoptix.conf'))
-        self.ptx_path = config.get('compiler', 'ptx_path')
-        self.arch = config.get('compiler', 'arch')
-        self.use_fast_math = config.getboolean('compiler', 'use_fast_math')
-        self.include_paths = config.get('compiler', 'include_paths').split(':')
+    def __init__(self, output_path=defaults['output_path'], include_paths=defaults['include_paths'],
+                 arch=defaults['arch'], use_fast_math=defaults['use_fast_math']):
+        self.output_path = output_path
+        self.include_paths = include_paths
+        self.arch = arch
+        self.use_fast_math = use_fast_math
 
-        if not os.path.exists(self.ptx_path):
-            os.makedirs(self.ptx_path)
+        if not os.path.exists(self.output_path):
+            os.makedirs(self.output_path)
 
     def compile(self, cu_file_path):
-        output_path = self.ptx_path
         cu_file_name = os.path.basename(cu_file_path)
-        output_file_path = os.path.join(output_path, cu_file_name + ".ptx")
+        output_file_path = os.path.join(self.output_path, cu_file_name + ".ptx")
 
         if _compile_required(cu_file_path, output_file_path):
             print("Optix Compiler: compiling " + cu_file_path)
