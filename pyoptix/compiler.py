@@ -1,6 +1,8 @@
 import re
 import os
-import subprocess
+import shlex
+import fnmatch
+from subprocess import check_call, CalledProcessError
 
 
 defaults = {
@@ -64,10 +66,17 @@ class OptixCompiler(object):
                     bash_command += " -I=" + include_path
             bash_command += " -o=" + output_file_path
             print(bash_command)
-            splitted = bash_command.split()
-            process = subprocess.Popen(splitted, stdout=subprocess.PIPE)
-            output = process.communicate()[0]
+            try:
+                check_call(shlex.split(bash_command))
+            except CalledProcessError as e:
+                print(e)
         else:
             print("Optix Compiler: no compiling required " + cu_file_path)
 
         return output_file_path
+
+    def clean(self):
+        if os.path.exists(self.output_path):
+            for dirpath, dirnames, filenames in os.walk(self.output_path):
+                for filename in fnmatch.filter(filenames, '*.ptx'):
+                    os.remove(os.path.join(dirpath, filename))

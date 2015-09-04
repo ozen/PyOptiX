@@ -6,9 +6,9 @@ from setuptools import setup, Extension, find_packages
 
 def glob_recursive(path, pattern):
     matches = []
-    for root, dirnames, filenames in os.walk(path):
+    for dirpath, dirnames, filenames in os.walk(path):
         for filename in fnmatch.filter(filenames, pattern):
-            matches.append(os.path.join(root, filename))
+            matches.append(os.path.join(dirpath, filename))
     return matches
 
 
