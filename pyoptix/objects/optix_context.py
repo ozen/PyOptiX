@@ -1,6 +1,8 @@
 from pyoptix._driver import _OptixContextWrapper
 from pyoptix._driver import RTbuffertype
 from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
+from pyoptix.compiler import OptixCompiler
+from pyoptix.objects.optix_program import OptixProgram
 
 
 class OptixContext(_OptixContextWrapper, OptixScopedObject):
@@ -10,6 +12,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         _OptixContextWrapper.__init__(self)
         OptixScopedObject.__init__(self)
         self._ray_generators = []
+        self.compiler = OptixCompiler()
 
     def launch(self, ray_generator, width, height):
         index = self._ray_generators.index(ray_generator)
@@ -41,17 +44,14 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixProgram
         """
-        # Compile it
-        from pyoptix.compiler.optix_compiler import OptixCompiler
-        compiler = OptixCompiler()
-        compiled_file_path = compiler.compile(file_name)
+        # Compile program
+        compiled_file_path = self.compiler.compile(file_name)
 
-        # Create program from compiled files
-        from pyoptix.objects.optix_program import OptixProgram
+        # Create program object from compiled file
         native = self._create_program_from_file(compiled_file_path, function_name)
         return OptixProgram(native, context=self)
 
-    def create_buffer(self, buffer_type:RTbuffertype):
+    def create_buffer(self, buffer_type: RTbuffertype):
         """
         :param buffer_type:RTbuffertype
         :rtype : OptixBuffer
@@ -151,4 +151,3 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         buffer = self.create_buffer(buffer_type)
         buffer.restructure_according_to_numpy_array(numpy_array)
         return buffer
-

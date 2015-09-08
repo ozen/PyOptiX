@@ -10,19 +10,19 @@ PyOptiX lets you access Nvidia's OptiX Ray Tracing Engine from Python.
 * Boost.Python
 * Boost.NumPy
 
-[1] Symbolic links can be used.
+[1] Symbolic links can be used if you have installed it to somewhere else.
 
 
-## Running
+### Before Running
 
-nvcc binary (CUDA compiler) must be in PATH. Use the following command to add its path:
+nvcc binary (CUDA compiler) must be in PATH. Use the following command to add it:
 
-'''
-    export PATH=$PATH:/usr/local/cuda/bin
-'''
+```
+export PATH=/usr/local/cuda/bin:$PATH
+```
 
-OptiX library files must be in LD_LIBRARY_PATH. Use the following command (or a variation for your setup) to add its path:
+OptiX library files must be in LD_LIBRARY_PATH. Use the following command (or a variation for your setup) to add it:
 
-'''
-    export LD_LIBRARY_PATH=/usr/local/optix/lib64:/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
-'''
+```
+export LD_LIBRARY_PATH=/usr/local/optix/lib64:/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+```
