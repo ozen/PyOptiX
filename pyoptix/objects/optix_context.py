@@ -3,78 +3,63 @@ from pyoptix._driver import RTbuffertype
 from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
 from pyoptix.compiler import OptixCompiler
 from pyoptix.objects.optix_program import OptixProgram
+from pyoptix.objects.optix_acceleration import OptixAcceleration
+from pyoptix.objects.optix_selector import OptixSelector
+from pyoptix.objects.optix_transform import OptixTransform
+from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
+from pyoptix.objects.optix_group import OptixGroup
+from pyoptix.objects.optix_geometry_instance import OptixGeometryInstance
+from pyoptix.objects.optix_material import OptixMaterial
+from pyoptix.objects.optix_geometry import OptixGeometry
+from pyoptix.objects.optix_texture import OptixTexture
+from pyoptix.objects.optix_buffer import OptixBuffer
 
 
 class OptixContext(_OptixContextWrapper, OptixScopedObject):
-    _ray_generators = None
 
     def __init__(self):
         _OptixContextWrapper.__init__(self)
         OptixScopedObject.__init__(self)
-        self._ray_generators = []
-        self.compiler = OptixCompiler()
+        self.compiler = None
 
-    def launch(self, ray_generator, width, height):
-        index = self._ray_generators.index(ray_generator)
-        self._launch_2d(index, width, height)
+    def init_compiler(self, output_path=None, include_paths=None, arch=None, use_fast_math=None):
+        self.compiler = OptixCompiler(output_path=output_path, include_paths=include_paths,
+                                      arch=arch, use_fast_math=use_fast_math)
 
-    def set_ray_type_count(self, ray_type_count):
-        self._set_ray_type_count(ray_type_count)
-
-    def add_ray_generator(self, ray_generator):
-        from pyoptix.objects.optix_program import OptixProgram
-        if not isinstance(ray_generator, OptixProgram):
-            raise ValueError("Ray generator must be Optix Program not" + str(type(ray_generator)))
-
-        self._ray_generators.append(ray_generator)
-        self._sync_ray_generators()
-
-    def remove_ray_generator(self, ray_generator):
-        self._ray_generators.remove(ray_generator)
-        self._sync_ray_generators()
-
-    def _sync_ray_generators(self):
-        total_ray_generation_count = len(self._ray_generators)
-        self._set_entry_point_count(total_ray_generation_count)
-
-        for i in range(total_ray_generation_count):
-            self._set_ray_generation_program(i, self._ray_generators[i])
-
-    def create_program_from_file(self, file_name, function_name):
+    def create_acceleration(self, builder, traverser):
         """
-        :rtype : OptixProgram
+        :rtype : OptixAcceleration
         """
-        # Compile program
-        compiled_file_path = self.compiler.compile(file_name)
+        native = self._create_accelerator(builder, traverser)
+        return OptixAcceleration(native, context=self)
 
-        # Create program object from compiled file
-        native = self._create_program_from_file(compiled_file_path, function_name)
-        return OptixProgram(native, context=self)
-
-    def create_buffer(self, buffer_type: RTbuffertype):
+    def create_buffer(self, buffer_type):
         """
-        :param buffer_type:RTbuffertype
+        :param buffer_type
         :rtype : OptixBuffer
         """
-        buffer_type_enum = None
+        native_buffer_type = None
         if buffer_type == 'i':
-            buffer_type_enum = RTbuffertype.RT_BUFFER_INPUT
+            native_buffer_type = RTbuffertype.RT_BUFFER_INPUT
         elif buffer_type == 'o':
-            buffer_type_enum = RTbuffertype.RT_BUFFER_OUTPUT
+            native_buffer_type = RTbuffertype.RT_BUFFER_OUTPUT
         elif buffer_type == 'io':
-            buffer_type_enum = RTbuffertype.RT_BUFFER_INPUT_OUTPUT
-        if buffer_type_enum is None:
+            native_buffer_type = RTbuffertype.RT_BUFFER_INPUT_OUTPUT
+        if native_buffer_type is None:
             raise ValueError("Buffer type must be 'i' 'o' or 'io'")
 
-        from pyoptix.objects.optix_buffer import OptixBuffer
-        native = self._create_buffer(buffer_type_enum)
+        native = self._create_buffer(native_buffer_type)
         return OptixBuffer(native, context=self)
+
+    def create_buffer_from_numpy_array(self, buffer_type, numpy_array, drop_last_dim=False):
+        buffer = self.create_buffer(buffer_type)
+        buffer.restructure_and_copy_from_numpy_array(numpy_array, drop_last_dim)
+        return buffer
 
     def create_texture_sampler(self):
         """
         :rtype : OptixTexture
         """
-        from pyoptix.objects.optix_texture import OptixTexture
         native = self._create_texture_sampler()
         return OptixTexture(native, context=self)
 
@@ -82,7 +67,6 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixGeometry
         """
-        from pyoptix.objects.optix_geometry import OptixGeometry
         native = self._create_geometry()
         return OptixGeometry(native, context=self)
 
@@ -90,7 +74,6 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixMaterial
         """
-        from pyoptix.objects.optix_material import OptixMaterial
         native = self._create_material()
         return OptixMaterial(native, context=self)
 
@@ -98,7 +81,6 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixGeometryInstance
         """
-        from pyoptix.objects.optix_geometry_instance import OptixGeometryInstance
         native = self._create_geometry_instance()
         return OptixGeometryInstance(native, context=self)
 
@@ -106,7 +88,6 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixGroup
         """
-        from pyoptix.objects.optix_group import OptixGroup
         native = self._create_group()
         return OptixGroup(native, context=self)
 
@@ -114,7 +95,6 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixGeometryGroup
         """
-        from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
         native = self._create_geometry_group()
         return OptixGeometryGroup(native, context=self)
 
@@ -122,7 +102,6 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixTransform
         """
-        from pyoptix.objects.optix_transform import OptixTransform
         native = self._create_transform()
         return OptixTransform(native, context=self)
 
@@ -130,24 +109,27 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         """
         :rtype : OptixSelector
         """
-        from pyoptix.objects.optix_selector import OptixSelector
         native = self._create_selector()
         return OptixSelector(native, context=self)
 
-    def create_acceleration(self, builder, traverser):
+    def create_program_from_file(self, file_name, function_name):
         """
-        :rtype : OptixAcceleration
+        :rtype : OptixProgram
         """
-        from pyoptix.objects.optix_acceleration import OptixAcceleration
-        native = self._create_accelerator(builder, traverser)
-        return OptixAcceleration(native, context=self)
+        if not self.compiler:
+            self.init_compiler()
 
-    def create_buffer_from_numpy_array(self, buffer_type, numpy_array):
-        buffer = self.create_buffer(buffer_type)
-        buffer.restructure_and_copy_from_numpy_array(numpy_array)
-        return buffer
+        # Compile program
+        compiled_file_path = self.compiler.compile(file_name)
 
-    def create_buffer_empty_like(self, buffer_type, numpy_array):
-        buffer = self.create_buffer(buffer_type)
-        buffer.restructure_according_to_numpy_array(numpy_array)
-        return buffer
+        # Create program object from compiled file
+        native = self._create_program_from_file(compiled_file_path, function_name)
+        return OptixProgram(native, context=self)
+
+    def launch(self, entry_point_index, width, height=None, depth=None):
+        if not height:
+            self._launch_1d(entry_point_index, width)
+        elif not depth:
+            self._launch_2d(entry_point_index, width, height)
+        else:
+            self._launch_3d(entry_point_index, width, height, depth)

@@ -35,13 +35,12 @@ dict_for_numpy_to_optix = {
         4: RTobjecttype.RT_OBJECTTYPE_INT4
     },
 
-    numpy.uint32:
-        {
-            1: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT,
-            2: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT2,
-            3: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT3,
-            4: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT4
-        },
+    numpy.uint32: {
+        1: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT,
+        2: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT2,
+        3: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT3,
+        4: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT4
+    },
 }
 
 

@@ -39,10 +39,10 @@ class OptixBuffer(_OptixBufferWrapper, OptixObject):
         self._set_shape(list(temp_shape))
 
     # NUMPY SUPPORT
-    def restructure_according_to_numpy_array(self, numpy_array, drop_last_dim):
+    def restructure_according_to_numpy_array(self, numpy_array, drop_last_dim=False):
         self.reset_buffer(numpy_shape=numpy_array.shape, dtype=numpy_array.dtype, drop_last_dim=drop_last_dim)
 
-    def restructure_and_copy_from_numpy_array(self, numpy_array, drop_last_dim):
+    def restructure_and_copy_from_numpy_array(self, numpy_array, drop_last_dim=False):
         self.restructure_according_to_numpy_array(numpy_array, drop_last_dim)
         self.copy_data_from_numpy_array(numpy_array)
 

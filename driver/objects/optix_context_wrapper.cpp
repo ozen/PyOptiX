@@ -29,7 +29,6 @@ unsigned int OptixContextWrapper::get_entry_point_count()
     return this->context->getEntryPointCount();
 }
 
-
 void OptixContextWrapper::set_ray_type_count(unsigned int ray_type_count)
 {
     this->context->setRayTypeCount(ray_type_count);
@@ -45,9 +44,24 @@ void OptixContextWrapper::set_ray_generation_program(unsigned int entry_point_in
     this->context->setRayGenerationProgram(entry_point_index, ray_generation_program->get_native_program());
 }
 
+void OptixContextWrapper::set_exception_program(unsigned int entry_point_index, OptixProgramWrapper* exception_program)
+{
+    this->context->setExceptionProgram(entry_point_index, exception_program->get_native_program());
+}
+
+void OptixContextWrapper::set_miss_program(unsigned int ray_type_index, OptixProgramWrapper* miss_program)
+{
+    this->context->setMissProgram(ray_type_index, miss_program->get_native_program());
+}
+
 void OptixContextWrapper::compile()
 {
     this->context->compile();
+}
+
+void OptixContextWrapper::launch_1d(unsigned int entry_point_index, int width)
+{
+    this->context->launch(entry_point_index, width);
 }
 
 void OptixContextWrapper::launch_2d(unsigned int entry_point_index, int width, int height)
@@ -55,9 +69,9 @@ void OptixContextWrapper::launch_2d(unsigned int entry_point_index, int width, i
     this->context->launch(entry_point_index, width, height);
 }
 
-void OptixContextWrapper::set_miss_program(unsigned int ray_type_index, OptixProgramWrapper* miss_program)
+void OptixContextWrapper::launch_3d(unsigned int entry_point_index, int width, int height, int depth)
 {
-    this->context->setMissProgram(ray_type_index, miss_program->get_native_program());
+    this->context->launch(entry_point_index, width, height, depth);
 }
 
 // CPU
@@ -215,7 +229,10 @@ void OptixContextWrapper::export_for_python()
             //*****************
 
             .def("get_ray_type_count", &OptixContextWrapper::get_ray_type_count)
+            .def("set_ray_type_count", &OptixContextWrapper::set_ray_type_count)
+
             .def("get_entry_point_count", &OptixContextWrapper::get_entry_point_count)
+            .def("set_entry_point_count", &OptixContextWrapper::set_entry_point_count)
 
             // CPU
             .def("get_cpu_num_of_threads", &OptixContextWrapper::get_cpu_num_of_threads)
@@ -228,13 +245,19 @@ void OptixContextWrapper::export_for_python()
             .def("get_enabled_devices", &OptixContextWrapper::get_enabled_devices)
             .def("set_devices", &OptixContextWrapper::set_devices)
 
-            //Memory
+            // Memory
             .def("get_used_host_memory", &OptixContextWrapper::get_used_host_memory)
             .def("get_available_device_memory", &OptixContextWrapper::get_available_device_memory)
 
             // Exceptions
-            .def("set_exception_enabled", &OptixContextWrapper::set_exception_enabled)
             .def("get_exception_enabled", &OptixContextWrapper::get_exception_enabled)
+            .def("set_exception_enabled", &OptixContextWrapper::set_exception_enabled)
+
+            // Programs
+            .def("set_ray_generation_program", &OptixContextWrapper::set_ray_generation_program)
+            .def("set_exception_program", &OptixContextWrapper::set_exception_program)
+            .def("set_miss_program", &OptixContextWrapper::set_miss_program);
+            .def("compile", &OptixContextWrapper::compile)
 
             //*****************
             // CONTROLLED ACCESS
@@ -252,11 +275,8 @@ void OptixContextWrapper::export_for_python()
             .def("_create_selector", &OptixContextWrapper::create_selector)
             .def("_create_accelerator", &OptixContextWrapper::create_accelerator)
 
-            .def("_set_ray_type_count", &OptixContextWrapper::set_ray_type_count)
-            .def("_set_entry_point_count", &OptixContextWrapper::set_entry_point_count)
-            .def("_set_ray_generation_program", &OptixContextWrapper::set_ray_generation_program)
-            .def("_compile", &OptixContextWrapper::compile)
+            .def("_launch_1d", &OptixContextWrapper::launch_1d)
             .def("_launch_2d", &OptixContextWrapper::launch_2d)
-            .def("_set_miss_program", &OptixContextWrapper::set_miss_program);
+            .def("_launch_3d", &OptixContextWrapper::launch_3d)
 
 }
