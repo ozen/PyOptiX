@@ -1,11 +1,19 @@
+from pyoptix.objects.optix_acceleration import OptixAcceleration
+from pyoptix.objects.optix_geometry import OptixGeometry
+from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
+from pyoptix.objects.optix_geometry_instance import OptixGeometryInstance
+from pyoptix.objects.optix_group import OptixGroup
+from pyoptix.objects.optix_material import OptixMaterial
+from pyoptix.objects.optix_selector import OptixSelector
+from pyoptix.objects.optix_transform import OptixTransform
+
+
 class OptixHasChild(object):
-    _children = None
-    _allowed_children = None
-    _object_which_can_have_children = None
 
     def __init__(self, allowed_children):
         self._children = []
         self._allowed_children = allowed_children
+        self._object_which_can_have_children = None
 
     def add_child(self, child):
         is_allowed = False
@@ -17,21 +25,12 @@ class OptixHasChild(object):
 
         if not is_allowed:
             raise TypeError("You can not add " +
-                            child.__class__.__name__ + " child"+
+                            child.__class__.__name__ + " child" +
                             " to " +
                             self.__class__.__name__)
 
         total_child_count = self.get_child_count()
         self._set_child_count(total_child_count + 1)
-
-        from pyoptix.objects.optix_acceleration import OptixAcceleration
-        from pyoptix.objects.optix_geometry import OptixGeometry
-        from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
-        from pyoptix.objects.optix_geometry_instance import OptixGeometryInstance
-        from pyoptix.objects.optix_group import OptixGroup
-        from pyoptix.objects.optix_material import OptixMaterial
-        from pyoptix.objects.optix_selector import OptixSelector
-        from pyoptix.objects.optix_transform import OptixTransform
 
         # add here to children
         if isinstance(child, OptixAcceleration):
@@ -52,13 +51,12 @@ class OptixHasChild(object):
             self._set_child_material(total_child_count, child)
         else:
             raise TypeError("You can not add " +
-                            self.__class__.__name__+
+                            self.__class__.__name__ +
                             " to " +
                             child.__class__.__name__ + " child")
 
         child._add_parent(self)
         self._children.append(child)
-
         return total_child_count
 
     def remove_child(self, child):
@@ -66,5 +64,3 @@ class OptixHasChild(object):
         self._remove_child(index)
         self._children.remove(child)
         child._remove_parent(self)
-
-

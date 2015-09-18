@@ -1,5 +1,6 @@
 #include "optix_geometry_instance_wrapper.h"
-
+#include "Python.h"
+#include <boost/python.hpp>
 
 
 OptixGeometryInstanceWrapper::OptixGeometryInstanceWrapper(optix::GeometryInstance geometry_instance)
@@ -25,6 +26,7 @@ void OptixGeometryInstanceWrapper::set_material_count(unsigned int count)
     return this->geometry_instance->setMaterialCount(count);
 
 }
+
 unsigned int OptixGeometryInstanceWrapper::get_material_count()
 {
     return this->geometry_instance->getMaterialCount();
@@ -35,14 +37,11 @@ void OptixGeometryInstanceWrapper::set_material(unsigned int idx, OptixMaterialW
     this->geometry_instance->setMaterial(idx, material->get_native());
 }
 
-
 optix::GeometryInstance OptixGeometryInstanceWrapper::get_native()
 {
     return geometry_instance;
 }
 
-#include "Python.h"
-#include <boost/python.hpp>
 void OptixGeometryInstanceWrapper::export_for_python()
 {
     namespace bp = boost::python;
@@ -55,9 +54,8 @@ void OptixGeometryInstanceWrapper::export_for_python()
             //*****************
             // DIRECT ACCESS
             //*****************
-            .def("_set_geometry", &OptixGeometryInstanceWrapper::set_geometry)
-            .def("_set_material_count", &OptixGeometryInstanceWrapper::set_material_count)
+            .def("set_geometry", &OptixGeometryInstanceWrapper::set_geometry)
+            .def("set_material_count", &OptixGeometryInstanceWrapper::set_material_count)
             .def("get_material_count", &OptixGeometryInstanceWrapper::get_material_count)
-            .def("_set_material", &OptixGeometryInstanceWrapper::set_material);
+            .def("set_material", &OptixGeometryInstanceWrapper::set_material);
 }
-

@@ -1,26 +1,35 @@
 import numpy
 from pyoptix._driver import RTobjecttype
+from pyoptix.objects.optix_buffer import OptixBuffer
+from pyoptix.objects.optix_texture import OptixTexture
+from pyoptix.objects.optix_program import OptixProgram
+from pyoptix.objects.optix_group import OptixGroup
+from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
+from pyoptix.objects.optix_selector import OptixSelector
+from pyoptix.objects.optix_transform import OptixTransform
 
 dict_for_optix_to_numpy_one_dtype = {
     0: None,
+
     RTobjecttype.RT_OBJECTTYPE_FLOAT: (numpy.float32, 1),
     RTobjecttype.RT_OBJECTTYPE_FLOAT2: (numpy.float32, 2),
     RTobjecttype.RT_OBJECTTYPE_FLOAT3: (numpy.float32, 3),
-    RTobjecttype.RT_OBJECTTYPE_FLOAT4.real: (numpy.float32, 4),
+    RTobjecttype.RT_OBJECTTYPE_FLOAT4: (numpy.float32, 4),
 
-    RTobjecttype.RT_OBJECTTYPE_INT.real: (numpy.int32, 1),
-    RTobjecttype.RT_OBJECTTYPE_INT2.real: (numpy.int32, 2),
-    RTobjecttype.RT_OBJECTTYPE_INT3.real: (numpy.int32, 3),
-    RTobjecttype.RT_OBJECTTYPE_INT4.real: (numpy.int32, 4),
+    RTobjecttype.RT_OBJECTTYPE_INT: (numpy.int32, 1),
+    RTobjecttype.RT_OBJECTTYPE_INT2: (numpy.int32, 2),
+    RTobjecttype.RT_OBJECTTYPE_INT3: (numpy.int32, 3),
+    RTobjecttype.RT_OBJECTTYPE_INT4: (numpy.int32, 4),
 
-    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT.real: (numpy.uint32, 1),
-    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT2.real: (numpy.uint32, 2),
-    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT3.real: (numpy.uint32, 3),
-    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT4.real: (numpy.uint32, 4),
+    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT: (numpy.uint32, 1),
+    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT2: (numpy.uint32, 2),
+    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT3: (numpy.uint32, 3),
+    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT4: (numpy.uint32, 4),
 }
 
 dict_for_numpy_to_optix = {
     0: None,
+
     numpy.float32: {
         1: RTobjecttype.RT_OBJECTTYPE_FLOAT,
         2: RTobjecttype.RT_OBJECTTYPE_FLOAT2,
@@ -56,24 +65,12 @@ class OptixScopedObject(object):
         if not variable_from_optix.is_valid():
             variable_from_optix = self._declare_variable(key)
 
-        #first take type from optix
+        # first take type from optix
         value_type = variable_from_optix.type
         is_optix_given_type = False
 
         if value_type is not RTobjecttype.RT_OBJECTTYPE_UNKNOWN and value_type is not RTobjecttype.RT_OBJECTTYPE_USER:
             is_optix_given_type = True
-
-        from pyoptix.objects.optix_buffer import OptixBuffer
-        from pyoptix.objects.optix_texture import OptixTexture
-        from pyoptix.objects.optix_program import OptixProgram
-
-        from pyoptix.objects.optix_group import OptixGroup
-
-        from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
-
-        from pyoptix.objects.optix_selector import OptixSelector
-
-        from pyoptix.objects.optix_transform import OptixTransform
 
         if isinstance(value, OptixBuffer):
             if is_optix_given_type and value_type is not RTobjecttype.RT_OBJECTTYPE_BUFFER:
@@ -164,18 +161,11 @@ class OptixScopedObject(object):
         self._remove_variable(variable_from_optix)
         del self._variables[key]
 
-    def keys(self):
-        return self._variables.keys()
-
-    def values(self):
-        return self._variables.values()
-
     def __contains__(self, item):
         return item in self._variables
 
-    def add(self, key, value):
-        # TODO: interface
-        self[key] = value
-
     def __iter__(self):
         return iter(self._variables)
+
+    def get_variables(self):
+        return self._variables_dict

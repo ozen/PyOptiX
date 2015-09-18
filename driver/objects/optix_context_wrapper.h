@@ -31,14 +31,15 @@ public:
 
     unsigned int get_ray_type_count();
     unsigned int get_entry_point_count();
-
     void set_ray_type_count(unsigned int ray_type_count);
     void set_entry_point_count(unsigned int entry_point_count);
     void set_ray_generation_program(unsigned int entry_point_index, OptixProgramWrapper* ray_generation_program);
-    void compile();
-    void launch_2d(unsigned int entry_point_index, int width, int height);
-
+    void set_exception_program(unsigned int entry_point_index, OptixProgramWrapper* exception_program);
     void set_miss_program(unsigned int ray_type_index, OptixProgramWrapper* miss_program);
+    void compile();
+    void launch_1d(unsigned int entry_point_index, int width);
+    void launch_2d(unsigned int entry_point_index, int width, int height);
+    void launch_3d(unsigned int entry_point_index, int width, int height, int depth);
 
     // CPU
     int get_cpu_num_of_threads();
