@@ -24,5 +24,5 @@ export PATH=/usr/local/cuda/bin:$PATH
 OptiX library files must be in LD_LIBRARY_PATH. Use the following command (or a variation for your setup) to add it:
 
 ```
-export LD_LIBRARY_PATH=/usr/local/optix/lib64:/usr/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib/x86_64-linux-gnu:/usr/local/optix/lib64:$LD_LIBRARY_PATH
 ```
