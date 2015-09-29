@@ -23,8 +23,16 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         self.compiler = None
 
     def init_compiler(self, output_path=None, include_paths=None, arch=None, use_fast_math=None):
-        self.compiler = OptixCompiler(output_path=output_path, include_paths=include_paths,
-                                      arch=arch, use_fast_math=use_fast_math)
+        kwargs = {}
+        if output_path:
+            kwargs['output_path'] = output_path
+        if include_paths:
+            kwargs['include_paths'] = include_paths
+        if arch:
+            kwargs['arch'] = arch
+        if use_fast_math:
+            kwargs['use_fast_math'] = use_fast_math
+        self.compiler = OptixCompiler(**kwargs)
 
     def create_acceleration(self, builder, traverser):
         """
