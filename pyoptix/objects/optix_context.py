@@ -14,6 +14,8 @@ from pyoptix.objects.optix_geometry import OptixGeometry
 from pyoptix.objects.optix_texture import OptixTexture
 from pyoptix.objects.optix_buffer import OptixBuffer
 
+import numpy
+
 
 class OptixContext(_OptixContextWrapper, OptixScopedObject):
 
@@ -62,6 +64,17 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
     def create_buffer_from_numpy_array(self, buffer_type, numpy_array, drop_last_dim=False):
         buffer = self.create_buffer(buffer_type)
         buffer.restructure_and_copy_from_numpy_array(numpy_array, drop_last_dim)
+        return buffer
+
+    def create_empty_buffer(self, buffer_type, numpy_shape, dtype=numpy.float32, drop_last_dim=False):
+        buffer = self.create_buffer(buffer_type)
+        buffer.reset_buffer(numpy_shape, dtype, drop_last_dim)
+        return buffer
+
+    def create_zeros_buffer(self, buffer_type, numpy_shape, dtype=numpy.float32, drop_last_dim=False):
+        buffer = self.create_buffer(buffer_type)
+        temp_numpy_array = numpy.zeros(numpy_shape, dtype=dtype)
+        buffer.restructure_and_copy_from_numpy_array(temp_numpy_array, drop_last_dim)
         return buffer
 
     def create_texture_sampler(self):

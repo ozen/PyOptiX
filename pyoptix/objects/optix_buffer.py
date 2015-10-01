@@ -51,13 +51,13 @@ class OptixBuffer(_OptixBufferWrapper, OptixObject):
         self.copy_data_into_numpy_array(numpy_array)
         return numpy_array
 
-    def copy_data_from_numpy_array(self, numpy_array: numpy.ndarray):
+    def copy_data_from_numpy_array(self, numpy_array):
         if numpy_array.nbytes != self.nbytes:
             raise BufferError("Arrays size must be equal!")
 
         self._copy_from_numpy_array(numpy_array)
 
-    def copy_data_into_numpy_array(self, numpy_array: numpy.ndarray):
+    def copy_data_into_numpy_array(self, numpy_array):
         if numpy_array.nbytes != self.nbytes:
             raise BufferError("Arrays size must be equal!")
 
