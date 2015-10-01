@@ -5,7 +5,10 @@ from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
 
 class OptixProgram(_OptixProgramWrapper, OptixObject, OptixScopedObject):
 
-    def __init__(self, native, context):
+    def __init__(self, native, context, file_name=None, function_name=None):
         OptixObject.__init__(self, context, native)
         OptixScopedObject.__init__(self)
         _OptixProgramWrapper.__init__(self, native)
+
+        self.file_name = file_name
+        self.function_name = function_name

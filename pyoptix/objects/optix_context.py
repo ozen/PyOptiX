@@ -145,7 +145,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
 
         # Create program object from compiled file
         native = self._create_program_from_file(compiled_file_path, function_name)
-        return OptixProgram(native, context=self)
+        return OptixProgram(native, context=self, file_name=file_name, function_name=function_name)
 
     def launch(self, entry_point_index, width, height=None, depth=None):
         if not height:
