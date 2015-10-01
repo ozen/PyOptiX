@@ -31,7 +31,7 @@ unsigned int OptixGeometryGroupWrapper::get_child_count()
     return this->geometry_group->getChildCount();
 }
 
-void OptixGeometryGroupWrapper::set_child_geometry_group_instance(unsigned int index, OptixGeometryInstanceWrapper* geometryinstance)
+void OptixGeometryGroupWrapper::set_child_geometry_instance(unsigned int index, OptixGeometryInstanceWrapper* geometryinstance)
 {
     this->geometry_group->setChild(index, geometryinstance->get_native());
 }
@@ -64,7 +64,7 @@ void OptixGeometryGroupWrapper::export_for_python()
 
             .def("_set_child_count", &OptixGeometryGroupWrapper::set_child_count)
             .def("get_child_count", &OptixGeometryGroupWrapper::get_child_count)
-            .def("_set_child_geometry_group_instance", &OptixGeometryGroupWrapper::set_child_geometry_group_instance)
+            .def("_set_child_geometry_instance", &OptixGeometryGroupWrapper::set_child_geometry_instance)
             .def("_remove_child", &OptixGeometryGroupWrapper::remove_child);
 
 }

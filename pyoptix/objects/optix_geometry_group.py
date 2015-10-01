@@ -19,3 +19,6 @@ class OptixGeometryGroup(_OptixGeometryGroupWrapper, OptixObject, OptixHasChild)
     def set_acceleration(self, acceleration):
         self._set_acceleration(acceleration)
         self._acceleration = acceleration
+
+    def get_acceleration(self):
+        return self._acceleration
