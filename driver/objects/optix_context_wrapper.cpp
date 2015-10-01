@@ -256,7 +256,6 @@ void OptixContextWrapper::export_for_python()
             // Programs
             .def("set_ray_generation_program", &OptixContextWrapper::set_ray_generation_program)
             .def("set_exception_program", &OptixContextWrapper::set_exception_program)
-            .def("set_miss_program", &OptixContextWrapper::set_miss_program)
             .def("compile", &OptixContextWrapper::compile)
 
             //*****************
@@ -274,6 +273,8 @@ void OptixContextWrapper::export_for_python()
             .def("_create_transform", &OptixContextWrapper::create_transform)
             .def("_create_selector", &OptixContextWrapper::create_selector)
             .def("_create_accelerator", &OptixContextWrapper::create_accelerator)
+
+            .def("_set_miss_program", &OptixContextWrapper::set_miss_program)
 
             .def("_launch_1d", &OptixContextWrapper::launch_1d)
             .def("_launch_2d", &OptixContextWrapper::launch_2d)

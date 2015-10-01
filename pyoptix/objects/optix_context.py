@@ -23,6 +23,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         _OptixContextWrapper.__init__(self)
         OptixScopedObject.__init__(self)
         self.compiler = None
+        self._miss_programs = {}
 
     def init_compiler(self, output_path=None, include_paths=None, arch=None, use_fast_math=None):
         kwargs = {}
@@ -154,3 +155,10 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
             self._launch_2d(entry_point_index, width, height)
         else:
             self._launch_3d(entry_point_index, width, height, depth)
+
+    def set_miss_program(self, ray_type_index, program):
+        self._miss_programs[ray_type_index] = program
+        self._set_miss_program(ray_type_index, program)
+
+    def get_miss_program(self, ray_type_index):
+        return self._miss_programs[ray_type_index]
