@@ -66,15 +66,11 @@ void OptixGeometryWrapper::export_for_python()
                 "_OptixGeometryWrapper docstring",
                 bp::init<optix::Geometry>())
 
-            //*****************
-            // DIRECT ACCESS
-            //*****************
-
             .def("mark_dirty", &OptixGeometryWrapper::mark_dirty)
             .def("is_dirty", &OptixGeometryWrapper::is_dirty)
-            .def("_set_primitive_count", &OptixGeometryWrapper::set_primitive_count)
+            .def("set_primitive_count", &OptixGeometryWrapper::set_primitive_count)
             .def("get_primitive_count", &OptixGeometryWrapper::get_primitive_count)
-            .def("_set_primitive_index_offset", &OptixGeometryWrapper::set_primitive_index_oOffset)
+            .def("set_primitive_index_offset", &OptixGeometryWrapper::set_primitive_index_oOffset)
             .def("get_primitive_index_offset", &OptixGeometryWrapper::get_primitive_index_offset)
 
             .def("_set_bounding_box_program", &OptixGeometryWrapper::set_bounding_box_program)
