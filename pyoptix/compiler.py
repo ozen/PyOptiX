@@ -50,9 +50,10 @@ class OptixCompiler(object):
         if not os.path.exists(self.output_path):
             os.makedirs(self.output_path)
 
-    def compile(self, cu_file_path):
-        cu_file_name = os.path.basename(cu_file_path)
-        output_file_path = os.path.join(self.output_path, cu_file_name + ".ptx")
+    def compile(self, cu_file_path, ptx_file_name=None):
+        if ptx_file_name is None:
+            ptx_file_name = '%s.ptx' % os.path.basename(cu_file_path)
+        output_file_path = os.path.join(self.output_path, ptx_file_name)
 
         if _compile_required(cu_file_path, output_file_path):
             print("Optix Compiler: compiling " + cu_file_path)
