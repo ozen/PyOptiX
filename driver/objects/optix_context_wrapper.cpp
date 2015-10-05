@@ -3,6 +3,7 @@
 
 OptixContextWrapper::OptixContextWrapper(): OptixScopedObjectWrapper()
 {
+    std::cout<<"~OptixContextWrapper construction"<<std::endl;
     this->context = optix::Context::create();
     this->set_scoped_object(this->context.get());
 }
@@ -130,6 +131,18 @@ bool OptixContextWrapper::get_exception_enabled(RTexception exception)
 }
 
 
+// Print
+void OptixContextWrapper::set_print_enabled(bool enabled)
+{
+    this->context->setPrintEnabled(enabled);
+}
+
+bool OptixContextWrapper::get_print_enabled()
+{
+    return this->context->getPrintEnabled();
+}
+
+
 // *********************************
 // OBJECTS
 // *********************************
@@ -252,6 +265,10 @@ void OptixContextWrapper::export_for_python()
             // Exceptions
             .def("get_exception_enabled", &OptixContextWrapper::get_exception_enabled)
             .def("set_exception_enabled", &OptixContextWrapper::set_exception_enabled)
+
+            // Print
+            .def("get_print_enabled", &OptixContextWrapper::get_print_enabled)
+            .def("set_print_enabled", &OptixContextWrapper::set_print_enabled)
 
             // Programs
             .def("set_ray_generation_program", &OptixContextWrapper::set_ray_generation_program)
