@@ -8,5 +8,5 @@ from .optix_group import OptixGroup
 from .optix_material import OptixMaterial
 from .optix_program import OptixProgram
 from .optix_selector import OptixSelector
-from .optix_texture import OptixTexture
+from .optix_texture_sampler import OptixTextureSampler
 from .optix_transform import OptixTransform

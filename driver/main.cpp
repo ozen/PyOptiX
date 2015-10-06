@@ -96,8 +96,8 @@ BOOST_PYTHON_MODULE(_driver)
     bp::enum_<RTwrapmode>("RTwrapmode")
         .value("RT_WRAP_REPEAT", RT_WRAP_REPEAT)
         .value("RT_WRAP_CLAMP_TO_EDGE", RT_WRAP_CLAMP_TO_EDGE)
-        .value("RT_WRAP_MIRROR", RT_WRAP_CLAMP_TO_EDGE)
-        .value("RT_WRAP_CLAMP_TO_BORDER", RT_WRAP_CLAMP_TO_EDGE);
+        .value("RT_WRAP_MIRROR", RT_WRAP_MIRROR)
+        .value("RT_WRAP_CLAMP_TO_BORDER", RT_WRAP_CLAMP_TO_BORDER);
 
     bp::enum_<RTfiltermode>("RTfiltermode")
         .value("RT_FILTER_NEAREST", RT_FILTER_NEAREST)

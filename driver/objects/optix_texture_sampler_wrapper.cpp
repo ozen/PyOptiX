@@ -24,7 +24,7 @@ unsigned int OptixTextureSamplerWrapper::get_mip_level_count()
     return this->texture_sampler->getMipLevelCount();
 }
 
-void OptixTextureSamplerWrapper::set_array_size(unsigned int  num_textures_in_array)
+void OptixTextureSamplerWrapper::set_array_size(unsigned int num_textures_in_array)
 {
     this->texture_sampler->setArraySize(num_textures_in_array);
 }
@@ -74,6 +74,11 @@ RTtextureindexmode OptixTextureSamplerWrapper::get_indexing_mode()
     return this->texture_sampler->getIndexingMode();
 }
 
+void OptixTextureSamplerWrapper::set_filtering_modes(RTfiltermode minification, RTfiltermode magnification, RTfiltermode mipmapping)
+{
+    this->texture_sampler->setFilteringModes(minification, magnification, mipmapping);
+}
+
 int OptixTextureSamplerWrapper::get_id()
 {
     return this->texture_sampler->getId();
@@ -110,15 +115,16 @@ void OptixTextureSamplerWrapper::export_for_python()
             .def("get_mip_level_count", &OptixTextureSamplerWrapper::get_mip_level_count)
             .def("set_array_size", &OptixTextureSamplerWrapper::set_array_size)
             .def("get_array_size", &OptixTextureSamplerWrapper::get_array_size)
-            .def("set_wrap_mode", &OptixTextureSamplerWrapper::set_wrap_mode)
-            .def("get_wrap_mode", &OptixTextureSamplerWrapper::get_wrap_mode)
             .def("set_max_anisotropy", &OptixTextureSamplerWrapper::set_max_anisotropy)
             .def("get_max_anisotropy", &OptixTextureSamplerWrapper::get_max_anisotropy)
-            .def("set_read_mode", &OptixTextureSamplerWrapper::set_read_mode)
+            .def("get_wrap_mode", &OptixTextureSamplerWrapper::get_wrap_mode)
             .def("get_read_mode", &OptixTextureSamplerWrapper::get_read_mode)
-            .def("set_indexing_mode", &OptixTextureSamplerWrapper::set_indexing_mode)
             .def("get_indexing_mode", &OptixTextureSamplerWrapper::get_indexing_mode)
             .def("get_id", &OptixTextureSamplerWrapper::get_id)
+            .def("_set_wrap_mode", &OptixTextureSamplerWrapper::set_wrap_mode)
+            .def("_set_read_mode", &OptixTextureSamplerWrapper::set_read_mode)
+            .def("_set_indexing_mode", &OptixTextureSamplerWrapper::set_indexing_mode)
+            .def("_set_filtering_modes", &OptixTextureSamplerWrapper::set_filtering_modes)
             .def("_set_buffer", &OptixTextureSamplerWrapper::set_buffer);
 }
 

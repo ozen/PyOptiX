@@ -11,7 +11,7 @@ from pyoptix.objects.optix_group import OptixGroup
 from pyoptix.objects.optix_geometry_instance import OptixGeometryInstance
 from pyoptix.objects.optix_material import OptixMaterial
 from pyoptix.objects.optix_geometry import OptixGeometry
-from pyoptix.objects.optix_texture import OptixTexture
+from pyoptix.objects.optix_texture_sampler import OptixTextureSampler
 from pyoptix.objects.optix_buffer import OptixBuffer
 
 import numpy
@@ -78,12 +78,36 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         buffer.restructure_and_copy_from_numpy_array(temp_numpy_array, drop_last_dim)
         return buffer
 
-    def create_texture_sampler(self):
+    def create_texture_sampler(self, buffer=None, array_size=1, wrap_mode=None, indexing_mode=None, read_mode=None,
+                               filter_mode=None):
         """
-        :rtype : OptixTexture
+        :rtype : OptixTextureSampler
         """
         native = self._create_texture_sampler()
-        return OptixTexture(native, context=self)
+        instance = OptixTextureSampler(native, context=self)
+
+        instance.set_max_anisotropy(1.0)
+        instance.set_mip_level_count(1)
+        instance.set_array_size(array_size)
+
+        if wrap_mode is not None:
+            instance.set_wrap_mode(0, wrap_mode)
+            instance.set_wrap_mode(1, wrap_mode)
+            instance.set_wrap_mode(2, wrap_mode)
+
+        if indexing_mode is not None:
+            instance.set_indexing_mode(indexing_mode)
+
+        if read_mode is not None:
+            instance.set_read_mode(read_mode)
+
+        if filter_mode is not None:
+            instance.set_filtering_modes(filter_mode, filter_mode, filter_mode)
+
+        if buffer is not None:
+            instance.set_buffer(0, 0, buffer)
+
+        return instance
 
     def create_geometry(self):
         """

@@ -34,6 +34,9 @@ public:
 
     void set_indexing_mode(RTtextureindexmode indexmode);
     RTtextureindexmode get_indexing_mode();
+
+    void set_filtering_modes(RTfiltermode minification, RTfiltermode magnification, RTfiltermode mipmapping);
+
     int get_id();
     void set_buffer(unsigned int texture_array_idx, unsigned int mip_level, OptixBufferWrapper* buffer);
 

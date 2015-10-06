@@ -68,7 +68,7 @@ class OptixScopedObject(object):
             is_optix_given_type = True
 
         from pyoptix.objects.optix_buffer import OptixBuffer
-        from pyoptix.objects.optix_texture import OptixTexture
+        from pyoptix.objects.optix_texture_sampler import OptixTextureSampler
         from pyoptix.objects.optix_program import OptixProgram
         from pyoptix.objects.optix_group import OptixGroup
         from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
@@ -80,7 +80,7 @@ class OptixScopedObject(object):
                 raise ValueError("Optix type is " + str(variable_from_optix) + " but you give buffer")
             variable_from_optix._set_buffer(value)
 
-        elif isinstance(value, OptixTexture):
+        elif isinstance(value, OptixTextureSampler):
             if is_optix_given_type and value_type is not RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER:
                 raise ValueError("Optix type is " + str(variable_from_optix) + " but you give texture")
             variable_from_optix._set_texture(value)
