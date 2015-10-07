@@ -22,7 +22,7 @@ EXTENSION_SOURCES = glob_recursive('driver', '*.cpp')
 
 setup(
     name='pyoptix',
-    version='0.0.16',
+    version='0.0.17',
     packages=find_packages(),
     ext_modules=[Extension('pyoptix._driver', EXTENSION_SOURCES,
                            include_dirs=LIBRARY_INCLUDE + EXTENSION_INCLUDE,

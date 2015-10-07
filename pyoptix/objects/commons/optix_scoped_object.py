@@ -49,19 +49,17 @@ dict_for_numpy_to_optix = {
 
 
 class OptixScopedObject(object):
-    _variables_dict = None
-
     def __init__(self):
         self._variables = dict()
 
     def __setitem__(self, key, value):
         # Optix interface
-        variable_from_optix = self._query_variable(key)
-        if not variable_from_optix.is_valid():
-            variable_from_optix = self._declare_variable(key)
+        optix_variable = self._query_variable(key)
+        if not optix_variable.is_valid():
+            optix_variable = self._declare_variable(key)
 
         # first take type from optix
-        value_type = variable_from_optix.type
+        value_type = optix_variable.type
         is_optix_given_type = False
 
         if value_type is not RTobjecttype.RT_OBJECTTYPE_UNKNOWN and value_type is not RTobjecttype.RT_OBJECTTYPE_USER:
@@ -77,38 +75,38 @@ class OptixScopedObject(object):
 
         if isinstance(value, OptixBuffer):
             if is_optix_given_type and value_type is not RTobjecttype.RT_OBJECTTYPE_BUFFER:
-                raise ValueError("Optix type is " + str(variable_from_optix) + " but you give buffer")
-            variable_from_optix._set_buffer(value)
+                raise ValueError("Optix type is " + str(optix_variable) + " but you give buffer")
+            optix_variable._set_buffer(value)
 
         elif isinstance(value, OptixTextureSampler):
             if is_optix_given_type and value_type is not RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER:
-                raise ValueError("Optix type is " + str(variable_from_optix) + " but you give texture")
-            variable_from_optix._set_texture(value)
+                raise ValueError("Optix type is " + str(optix_variable) + " but you give texture")
+            optix_variable._set_texture(value)
 
         elif isinstance(value, OptixProgram):
             if is_optix_given_type and value_type is not RTobjecttype.RT_OBJECTTYPE_PROGRAM:
-                raise ValueError("Optix type is " + str(variable_from_optix) + " but you give program")
-            variable_from_optix._set_program_id_with_program(value)
+                raise ValueError("Optix type is " + str(optix_variable) + " but you give program")
+            optix_variable._set_program_id_with_program(value)
 
         elif isinstance(value, OptixGroup):
             if is_optix_given_type and value_type is not RTobjecttype.RT_OBJECTTYPE_GROUP:
-                raise ValueError("Optix type is " + str(variable_from_optix) + " but you give group")
-            variable_from_optix._set_group(value)
+                raise ValueError("Optix type is " + str(optix_variable) + " but you give group")
+            optix_variable._set_group(value)
 
         elif isinstance(value, OptixGeometryGroup):
             if is_optix_given_type and value_type is not RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP:
-                raise ValueError("Optix type is " + str(variable_from_optix) + " but you give geometry group")
-            variable_from_optix._set_geometry_group(value)
+                raise ValueError("Optix type is " + str(optix_variable) + " but you give geometry group")
+            optix_variable._set_geometry_group(value)
 
         elif isinstance(value, OptixSelector):
             if is_optix_given_type and value_type is not RTobjecttype.RT_OBJECTTYPE_SELECTOR:
-                raise ValueError("Optix type is " + str(variable_from_optix) + " but you give selector")
-            variable_from_optix._set_selector(value)
+                raise ValueError("Optix type is " + str(optix_variable) + " but you give selector")
+            optix_variable._set_selector(value)
 
         elif isinstance(value, OptixTransform):
             if is_optix_given_type and value_type is not RTobjecttype.RT_OBJECTTYPE_TRANSFORM:
-                raise ValueError("Optix type is " + str(variable_from_optix) + " but you give transform")
-            variable_from_optix._set_transform(value)
+                raise ValueError("Optix type is " + str(optix_variable) + " but you give transform")
+            optix_variable._set_transform(value)
 
         elif is_optix_given_type:
             # OK we have optix type so we try to convert value into optix_type
@@ -122,7 +120,7 @@ class OptixScopedObject(object):
             if numpy_type_and_dim_from_optix is None:
                 return NotImplementedError("Not implemented for optix type " + str(value_type))
 
-            if len(value_numpy_array.shape) is not 1:
+            if len(value_numpy_array.shape) != 1:
                 return ValueError("Optix accept only one dim input for " + str(value_type))
 
             if value_numpy_array.shape[0] is not numpy_type_and_dim_from_optix[1]:
@@ -131,19 +129,19 @@ class OptixScopedObject(object):
             value_numpy_array = value_numpy_array.astype(numpy_type_and_dim_from_optix[0])
             value = value_numpy_array
 
-            variable_from_optix._set_variable_with_type(value, value_type)
+            optix_variable._set_variable_with_type(value, value_type)
 
         elif isinstance(value, numpy.ndarray):
             value_numpy_array = value
             if len(value_numpy_array.shape) == 0:
                 value_numpy_array = value_numpy_array.reshape((1))
-            variable_from_optix._set_with_numpy_array1x1_dtype(value_numpy_array)
+            optix_variable._set_with_numpy_array1x1_dtype(value_numpy_array)
 
         else:
             raise NotImplementedError("Optix can not recognize the type, you should give a numpy array.")
         """
         else:
-            self._remove_variable(variable_from_optix)
+            self._remove_variable(optix_variable)
             raise ValueError(str(type(value)) + "can not assign to OptixScopedObject")
         """
 
@@ -157,11 +155,11 @@ class OptixScopedObject(object):
         return len(self._variables)
 
     def __delitem__(self, key):
-        variable_from_optix = self._query_variable(key)
-        if not variable_from_optix.is_valid():
+        optix_variable = self._query_variable(key)
+        if not optix_variable.is_valid():
             raise IndexError("there is no key like : " + str(key))
 
-        self._remove_variable(variable_from_optix)
+        self._remove_variable(optix_variable)
         del self._variables[key]
 
     def __contains__(self, item):
@@ -171,4 +169,4 @@ class OptixScopedObject(object):
         return iter(self._variables)
 
     def get_variables(self):
-        return self._variables_dict
+        return self._variables

@@ -16,13 +16,13 @@ FILTERING_STRING_TO_OPTIX_ENUM = {
 }
 
 READ_STRING_TO_OPTIX_ENUM = {
-    'element_type': RTtexturereadmode.RT_TEXTURE_READ_ELEMENT_TYPE,
-    'float': RTtexturereadmode.RT_TEXTURE_READ_NORMALIZED_FLOAT,
+    'element': RTtexturereadmode.RT_TEXTURE_READ_ELEMENT_TYPE,
+    'normalized_float': RTtexturereadmode.RT_TEXTURE_READ_NORMALIZED_FLOAT,
 }
 
 INDEXING_STRING_TO_OPTIX_ENUM = {
-    'coordinates': RTtextureindexmode.RT_TEXTURE_INDEX_NORMALIZED_COORDINATES,
-    'array': RTtextureindexmode.RT_TEXTURE_INDEX_ARRAY_INDEX,
+    'normalized': RTtextureindexmode.RT_TEXTURE_INDEX_NORMALIZED_COORDINATES,
+    'index': RTtextureindexmode.RT_TEXTURE_INDEX_ARRAY_INDEX,
 }
 
 

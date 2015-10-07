@@ -1,5 +1,4 @@
-from pyoptix._driver import _OptixContextWrapper
-from pyoptix._driver import RTbuffertype
+from pyoptix._driver import _OptixContextWrapper, RTbuffertype, RTfiltermode
 from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
 from pyoptix.compiler import OptixCompiler
 from pyoptix.objects.optix_program import OptixProgram
@@ -86,23 +85,23 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         native = self._create_texture_sampler()
         instance = OptixTextureSampler(native, context=self)
 
-        instance.set_max_anisotropy(1.0)
-        instance.set_mip_level_count(1)
-        instance.set_array_size(array_size)
+        if indexing_mode is not None:
+            instance.set_indexing_mode(indexing_mode)
 
         if wrap_mode is not None:
             instance.set_wrap_mode(0, wrap_mode)
             instance.set_wrap_mode(1, wrap_mode)
             instance.set_wrap_mode(2, wrap_mode)
 
-        if indexing_mode is not None:
-            instance.set_indexing_mode(indexing_mode)
-
         if read_mode is not None:
             instance.set_read_mode(read_mode)
 
         if filter_mode is not None:
-            instance.set_filtering_modes(filter_mode, filter_mode, filter_mode)
+            instance.set_filtering_modes(filter_mode, filter_mode, RTfiltermode.RT_FILTER_NONE)
+
+        instance.set_max_anisotropy(1.0)
+        instance.set_mip_level_count(1)
+        instance.set_array_size(array_size)
 
         if buffer is not None:
             instance.set_buffer(0, 0, buffer)
