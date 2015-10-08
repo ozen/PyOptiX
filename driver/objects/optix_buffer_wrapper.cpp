@@ -159,18 +159,12 @@ void OptixBufferWrapper::export_for_python()
                 "_OptixBufferWrapper docstring",
                 bp::init<optix::Buffer>())
 
-            //*****************
-            // DIRECT ACCESS
-            //*****************
             .def("get_id", &OptixBufferWrapper::get_id)
             .def("mark_dirty", &OptixBufferWrapper::mark_dirty)
 
             .add_property("nbytes", &OptixBufferWrapper::get_buffer_size_in_bytes)
 
-            //*****************
-            // CONTROLLED ACCESS
-            //*****************
-            .def("_get_format", &OptixBufferWrapper::get_format)
+            .def("get_format", &OptixBufferWrapper::get_format)
             .def("_set_format", &OptixBufferWrapper::set_format)
 
             .def("_get_shape", &OptixBufferWrapper::get_shape)

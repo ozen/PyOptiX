@@ -1,51 +1,6 @@
 import numpy
 from pyoptix._driver import RTobjecttype
-
-
-dict_for_optix_to_numpy_one_dtype = {
-    0: None,
-
-    RTobjecttype.RT_OBJECTTYPE_FLOAT: (numpy.float32, 1),
-    RTobjecttype.RT_OBJECTTYPE_FLOAT2: (numpy.float32, 2),
-    RTobjecttype.RT_OBJECTTYPE_FLOAT3: (numpy.float32, 3),
-    RTobjecttype.RT_OBJECTTYPE_FLOAT4: (numpy.float32, 4),
-
-    RTobjecttype.RT_OBJECTTYPE_INT: (numpy.int32, 1),
-    RTobjecttype.RT_OBJECTTYPE_INT2: (numpy.int32, 2),
-    RTobjecttype.RT_OBJECTTYPE_INT3: (numpy.int32, 3),
-    RTobjecttype.RT_OBJECTTYPE_INT4: (numpy.int32, 4),
-
-    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT: (numpy.uint32, 1),
-    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT2: (numpy.uint32, 2),
-    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT3: (numpy.uint32, 3),
-    RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT4: (numpy.uint32, 4),
-}
-
-
-dict_for_numpy_to_optix = {
-    0: None,
-
-    numpy.float32: {
-        1: RTobjecttype.RT_OBJECTTYPE_FLOAT,
-        2: RTobjecttype.RT_OBJECTTYPE_FLOAT2,
-        3: RTobjecttype.RT_OBJECTTYPE_FLOAT3,
-        4: RTobjecttype.RT_OBJECTTYPE_FLOAT4
-    },
-
-    numpy.int32: {
-        1: RTobjecttype.RT_OBJECTTYPE_INT,
-        2: RTobjecttype.RT_OBJECTTYPE_INT2,
-        3: RTobjecttype.RT_OBJECTTYPE_INT3,
-        4: RTobjecttype.RT_OBJECTTYPE_INT4
-    },
-
-    numpy.uint32: {
-        1: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT,
-        2: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT2,
-        3: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT3,
-        4: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT4
-    },
-}
+from pyoptix.objects.commons.types import OBJECT_TYPE_TO_DTYPE
 
 
 class OptixScopedObject(object):
@@ -115,7 +70,7 @@ class OptixScopedObject(object):
             if len(value_numpy_array.shape) == 0:
                 value_numpy_array = value_numpy_array.reshape((1))
 
-            numpy_type_and_dim_from_optix = dict_for_optix_to_numpy_one_dtype[value_type]
+            numpy_type_and_dim_from_optix = OBJECT_TYPE_TO_DTYPE[value_type]
 
             if numpy_type_and_dim_from_optix is None:
                 return NotImplementedError("Not implemented for optix type " + str(value_type))

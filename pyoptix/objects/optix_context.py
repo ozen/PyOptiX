@@ -1,4 +1,4 @@
-from pyoptix._driver import _OptixContextWrapper, RTbuffertype, RTfiltermode
+from pyoptix._driver import _OptixContextWrapper, RTbuffertype, RTfiltermode, RTformat
 from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
 from pyoptix.compiler import OptixCompiler
 from pyoptix.objects.optix_program import OptixProgram
@@ -104,6 +104,8 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         instance.set_array_size(array_size)
 
         if buffer is not None:
+            if buffer.get_type() == RTformat.RT_FORMAT_USER:
+                raise TypeError("Texture sampler cannot be associated with a user-typed buffer")
             instance.set_buffer(0, 0, buffer)
 
         return instance

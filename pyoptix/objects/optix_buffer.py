@@ -2,12 +2,12 @@ import numpy
 from pyoptix._driver import _OptixBufferWrapper
 from pyoptix._driver import RTformat
 from pyoptix.objects.commons.optix_object import OptixObject
+from pyoptix.objects.commons.types import get_format_from_dtype
 
 
 class OptixBuffer(_OptixBufferWrapper, OptixObject):
     _dtype_numpy = None
     _shape_numpy = None
-
     _last_dim_dropped = None
 
     def __init__(self, native, context):
@@ -15,27 +15,63 @@ class OptixBuffer(_OptixBufferWrapper, OptixObject):
         _OptixBufferWrapper.__init__(self, native)
         self._last_dim_dropped = False
 
-    def reset_buffer(self, numpy_shape, dtype=numpy.float32, drop_last_dim=False):
-        # Allah(CC)'in emri
-        self._set_format(RTformat.RT_FORMAT_USER)
+    @property
+    def id(self):
+        return self.get_id()
 
+    @property
+    def shape_of_optix_buffer(self):
+        return tuple(self._get_shape())
+
+    @property
+    def itemsize_of_optix_buffer(self):
+        return self._get_element_size()
+
+    @property
+    def shape(self):
+        return self._shape_numpy
+
+    @property
+    def dtype(self):
+        return numpy.dtype(self._dtype_numpy)
+
+    def set_format(self, format=None, dtype=None, type_size=1):
+        _format = None
+
+        if format is not None:
+            if isinstance(format, RTformat):
+                _format = format
+            else:
+                raise ValueError('Invalid buffer format')
+        elif dtype is not None:
+            try:
+                dtype = numpy.dtype(dtype)
+                _format = get_format_from_dtype(dtype, type_size)
+            except TypeError:
+                raise ValueError('Invalid dtype argument')
+
+        self._set_format(_format)
+
+    def reset_buffer(self, numpy_shape, dtype=numpy.float32, drop_last_dim=False):
         self._dtype_numpy = numpy.dtype(dtype)
         self._shape_numpy = numpy_shape
 
-        temp_item_size = self._dtype_numpy.itemsize
+        item_size = self._dtype_numpy.itemsize
         temp_shape = numpy_shape
+        type_size = 1
 
         if drop_last_dim:
-            last_dim = len(numpy_shape) - 1
-            temp_item_size = numpy_shape[last_dim] * self._dtype_numpy.itemsize
-            temp_shape = numpy_shape[0:last_dim]
+            item_size = numpy_shape[-1] * self._dtype_numpy.itemsize
+            temp_shape = numpy_shape[0:-1]
+            type_size = numpy_shape[-1]
             self._last_dim_dropped = True
 
-        self._set_element_size(temp_item_size)
+        self.set_format(dtype=dtype, type_size=type_size)
+        if self.get_format() == RTformat.RT_FORMAT_USER:
+            self._set_element_size(item_size)
 
         # convert numpy dim to optix dim (inverting shape)
         temp_shape = temp_shape[::-1]
-
         self._set_shape(list(temp_shape))
 
     # NUMPY SUPPORT
@@ -63,22 +99,3 @@ class OptixBuffer(_OptixBufferWrapper, OptixObject):
 
         self._copy_into_numpy_array(numpy_array)
 
-    @property
-    def id(self):
-        return self.get_id()
-
-    @property
-    def shape_of_optix_buffer(self):
-        return tuple(self._get_shape())
-
-    @property
-    def itemsize_of_optix_buffer(self):
-        return self._get_element_size()
-
-    @property
-    def shape(self):
-        return self._shape_numpy
-
-    @property
-    def dtype(self):
-        return numpy.dtype(self._dtype_numpy)
