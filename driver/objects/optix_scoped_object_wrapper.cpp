@@ -1,4 +1,6 @@
 #include "optix_scoped_object_wrapper.h"
+#include "Python.h"
+#include <boost/python.hpp>
 
 
 OptixScopedObjectWrapper::OptixScopedObjectWrapper()
@@ -12,24 +14,24 @@ void OptixScopedObjectWrapper::set_scoped_object(optix::ScopedObj* scoped_object
     this->set_destroyable_object(scoped_object);
 }
 
-
-
-OptixVariableWrapper* OptixScopedObjectWrapper::declare_variable(const std::string name)
+optix::Variable OptixScopedObjectWrapper::declare_variable(const std::string name)
 {
-    optix::Variable variable = this->scoped_object->declareVariable(name);
-    return new OptixVariableWrapper(variable);
+    return this->scoped_object->declareVariable(name);
 }
 
-OptixVariableWrapper* OptixScopedObjectWrapper::query_variable(const std::string name)
+optix::Variable OptixScopedObjectWrapper::query_variable(const std::string name)
 {
-    optix::Variable variable = this->scoped_object->queryVariable(name);
-    return new OptixVariableWrapper(variable);
+    return this->scoped_object->queryVariable(name);
 }
 
-void OptixScopedObjectWrapper::remove_variable(OptixVariableWrapper* optix_varible_wrapper)
+optix::Variable OptixScopedObjectWrapper::get_variable(int index)
 {
-    this->scoped_object->removeVariable(optix_varible_wrapper->get_variable_native());
+    return this->scoped_object->getVariable(index);
+}
 
+void OptixScopedObjectWrapper::remove_variable(optix::Variable variable)
+{
+    this->scoped_object->removeVariable(variable);
 }
 
 unsigned int OptixScopedObjectWrapper::get_variable_count()
@@ -37,32 +39,18 @@ unsigned int OptixScopedObjectWrapper::get_variable_count()
     return this->scoped_object->getVariableCount();
 }
 
-OptixVariableWrapper* OptixScopedObjectWrapper::get_variable(int index)
-{
-    optix::Variable variable = this->scoped_object->getVariable(index);
-    return new OptixVariableWrapper(variable);
-}
-
-
-
-
-// *********************************
-// *********************************
-// PYTHON SUPPORT
-// *********************************
-// *********************************
-
-#include "Python.h"
-#include <boost/python.hpp>
 void OptixScopedObjectWrapper::export_for_python()
 {
     namespace bp = boost::python;
 
-    bp::class_<OptixScopedObjectWrapper, bp::bases<OptixDestroyableObject> >("_OptixScopedObjectWrapper", "_OptixScopedObjectWrapper docstring", bp::no_init)
-            .def("_declare_variable", &OptixScopedObjectWrapper::declare_variable, bp::return_value_policy<bp::manage_new_object>())
-            .def("_query_variable", &OptixScopedObjectWrapper::query_variable, bp::return_value_policy<bp::manage_new_object>())
-            .def("_remove_variable", &OptixScopedObjectWrapper::remove_variable)
-            .def("get_variable_count", &OptixScopedObjectWrapper::get_variable_count)
-            .def("_get_variable", &OptixScopedObjectWrapper::get_variable, bp::return_value_policy<bp::manage_new_object>());
-}
+    bp::class_<OptixScopedObjectWrapper, bp::bases<OptixDestroyableObject> >(
+                "_OptixScopedObjectWrapper",
+                "_OptixScopedObjectWrapper docstring",
+                bp::no_init)
 
+            .def("_declare_variable", &OptixScopedObjectWrapper::declare_variable)
+            .def("_query_variable", &OptixScopedObjectWrapper::query_variable)
+            .def("_get_variable", &OptixScopedObjectWrapper::get_variable)
+            .def("_remove_variable", &OptixScopedObjectWrapper::remove_variable)
+            .def("get_variable_count", &OptixScopedObjectWrapper::get_variable_count);
+}

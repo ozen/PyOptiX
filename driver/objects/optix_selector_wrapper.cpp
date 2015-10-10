@@ -1,4 +1,7 @@
 #include "optix_selector_wrapper.h"
+#include "Python.h"
+#include <boost/python.hpp>
+
 
 OptixSelectorWrapper::OptixSelectorWrapper(optix::Selector selector)
 {
@@ -8,8 +11,6 @@ OptixSelectorWrapper::OptixSelectorWrapper(optix::Selector selector)
 
 OptixSelectorWrapper::~OptixSelectorWrapper()
 {
-    std::cout<<"~OptixSelectorWrapper deconstruction"<<std::endl;
-
     if(this->selector.get() != 0)
         this->selector->destroy();
 }
@@ -23,6 +24,7 @@ void OptixSelectorWrapper::set_child_count(unsigned int count)
 {
     this->selector->setChildCount(count);
 }
+
 unsigned int OptixSelectorWrapper::get_child_count()
 {
     return this->selector->getChildCount();
@@ -48,23 +50,16 @@ void OptixSelectorWrapper::set_child_transform(unsigned int index, OptixTransfor
     this->selector->setChild(index, child->get_native());
 }
 
-
-//void set_child_transform(unsigned int index, OptixGeometryGroupWrapper* child);
-
 void OptixSelectorWrapper::remove_child(unsigned int index)
 {
     this->selector->removeChild(index);
 }
-
 
 optix::Selector OptixSelectorWrapper::get_native()
 {
     return this->selector;
 }
 
-
-#include "Python.h"
-#include <boost/python.hpp>
 void OptixSelectorWrapper::export_for_python()
 {
     namespace bp = boost::python;
@@ -73,9 +68,7 @@ void OptixSelectorWrapper::export_for_python()
                 "_OptixSelectorWrapper",
                 "_OptixSelectorWrapper docstring",
                 bp::init<optix::Selector>())
-            //*****************
-            // DIRECT ACCESS
-            //*****************
+
             .def("_set_visit_program", &OptixSelectorWrapper::set_visit_program)
             .def("_set_child_count", &OptixSelectorWrapper::set_child_count)
             .def("get_child_count", &OptixSelectorWrapper::get_child_count)

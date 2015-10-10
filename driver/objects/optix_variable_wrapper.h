@@ -5,7 +5,6 @@
 #include "boost/python.hpp"
 #include "boost/numpy.hpp"
 
-
 class OptixBufferWrapper;
 class OptixTextureSamplerWrapper;
 class OptixProgramWrapper;
@@ -32,8 +31,6 @@ public:
 
     unsigned long get_size_in_bytes();
 
-    optix::Variable get_variable_native();
-
     void set_buffer(OptixBufferWrapper* buffer_wrapper);
     void set_texture(OptixTextureSamplerWrapper* texture_wrapper);
     void set_program_id_with_program(OptixProgramWrapper* program_wrapper);
@@ -42,11 +39,12 @@ public:
     void set_transform(OptixTransformWrapper* transform_wrapper);
     void set_selector(OptixSelectorWrapper* selector_wrapper);
 
-    void set_with_numpy_array1x1_dtype(const boost::numpy::ndarray& numpy_array1x1);
-    void set_variable_with_type(const boost::numpy::ndarray& numpy_array, RTobjecttype object_type);
+    void set_from_numpy(const boost::numpy::ndarray& numpy_array);
+    void set_from_numpy_with_type(const boost::numpy::ndarray& numpy_array, RTobjecttype object_type);
+
+    optix::Variable get_native();
 
     static void export_for_python();
-
 };
 
 

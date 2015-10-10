@@ -1,19 +1,17 @@
 #ifndef OPTIX_GEOMETRY_INSTANCE_WRAPPER_H
 #define OPTIX_GEOMETRY_INSTANCE_WRAPPER_H
 
-
-
 #include "shared_includes.h"
-
 #include "optix_geometry_wrapper.h"
 #include "optix_material_wrapper.h"
-
 #include "optix_scoped_object_wrapper.h"
+
 
 class OptixGeometryInstanceWrapper : public OptixScopedObjectWrapper
 {
 private:
     optix::GeometryInstance geometry_instance;
+
 public:
     OptixGeometryInstanceWrapper(optix::GeometryInstance geometry_instance);
     ~OptixGeometryInstanceWrapper();
@@ -28,17 +26,7 @@ public:
     optix::GeometryInstance get_native();
 
     static void export_for_python();
-
 };
-
-
-
-
-
-
-
-
-
 
 
 #endif

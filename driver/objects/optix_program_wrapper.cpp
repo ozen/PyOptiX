@@ -1,4 +1,6 @@
 #include "optix_program_wrapper.h"
+#include "Python.h"
+#include <boost/python.hpp>
 
 
 OptixProgramWrapper::OptixProgramWrapper(optix::Program program)
@@ -9,28 +11,21 @@ OptixProgramWrapper::OptixProgramWrapper(optix::Program program)
 
 OptixProgramWrapper::~OptixProgramWrapper()
 {
-    std::cout<<"~OptixProgramWrapper deconstruction"<<std::endl;
-
+    std::cout<<"OptixProgramWrapper deconstruction"<<std::endl;
     if(this->program.get() != 0)
         this->program->destroy();
 }
-
 
 int OptixProgramWrapper::get_id()
 {
     return this->program->getId();
 }
 
-
-
 optix::Program OptixProgramWrapper::get_native_program()
 {
     return this->program;
 }
 
-
-#include "Python.h"
-#include <boost/python.hpp>
 void OptixProgramWrapper::export_for_python()
 {
     namespace bp = boost::python;
@@ -39,9 +34,7 @@ void OptixProgramWrapper::export_for_python()
                 "_OptixProgramWrapper",
                 "_OptixProgramWrapper docstring",
                 bp::init<optix::Program>())
-            //*****************
-            // DIRECT ACCESS
-            //*****************
+
             .def("get_id", &OptixProgramWrapper::get_id);
 }
 

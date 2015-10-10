@@ -5,7 +5,6 @@
 #include "optix_program_wrapper.h"
 #include "optix_destroyable_object_wrapper.h"
 
-
 class OptixSelectorWrapper;
 class OptixGroupWrapper;
 class OptixGeometryGroupWrapper;
@@ -14,6 +13,7 @@ class OptixTransformWrapper: public OptixDestroyableObject
 {
 private:
     optix::Transform transform;
+
 public:
     OptixTransformWrapper(optix::Transform transform);
     ~OptixTransformWrapper();
@@ -30,5 +30,6 @@ public:
 
     static void export_for_python();
 };
+
 
 #endif

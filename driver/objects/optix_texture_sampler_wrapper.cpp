@@ -1,4 +1,6 @@
 #include "optix_texture_sampler_wrapper.h"
+#include "Python.h"
+#include <boost/python.hpp>
 
 
 OptixTextureSamplerWrapper::OptixTextureSamplerWrapper(optix::TextureSampler texture_sampler)
@@ -9,11 +11,11 @@ OptixTextureSamplerWrapper::OptixTextureSamplerWrapper(optix::TextureSampler tex
 
 OptixTextureSamplerWrapper::~OptixTextureSamplerWrapper()
 {
-    std::cout<<"~OptixTextureSamplerWrapper deconstruction"<<std::endl;
-
+    std::cout<<"OptixTextureSamplerWrapper deconstruction"<<std::endl;
     if(this->texture_sampler.get() != 0)
         this->texture_sampler->destroy();
 }
+
 void OptixTextureSamplerWrapper::set_mip_level_count(unsigned int num_mip_levels)
 {
     this->texture_sampler->setMipLevelCount(num_mip_levels);
@@ -94,9 +96,6 @@ optix::TextureSampler OptixTextureSamplerWrapper::get_native()
     return this->texture_sampler;
 }
 
-
-#include "Python.h"
-#include <boost/python.hpp>
 void OptixTextureSamplerWrapper::export_for_python()
 {
     namespace bp = boost::python;
@@ -106,11 +105,6 @@ void OptixTextureSamplerWrapper::export_for_python()
                 "_OptixTextureSamplerWrapper docstring",
                 bp::init<optix::TextureSampler>())
 
-            //*****************
-            // DIRECT ACCESS
-            //*****************
-
-            // CPU
             .def("set_mip_level_count", &OptixTextureSamplerWrapper::set_mip_level_count)
             .def("get_mip_level_count", &OptixTextureSamplerWrapper::get_mip_level_count)
             .def("set_array_size", &OptixTextureSamplerWrapper::set_array_size)

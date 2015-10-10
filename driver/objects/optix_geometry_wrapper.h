@@ -2,7 +2,6 @@
 #define OPTIX_GEOMETRY_WRAPPER_H
 
 #include "shared_includes.h"
-
 #include "optix_program_wrapper.h"
 #include "optix_scoped_object_wrapper.h"
 
@@ -11,6 +10,7 @@ class OptixGeometryWrapper : public OptixScopedObjectWrapper
 {
 private:
     optix::Geometry geometry;
+
 public:
     OptixGeometryWrapper(optix::Geometry geometry);
     ~OptixGeometryWrapper();
@@ -25,11 +25,10 @@ public:
     void set_bounding_box_program(OptixProgramWrapper*  program);
     void set_intersection_program(OptixProgramWrapper*  program);
 
-
     optix::Geometry get_native();
 
     static void export_for_python();
-
 };
+
 
 #endif

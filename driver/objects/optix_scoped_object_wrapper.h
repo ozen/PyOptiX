@@ -3,7 +3,6 @@
 
 #include "shared_includes.h"
 #include "optix_variable_wrapper.h"
-
 #include "optix_destroyable_object_wrapper.h"
 
 class OptixScopedObjectWrapper: public OptixDestroyableObject
@@ -15,13 +14,11 @@ protected:
     void set_scoped_object(optix::ScopedObj* scoped_object);
 
 public:
-    OptixVariableWrapper* declare_variable(const std::string name);
-    OptixVariableWrapper* query_variable(const std::string name);
-
-    void remove_variable(OptixVariableWrapper* optix_varible_wrapper);
-
+    optix::Variable declare_variable(const std::string name);
+    optix::Variable query_variable(const std::string name);
+    optix::Variable get_variable(int index);
+    void remove_variable(optix::Variable optix_variable_wrapper);
     unsigned int get_variable_count();
-    OptixVariableWrapper* get_variable(int index);
 
     static void export_for_python();
 };

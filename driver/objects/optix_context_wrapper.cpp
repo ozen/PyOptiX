@@ -1,16 +1,18 @@
 #include "optix_context_wrapper.h"
 #include <iostream>
+#include "Python.h"
+
 
 OptixContextWrapper::OptixContextWrapper(): OptixScopedObjectWrapper()
 {
-    std::cout<<"~OptixContextWrapper construction"<<std::endl;
+    std::cout<<"OptixContextWrapper construction"<<std::endl;
     this->context = optix::Context::create();
     this->set_scoped_object(this->context.get());
 }
 
 OptixContextWrapper::~OptixContextWrapper()
 {
-    std::cout<<"~OptixContextWrapper deconstruction"<<std::endl;
+    std::cout<<"OptixContextWrapper deconstruction"<<std::endl;
     if(this->context.get() != 0)
         this->context->destroy();
 }
@@ -80,6 +82,7 @@ int OptixContextWrapper::get_cpu_num_of_threads()
 {
     return context->getCPUNumThreads();
 }
+
 void OptixContextWrapper::set_cpu_num_of_threads( int threadCount)
 {
     context->setCPUNumThreads( threadCount);
@@ -90,24 +93,28 @@ int OptixContextWrapper::get_available_devices_count()
 {
     return optix::Context::getDeviceCount();
 }
+
 std::string OptixContextWrapper::get_device_name( int deviceId)
 {
     return context->getDeviceName( deviceId);
 }
+
 int OptixContextWrapper::get_enabled_device_count()
 {
     return context->getEnabledDeviceCount();
 }
+
 std::vector<int> OptixContextWrapper::get_enabled_devices()
 {
     return context->getEnabledDevices();
 }
+
 void OptixContextWrapper::set_devices(std::vector<int> devices)
 {
     context->setDevices(devices.begin(), devices.end());
 }
 
-//Memory
+// Memory
 unsigned long OptixContextWrapper::get_used_host_memory()
 {
     return static_cast<unsigned long>(context->getUsedHostMemory());
@@ -116,8 +123,6 @@ unsigned long OptixContextWrapper::get_available_device_memory(int deviceId)
 {
     return static_cast<unsigned long>( context->getAvailableDeviceMemory(deviceId));
 }
-
-
 
 // Exceptions
 void OptixContextWrapper::set_exception_enabled(RTexception exception, bool enabled)
@@ -129,7 +134,6 @@ bool OptixContextWrapper::get_exception_enabled(RTexception exception)
 {
     return this->context->getExceptionEnabled(exception);
 }
-
 
 // Print
 void OptixContextWrapper::set_print_enabled(bool enabled)
@@ -210,8 +214,6 @@ optix::Acceleration OptixContextWrapper::create_accelerator(std::string builder,
 // *********************************
 // *********************************
 
-
-#include "Python.h"
 
 template<class T>
 struct VecToList

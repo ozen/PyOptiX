@@ -2,7 +2,6 @@
 #define OPTIX_CONTEXT_WRAPPER_H
 
 #include "shared_includes.h"
-
 #include "optix_buffer_wrapper.h"
 #include "optix_program_wrapper.h"
 #include "optix_texture_sampler_wrapper.h"
@@ -14,9 +13,8 @@
 #include "optix_transform_wrapper.h"
 #include "optix_selector_wrapper.h"
 #include "optix_acceleration_wrapper.h"
-
-
 #include "optix_scoped_object_wrapper.h"
+
 
 class OptixContextWrapper : public OptixScopedObjectWrapper
 {

@@ -10,8 +10,7 @@ OptixMaterialWrapper::OptixMaterialWrapper(optix::Material material)
 
 OptixMaterialWrapper::~OptixMaterialWrapper()
 {
-    std::cout<<"~OptixMaterialWrapper deconstruction"<<std::endl;
-
+    std::cout<<"OptixMaterialWrapper deconstruction"<<std::endl;
     if(this->material.get() != 0)
         this->material->destroy();
 }
@@ -40,9 +39,6 @@ void OptixMaterialWrapper::export_for_python()
                 "_OptixMaterialWrapper docstring",
                 bp::init<optix::Material>())
 
-            //*****************
-            // DIRECT ACCESS
-            //*****************
             .def("_set_closest_hit_program", &OptixMaterialWrapper::set_closest_hit_program)
             .def("_set_any_hit_program", &OptixMaterialWrapper::set_any_hit_program);
 }

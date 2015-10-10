@@ -3,8 +3,6 @@ import numpy
 
 
 OBJECT_TYPE_TO_DTYPE = {
-    0: None,
-
     RTobjecttype.RT_OBJECTTYPE_FLOAT: (numpy.float32, 1),
     RTobjecttype.RT_OBJECTTYPE_FLOAT2: (numpy.float32, 2),
     RTobjecttype.RT_OBJECTTYPE_FLOAT3: (numpy.float32, 3),
@@ -23,26 +21,28 @@ OBJECT_TYPE_TO_DTYPE = {
 
 
 DTYPE_TO_OBJECT_TYPE = {
-    numpy.float32: {
+    numpy.dtype(numpy.float32): {
         1: RTobjecttype.RT_OBJECTTYPE_FLOAT,
         2: RTobjecttype.RT_OBJECTTYPE_FLOAT2,
         3: RTobjecttype.RT_OBJECTTYPE_FLOAT3,
         4: RTobjecttype.RT_OBJECTTYPE_FLOAT4
     },
 
-    numpy.int32: {
+    numpy.dtype(numpy.int32): {
         1: RTobjecttype.RT_OBJECTTYPE_INT,
         2: RTobjecttype.RT_OBJECTTYPE_INT2,
         3: RTobjecttype.RT_OBJECTTYPE_INT3,
         4: RTobjecttype.RT_OBJECTTYPE_INT4
     },
 
-    numpy.uint32: {
+    numpy.dtype(numpy.uint32): {
         1: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT,
         2: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT2,
         3: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT3,
         4: RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT4
     },
+
+    'default': RTobjecttype.RT_OBJECTTYPE_USER,
 }
 
 
@@ -138,8 +138,57 @@ DTYPE_TO_FORMAT = {
 }
 
 
+OBJECT_TYPE_TO_PYOPTIX_CLASS = {
+    RTobjecttype.RT_OBJECTTYPE_BUFFER: 'OptixBuffer',
+    RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER: 'OptixTextureSampler',
+    RTobjecttype.RT_OBJECTTYPE_PROGRAM: 'OptixProgram',
+    RTobjecttype.RT_OBJECTTYPE_GROUP: 'OptixGroup',
+    RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP: 'OptixGeometryGroup',
+    RTobjecttype.RT_OBJECTTYPE_SELECTOR: 'OptixSelector',
+    RTobjecttype.RT_OBJECTTYPE_TRANSFORM: 'OptixTransform',
+
+    'default': None,
+}
+
+
+def get_dtype_from_object_type(object_type):
+    if object_type in OBJECT_TYPE_TO_DTYPE:
+        return OBJECT_TYPE_TO_DTYPE[object_type]
+    else:
+        return None, None
+
+
+def get_object_type_from_dtype(dtype, type_size):
+    if dtype in DTYPE_TO_OBJECT_TYPE and type_size in DTYPE_TO_OBJECT_TYPE[dtype]:
+        return DTYPE_TO_OBJECT_TYPE[dtype][type_size]
+    else:
+        return DTYPE_TO_OBJECT_TYPE['default']
+
+
 def get_format_from_dtype(dtype, type_size):
     if dtype in DTYPE_TO_FORMAT and type_size in DTYPE_TO_FORMAT[dtype]:
         return DTYPE_TO_FORMAT[dtype][type_size]
     else:
         return DTYPE_TO_FORMAT['default']
+
+
+def get_pyoptix_class_by_name(class_name):
+    from pyoptix.objects.optix_buffer import OptixBuffer
+    from pyoptix.objects.optix_texture_sampler import OptixTextureSampler
+    from pyoptix.objects.optix_program import OptixProgram
+    from pyoptix.objects.optix_group import OptixGroup
+    from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
+    from pyoptix.objects.optix_selector import OptixSelector
+    from pyoptix.objects.optix_transform import OptixTransform
+    try:
+        return locals()[class_name]
+    except KeyError:
+        return None
+
+
+def get_pyoptix_class_from_object_type(object_type):
+    if object_type in OBJECT_TYPE_TO_PYOPTIX_CLASS:
+        class_name = OBJECT_TYPE_TO_PYOPTIX_CLASS[object_type]
+    else:
+        class_name = OBJECT_TYPE_TO_PYOPTIX_CLASS['default']
+    return get_pyoptix_class_by_name(class_name)

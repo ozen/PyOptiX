@@ -2,8 +2,8 @@
 #define OPTIX_PROGRAM_WRAPPER_H
 
 #include "shared_includes.h"
-
 #include "optix_scoped_object_wrapper.h"
+
 
 class OptixProgramWrapper : public OptixScopedObjectWrapper
 {

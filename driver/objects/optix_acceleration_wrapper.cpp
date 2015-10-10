@@ -1,5 +1,7 @@
 #include "optix_acceleration_wrapper.h"
 #include <iostream>
+#include "Python.h"
+#include "boost/python.hpp"
 
 
 OptixAccelerationWrapper::OptixAccelerationWrapper(optix::Acceleration acceleration)
@@ -10,7 +12,6 @@ OptixAccelerationWrapper::OptixAccelerationWrapper(optix::Acceleration accelerat
 
 OptixAccelerationWrapper::~OptixAccelerationWrapper()
 {
-    std::cout<<"~OptixAccelerationWrapper deconstruction"<<std::endl;
     if(acceleration.get() != 0)
         this->acceleration->destroy();
 }
@@ -36,10 +37,6 @@ optix::Acceleration OptixAccelerationWrapper::get_native()
     return acceleration;
 }
 
-#include "Python.h"
-#include "boost/python.hpp"
-
-
 void OptixAccelerationWrapper::export_for_python()
 {
     namespace bp = boost::python;
@@ -54,5 +51,3 @@ void OptixAccelerationWrapper::export_for_python()
             .def("is_dirty", &OptixAccelerationWrapper::is_dirty);
 
 }
-
-

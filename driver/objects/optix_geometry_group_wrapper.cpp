@@ -1,5 +1,6 @@
 #include "optix_geometry_group_wrapper.h"
-
+#include "Python.h"
+#include <boost/python.hpp>
 
 
 OptixGeometryGroupWrapper::OptixGeometryGroupWrapper(optix::GeometryGroup geometry_group)
@@ -10,7 +11,6 @@ OptixGeometryGroupWrapper::OptixGeometryGroupWrapper(optix::GeometryGroup geomet
 
 OptixGeometryGroupWrapper::~OptixGeometryGroupWrapper()
 {
-    std::cout<<"~OptixGeometryGroupWrapper deconstruction"<<std::endl;
     if(this->geometry_group.get() != 0)
         this->geometry_group->destroy();
 }
@@ -19,7 +19,6 @@ void OptixGeometryGroupWrapper::set_acceleration(OptixAccelerationWrapper* accel
 {
     this->geometry_group->setAcceleration(acceleration->get_native());
 }
-
 
 void OptixGeometryGroupWrapper::set_child_count(unsigned int count)
 {
@@ -46,8 +45,6 @@ optix::GeometryGroup OptixGeometryGroupWrapper::get_native()
     return this->geometry_group;
 }
 
-#include "Python.h"
-#include <boost/python.hpp>
 void OptixGeometryGroupWrapper::export_for_python()
 {
     namespace bp = boost::python;
@@ -57,17 +54,9 @@ void OptixGeometryGroupWrapper::export_for_python()
                 "_OptixGeometryGroupWrapper docstring",
                 bp::init<optix::GeometryGroup>())
 
-            //*****************
-            // DIRECT ACCESS
-            //*****************
             .def("_set_acceleration", &OptixGeometryGroupWrapper::set_acceleration)
-
             .def("_set_child_count", &OptixGeometryGroupWrapper::set_child_count)
             .def("get_child_count", &OptixGeometryGroupWrapper::get_child_count)
             .def("_set_child_geometry_instance", &OptixGeometryGroupWrapper::set_child_geometry_instance)
             .def("_remove_child", &OptixGeometryGroupWrapper::remove_child);
-
 }
-
-
-

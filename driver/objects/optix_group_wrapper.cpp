@@ -1,4 +1,6 @@
+#include <boost/python.hpp>
 #include "optix_group_wrapper.h"
+
 
 OptixGroupWrapper::OptixGroupWrapper(optix::Group group)
 {
@@ -8,7 +10,6 @@ OptixGroupWrapper::OptixGroupWrapper(optix::Group group)
 
 OptixGroupWrapper::~OptixGroupWrapper()
 {
-    std::cout<<"GroupWrapper deconstruction"<<std::endl;
     if(this->group.get() != 0)
         this->group->destroy();
 }
@@ -38,16 +39,15 @@ void OptixGroupWrapper::set_child_group(unsigned int index, OptixGroupWrapper* c
     this->group->setChild(index, child->get_native());
 }
 
-
 void OptixGroupWrapper::set_child_selector(unsigned int index, OptixSelectorWrapper* child)
 {
     this->group->setChild(index, child->get_native());
 }
+
 void OptixGroupWrapper::set_child_transform(unsigned int index, OptixTransformWrapper* child)
 {
     this->group->setChild(index, child->get_native());
 }
-
 
 void OptixGroupWrapper::set_child_acceleration(unsigned int index, OptixAccelerationWrapper* child)
 {
@@ -64,7 +64,6 @@ optix::Group OptixGroupWrapper::get_native()
     return this->group;
 }
 
-#include <boost/python.hpp>
 void OptixGroupWrapper::export_for_python()
 {
     namespace bp = boost::python;
@@ -74,9 +73,6 @@ void OptixGroupWrapper::export_for_python()
                 "_OptixGroupWrapper docstring",
                 bp::init<optix::Group>())
 
-            //*****************
-            // DIRECT ACCESS
-            //*****************
             .def("_set_acceleration", &OptixGroupWrapper::set_acceleration)
             .def("_set_child_count", &OptixGroupWrapper::set_child_count)
             .def("get_child_count", &OptixGroupWrapper::get_child_count)
@@ -87,7 +83,3 @@ void OptixGroupWrapper::export_for_python()
             .def("_set_child_acceleration", &OptixGroupWrapper::set_child_acceleration)
             .def("_remove_child", &OptixGroupWrapper::remove_child);
 }
-
-
-
-

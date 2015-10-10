@@ -10,3 +10,4 @@ from .optix_program import OptixProgram
 from .optix_selector import OptixSelector
 from .optix_texture_sampler import OptixTextureSampler
 from .optix_transform import OptixTransform
+from .optix_variable import OptixVariable

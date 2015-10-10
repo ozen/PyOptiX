@@ -3,8 +3,6 @@
 
 #include "shared_includes.h"
 #include "optix_buffer_wrapper.h"
-
-
 #include "optix_destroyable_object_wrapper.h"
 
 

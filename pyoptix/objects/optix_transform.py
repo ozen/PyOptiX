@@ -12,7 +12,6 @@ class OptixTransform(_OptixTransformWrapper, OptixObject, OptixHasChild):
         from pyoptix.objects.optix_geometry_group import OptixGeometryGroup
         from pyoptix.objects.optix_group import OptixGroup
         from pyoptix.objects.optix_selector import OptixSelector
-        from pyoptix.objects.optix_transform import OptixTransform
 
         allowed_children = [OptixGeometryGroup, OptixGroup, OptixSelector, OptixTransform]
         OptixHasChild.__init__(self, allowed_children)

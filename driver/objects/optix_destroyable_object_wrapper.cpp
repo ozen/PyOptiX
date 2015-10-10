@@ -1,12 +1,13 @@
 #include "optix_destroyable_object_wrapper.h"
-
-
+#include "Python.h"
+#include <boost/python.hpp>
 
 
 OptixDestroyableObject::OptixDestroyableObject()
 {
 
 }
+
 OptixDestroyableObject::~OptixDestroyableObject()
 {
 
@@ -27,17 +28,13 @@ void OptixDestroyableObject::validate()
 }
 
 
-
-#include "Python.h"
-#include <boost/python.hpp>
 void OptixDestroyableObject::export_for_python()
 {
-    namespace bp = boost::python;
+    boost::python::class_<OptixDestroyableObject >(
+                "_OptixDestroyableObject",
+                "_OptixDestroyableObject docstring",
+                boost::python::no_init)
 
-    bp::class_<OptixDestroyableObject >("_OptixDestroyableObject", "_OptixDestroyableObject docstring", bp::no_init)
-            //*****************
-            // DIRECT ACCESS
-            //*****************
             .def("destroy", &OptixDestroyableObject::destroy)
             .def("validate", &OptixDestroyableObject::validate);
 }

@@ -1,7 +1,6 @@
 class OptixObject(object):
     _context = None
     _native = None
-
     _parents = None
 
     def __init__(self, context, native):
@@ -18,4 +17,3 @@ class OptixObject(object):
 
     def _remove_parent(self, parent):
         self._parents.remove(parent)
-

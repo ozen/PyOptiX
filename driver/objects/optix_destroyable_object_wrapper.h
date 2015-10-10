@@ -1,8 +1,8 @@
 #ifndef OPTIX_DESTROYABLE_OBJECT_H
 #define OPTIX_DESTROYABLE_OBJECT_H
 
-
 #include "shared_includes.h"
+
 
 class OptixDestroyableObject
 {
@@ -19,8 +19,5 @@ public:
 
     static void export_for_python();
 };
-
-
-
 
 #endif

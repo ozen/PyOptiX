@@ -11,7 +11,6 @@ OptixGeometryInstanceWrapper::OptixGeometryInstanceWrapper(optix::GeometryInstan
 
 OptixGeometryInstanceWrapper::~OptixGeometryInstanceWrapper()
 {
-    std::cout<<"~OptixGeometryInstanceWrapper deconstruction"<<std::endl;
     if(this->geometry_instance.get() != 0)
         this->geometry_instance->destroy();
 }
@@ -24,7 +23,6 @@ void OptixGeometryInstanceWrapper::set_geometry(OptixGeometryWrapper* geometry)
 void OptixGeometryInstanceWrapper::set_material_count(unsigned int count)
 {
     return this->geometry_instance->setMaterialCount(count);
-
 }
 
 unsigned int OptixGeometryInstanceWrapper::get_material_count()
@@ -51,9 +49,6 @@ void OptixGeometryInstanceWrapper::export_for_python()
                 "_OptixGeometryInstanceWrapper docstring",
                 bp::init<optix::GeometryInstance>())
 
-            //*****************
-            // DIRECT ACCESS
-            //*****************
             .def("set_geometry", &OptixGeometryInstanceWrapper::set_geometry)
             .def("set_material_count", &OptixGeometryInstanceWrapper::set_material_count)
             .def("get_material_count", &OptixGeometryInstanceWrapper::get_material_count)

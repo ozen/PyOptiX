@@ -1,9 +1,11 @@
-#include "optix_buffer_wrapper.h"
 #include <iostream>
+#include "optix_buffer_wrapper.h"
+#include "numpy_boost_helpers.h"
 
 
 OptixBufferWrapper::OptixBufferWrapper(optix::Buffer buffer)
 {
+    std::cout<<"OptixBufferWrapper construction"<<std::endl;
     this->buffer = buffer;
     this->set_destroyable_object(this->buffer.get());
 }
@@ -19,7 +21,6 @@ int OptixBufferWrapper::get_id()
 {
     return this->buffer->getId();
 }
-
 
 void OptixBufferWrapper::mark_dirty()
 {
@@ -112,9 +113,6 @@ int OptixBufferWrapper::get_element_size()
     return this->buffer->getElementSize();
 }
 
-
-#include "numpy_boost_helpers.h"
-//Numpy Support
 void OptixBufferWrapper::copy_into_numpy_array(const boost::numpy::ndarray& numpy_array)
 {
     void* buff_ptr = this->buffer->map();
@@ -122,7 +120,6 @@ void OptixBufferWrapper::copy_into_numpy_array(const boost::numpy::ndarray& nump
     memcpy(numpy_array.get_data(), buff_ptr, size_in_bytes);
     this->buffer->unmap();
 }
-
 
 void OptixBufferWrapper::copy_from_numpy_array(const boost::numpy::ndarray& numpy_array)
 {
@@ -132,14 +129,10 @@ void OptixBufferWrapper::copy_from_numpy_array(const boost::numpy::ndarray& nump
     this->buffer->unmap();
 }
 
-
-
 optix::Buffer OptixBufferWrapper::get_native_buffer()
 {
     return this->buffer;
 }
-
-
 
 
 // *********************************

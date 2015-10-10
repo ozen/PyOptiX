@@ -1,8 +1,10 @@
 #include "optix_transform_wrapper.h"
-
 #include "optix_group_wrapper.h"
 #include "optix_selector_wrapper.h"
 #include "optix_geometry_group_wrapper.h"
+#include "Python.h"
+#include <boost/python.hpp>
+
 
 OptixTransformWrapper::OptixTransformWrapper(optix::Transform transform)
 {
@@ -12,8 +14,6 @@ OptixTransformWrapper::OptixTransformWrapper(optix::Transform transform)
 
 OptixTransformWrapper::~OptixTransformWrapper()
 {
-    std::cout<<"~OptixTransformWrapper deconstruction"<<std::endl;
-
     if(this->transform.get() != 0)
         this->transform->destroy();
 }
@@ -53,8 +53,6 @@ optix::Transform OptixTransformWrapper::get_native()
     return this->transform;
 }
 
-#include "Python.h"
-#include <boost/python.hpp>
 void OptixTransformWrapper::export_for_python()
 {
     namespace bp = boost::python;
@@ -63,9 +61,7 @@ void OptixTransformWrapper::export_for_python()
                 "_OptixTransformWrapper",
                 "_OptixTransformWrapper docstring",
                 bp::init<optix::Transform>())
-            //*****************
-            // DIRECT ACCESS
-            //*****************
+
             .def("_set_matrix", &OptixTransformWrapper::set_matrix)
             .def("_get_matrix", &OptixTransformWrapper::get_matrix)
             .def("_set_child_geometry_group", &OptixTransformWrapper::set_child_geometry_group)
