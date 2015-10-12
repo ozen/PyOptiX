@@ -104,7 +104,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         instance.set_array_size(array_size)
 
         if buffer is not None:
-            if buffer.get_type() == RTformat.RT_FORMAT_USER:
+            if buffer.get_format() == RTformat.RT_FORMAT_USER:
                 raise TypeError("Texture sampler cannot be associated with a user-typed buffer")
             instance.set_buffer(0, 0, buffer)
 

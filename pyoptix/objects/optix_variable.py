@@ -1,6 +1,6 @@
 from pyoptix._driver import _OptixVariableWrapper, RTobjecttype
-from pyoptix.objects.commons.types import get_object_type_from_dtype, get_pyoptix_class_from_object_type, \
-    get_dtype_from_object_type
+from pyoptix.objects.commons.types import get_object_type_from_dtype, get_dtype_from_object_type, \
+    get_object_type_from_pyoptix_class
 import numpy
 
 
@@ -17,46 +17,54 @@ OBJECT_TYPE_TO_SET_FUNCTION = {
 
 class OptixVariable(_OptixVariableWrapper):
 
-    def __init__(self, native):
-        _OptixVariableWrapper.__init__(self, native)
-        self._native = native
+    def __init__(self, wrapped_variable):
+        _OptixVariableWrapper.__init__(self, wrapped_variable._native)
         self._value = None
 
     @property
-    def native(self):
-        return self._native
-
-    @property
     def value(self):
-        return self._native
+        return self._value
 
     @value.setter
     def value(self, value):
-        if self.type == RTobjecttype.RT_OBJECTTYPE_UNKNOWN or self.type == RTobjecttype.RT_OBJECTTYPE_USER:
-            if isinstance(value, numpy.ndarray):
-                # Use ndarray's dtype to determine variable type
-                object_type = get_object_type_from_dtype(value.dtype, value.shape[-1])
-                self._set_from_numpy_with_type(value, object_type)
+        optix_has_type = False
+        if not self.type == RTobjecttype.RT_OBJECTTYPE_UNKNOWN and not self.type == RTobjecttype.RT_OBJECTTYPE_USER:
+            optix_has_type = True
+
+        class_object_type = get_object_type_from_pyoptix_class(value)
+
+        if class_object_type:
+            # OPTION 1: value is a known OptiX object.
+            # do a preliminary check on type right now so it won't fail in device-compile time
+            if optix_has_type and self.type != class_object_type:
+                raise TypeError("Variable type is %s, but %s was given" % (self.type, type(value)))
+
+            # call the respective set function of the optix type of the variable
+            getattr(self, OBJECT_TYPE_TO_SET_FUNCTION[class_object_type])(value)
+            self._value = value
+
+        elif optix_has_type:
+            # OPTION 2: OptiX variable has a type but value is not a known OptiX object.
+            # Try to form a numpy array from value that is compatible with the variable type.
+            try:
+                dtype, dim = get_dtype_from_object_type(self.type)
+                if dtype is None or dim is None:
+                    raise ValueError()
+                value = numpy.array(value, dtype=dtype)
+                if len(value.shape != 1) or value.shape[0] != dim:
+                    raise TypeError("Cannot convert the value to a numpy array matching %s." % self.type)
+                self._set_from_numpy_with_type(value, self.type)
                 self._value = value
-            else:
-                # Unknown and user-typed variables can only be assigned an ndarray
-                raise TypeError("Cannot recognize the variable type or it's user-type. You can assign a numpy array.")
+            except (ValueError, AttributeError):
+                raise TypeError("Variable type is %s, but %s was given" % (self.type, type(value)))
+
+        elif isinstance(value, numpy.ndarray) and not optix_has_type:
+            # OPTION 3: OptiX variable type is unknown or it is user-type, but the value is a numpy array.
+            # Use ndarray's dtype to determine variable type
+            object_type = get_object_type_from_dtype(value.dtype, value.shape[-1])
+            self._set_from_numpy_with_type(value, object_type)
+            self._value = value
 
         else:
-            if isinstance(value, get_pyoptix_class_from_object_type(self.type)):
-                # value class and variable type match, use the respective set function
-                getattr(self, OBJECT_TYPE_TO_SET_FUNCTION[self.type])(value)
-                self._value = value
-            else:
-                try:
-                    # try to convert the value to the variable type
-                    dtype, dim = get_dtype_from_object_type(self.type)
-                    if dtype is None or dim is None:
-                        raise ValueError()
-                    value = numpy.array(value, dtype=dtype)
-                    if len(value.shape != 1) or value.shape[0] != dim:
-                        raise TypeError("Cannot convert the value to a numpy array matching %s." % self.type)
-                    self._set_from_numpy_with_type(value, self.type)
-                    self._value = value
-                except (ValueError, AttributeError):
-                    raise TypeError("Variable type is %s, but %s was given" % (self.type, type(value)))
+            # Unknown and user-typed variables can only be assigned an ndarray
+            raise TypeError("Cannot recognize the variable type or it's user-type. You can assign a numpy array.")

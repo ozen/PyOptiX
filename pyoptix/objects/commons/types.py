@@ -150,6 +150,18 @@ OBJECT_TYPE_TO_PYOPTIX_CLASS = {
     'default': None,
 }
 
+PYOPTIX_CLASS_TO_OBJECT_TYPE = {
+    'OptixBuffer': RTobjecttype.RT_OBJECTTYPE_BUFFER,
+    'OptixTextureSampler': RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER,
+    'OptixProgram': RTobjecttype.RT_OBJECTTYPE_PROGRAM,
+    'OptixGroup': RTobjecttype.RT_OBJECTTYPE_GROUP,
+    'OptixGeometryGroup': RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP,
+    'OptixSelector': RTobjecttype.RT_OBJECTTYPE_SELECTOR,
+    'OptixTransform': RTobjecttype.RT_OBJECTTYPE_TRANSFORM,
+
+    'default': None,
+}
+
 
 def get_dtype_from_object_type(object_type):
     if object_type in OBJECT_TYPE_TO_DTYPE:
@@ -192,3 +204,14 @@ def get_pyoptix_class_from_object_type(object_type):
     else:
         class_name = OBJECT_TYPE_TO_PYOPTIX_CLASS['default']
     return get_pyoptix_class_by_name(class_name)
+
+
+def get_object_type_from_pyoptix_class(instance):
+    try:
+        name = instance.__class__.__name__
+        if name in PYOPTIX_CLASS_TO_OBJECT_TYPE:
+            return PYOPTIX_CLASS_TO_OBJECT_TYPE[name]
+        else:
+            return PYOPTIX_CLASS_TO_OBJECT_TYPE['default']
+    except Exception:
+        return None

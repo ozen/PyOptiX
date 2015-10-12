@@ -6,26 +6,21 @@ class OptixScopedObject(object):
         self._variables = dict()
 
     def __setitem__(self, key, value):
-        # added_variable_to_optix = False
-        #
-        # native_variable = self._query_variable(key)
-        # if native_variable == 0:
-        #     native_variable = self._declare_variable(key)
-        #     added_variable_to_optix = True
+        added_variable_to_optix = False
 
-        native_variable = self._query_or_declare_variable(key)
-        optix_variable = OptixVariable(native_variable)
-        optix_variable.value = value
-        self._variables[key] = optix_variable
+        wrapped_variable = self._query_variable(key)
+        if not wrapped_variable.is_valid():
+            wrapped_variable = self._declare_variable(key)
+            added_variable_to_optix = True
 
-        # try:
-        #     optix_variable = OptixVariable(native_variable)
-        #     optix_variable.value = value
-        #     self._variables[key] = optix_variable
-        # except Exception as e:
-        #     if added_variable_to_optix:
-        #         self._remove_variable(native_variable)
-        #     raise e
+        try:
+            optix_variable = OptixVariable(wrapped_variable)
+            optix_variable.value = value
+            self._variables[key] = optix_variable
+        except Exception as e:
+            if added_variable_to_optix:
+                self._remove_variable(wrapped_variable)
+            raise e
 
     def __getitem__(self, key):
         return self._variables[key].value
@@ -34,11 +29,11 @@ class OptixScopedObject(object):
         return len(self._variables)
 
     def __delitem__(self, key):
-        native_variable = self._query_variable(key)
-        if native_variable == 0:
+        wrapped_variable = self._query_variable(key)
+        if not wrapped_variable.is_valid():
             raise ValueError("Variable not found")
 
-        self._remove_variable(native_variable)
+        self._remove_variable(wrapped_variable)
         del self._variables[key]
 
     def __contains__(self, item):

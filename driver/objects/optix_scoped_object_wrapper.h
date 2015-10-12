@@ -14,11 +14,10 @@ protected:
     void set_scoped_object(optix::ScopedObj* scoped_object);
 
 public:
-    optix::Variable query_variable(const std::string name);
-    optix::Variable declare_variable(const std::string name);
-    optix::Variable query_or_declare_variable(const std::string name);
-    optix::Variable get_variable(int index);
-    void remove_variable(optix::Variable optix_variable_wrapper);
+    OptixVariableWrapper* query_variable(const std::string name);
+    OptixVariableWrapper* declare_variable(const std::string name);
+    OptixVariableWrapper* get_variable(int index);
+    void remove_variable(OptixVariableWrapper* optix_variable_wrapper);
     unsigned int get_variable_count();
 
     static void export_for_python();
