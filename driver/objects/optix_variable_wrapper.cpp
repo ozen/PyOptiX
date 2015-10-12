@@ -16,6 +16,11 @@ OptixVariableWrapper::OptixVariableWrapper(optix::Variable variable)
     this->variable = variable;
 }
 
+OptixVariableWrapper::~OptixVariableWrapper()
+{
+
+}
+
 bool OptixVariableWrapper::is_valid()
 {
     if (this->variable == 0)
@@ -137,7 +142,7 @@ void OptixVariableWrapper::set_from_numpy(const boost::numpy::ndarray& numpy_arr
 
 optix::Variable OptixVariableWrapper::get_native()
 {
-    return this->variable;
+    return variable;
 }
 
 void OptixVariableWrapper::export_for_python()

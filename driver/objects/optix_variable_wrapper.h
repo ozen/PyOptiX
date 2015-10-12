@@ -21,6 +21,7 @@ private:
 
 public:
     OptixVariableWrapper(optix::Variable variable);
+    ~OptixVariableWrapper();
 
     bool is_valid();
 

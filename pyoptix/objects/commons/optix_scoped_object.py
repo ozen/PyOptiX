@@ -6,21 +6,26 @@ class OptixScopedObject(object):
         self._variables = dict()
 
     def __setitem__(self, key, value):
-        added_variable_to_optix = False
+        # added_variable_to_optix = False
+        #
+        # native_variable = self._query_variable(key)
+        # if native_variable == 0:
+        #     native_variable = self._declare_variable(key)
+        #     added_variable_to_optix = True
 
-        native_variable = self._query_variable(key)
-        if native_variable == 0:
-            native_variable = self._declare_variable(key)
-            added_variable_to_optix = True
+        native_variable = self._query_or_declare_variable(key)
+        optix_variable = OptixVariable(native_variable)
+        optix_variable.value = value
+        self._variables[key] = optix_variable
 
-        try:
-            optix_variable = OptixVariable(native_variable)
-            optix_variable.value = value
-            self._variables[key] = optix_variable
-        except Exception as e:
-            if added_variable_to_optix:
-                self._remove_variable(native_variable)
-            raise e
+        # try:
+        #     optix_variable = OptixVariable(native_variable)
+        #     optix_variable.value = value
+        #     self._variables[key] = optix_variable
+        # except Exception as e:
+        #     if added_variable_to_optix:
+        #         self._remove_variable(native_variable)
+        #     raise e
 
     def __getitem__(self, key):
         return self._variables[key].value

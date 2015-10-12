@@ -14,14 +14,22 @@ void OptixScopedObjectWrapper::set_scoped_object(optix::ScopedObj* scoped_object
     this->set_destroyable_object(scoped_object);
 }
 
+optix::Variable OptixScopedObjectWrapper::query_variable(const std::string name)
+{
+    return this->scoped_object->queryVariable(name);
+}
+
 optix::Variable OptixScopedObjectWrapper::declare_variable(const std::string name)
 {
     return this->scoped_object->declareVariable(name);
 }
 
-optix::Variable OptixScopedObjectWrapper::query_variable(const std::string name)
+optix::Variable OptixScopedObjectWrapper::query_or_declare_variable(const std::string name)
 {
-    return this->scoped_object->queryVariable(name);
+    optix::Variable variable = this->scoped_object->queryVariable(name);
+    if (variable == 0)
+        return this->scoped_object->declareVariable(name);
+    return variable;
 }
 
 optix::Variable OptixScopedObjectWrapper::get_variable(int index)
@@ -51,6 +59,7 @@ void OptixScopedObjectWrapper::export_for_python()
             .def("_declare_variable", &OptixScopedObjectWrapper::declare_variable)
             .def("_query_variable", &OptixScopedObjectWrapper::query_variable)
             .def("_get_variable", &OptixScopedObjectWrapper::get_variable)
+            .def("_query_or_declare_variable", &OptixScopedObjectWrapper::query_or_declare_variable)
             .def("_remove_variable", &OptixScopedObjectWrapper::remove_variable)
             .def("get_variable_count", &OptixScopedObjectWrapper::get_variable_count);
 }
