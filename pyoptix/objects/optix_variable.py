@@ -51,7 +51,9 @@ class OptixVariable(_OptixVariableWrapper):
                 if dtype is None or dim is None:
                     raise ValueError()
                 value = numpy.array(value, dtype=dtype)
-                if len(value.shape != 1) or value.shape[0] != dim:
+                if len(value.shape) != 1:
+                    value = value.reshape(1)
+                if value.shape[0] != dim:
                     raise TypeError("Cannot convert the value to a numpy array matching %s." % self.type)
                 self._set_from_numpy_with_type(value, self.type)
                 self._value = value
@@ -61,6 +63,8 @@ class OptixVariable(_OptixVariableWrapper):
         elif isinstance(value, numpy.ndarray) and not optix_has_type:
             # OPTION 3: OptiX variable type is unknown or it is user-type, but the value is a numpy array.
             # Use ndarray's dtype to determine variable type
+            if len(value.shape) == 0:
+                value = value.reshape(1)
             object_type = get_object_type_from_dtype(value.dtype, value.shape[-1])
             self._set_from_numpy_with_type(value, object_type)
             self._value = value
