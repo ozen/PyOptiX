@@ -15,4 +15,13 @@ class OptixGroup(_OptixGroupWrapper, OptixObject, OptixHasChild):
         from pyoptix.objects.optix_acceleration import OptixAcceleration
         allowed_children = [OptixGeometryGroup, OptixGroup, OptixSelector, OptixTransform, OptixAcceleration]
 
+        self._acceleration = None
+
         OptixHasChild.__init__(self, allowed_children)
+
+    def set_acceleration(self, acceleration):
+        self._set_acceleration(acceleration)
+        self._acceleration = acceleration
+
+    def get_acceleration(self):
+        return self._acceleration

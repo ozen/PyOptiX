@@ -12,6 +12,7 @@ class OptixGeometryGroup(_OptixGeometryGroupWrapper, OptixObject, OptixHasChild)
         _OptixGeometryGroupWrapper.__init__(self, native)
 
         allowed_children = [OptixGeometryInstance, OptixAcceleration]
+
         self._acceleration = None
 
         OptixHasChild.__init__(self, allowed_children)

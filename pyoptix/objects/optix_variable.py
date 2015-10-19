@@ -34,7 +34,7 @@ class OptixVariable(_OptixVariableWrapper):
         class_object_type = get_object_type_from_pyoptix_class(value)
 
         if class_object_type:
-            # OPTION 1: value is a known OptiX object.
+            # OPTION 1: value is a known OptiX object like GeometryGroup, Buffer etc.
             # do a preliminary check on type right now so it won't fail in device-compile time
             if optix_has_type and self.type != class_object_type:
                 raise TypeError("Variable type is %s, but %s was given" % (self.type, type(value)))

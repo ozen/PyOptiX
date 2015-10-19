@@ -3,7 +3,6 @@ class OptixHasChild(object):
     def __init__(self, allowed_children):
         self._children = []
         self._allowed_children = allowed_children
-        self._object_which_can_have_children = None
 
     def add_child(self, child):
         is_allowed = False
@@ -49,6 +48,9 @@ class OptixHasChild(object):
         elif isinstance(child, OptixMaterial):
             self._set_child_material(total_child_count, child)
         else:
+            total_child_count = self.get_child_count()
+            self._set_child_count(total_child_count - 1)
+
             raise TypeError("You can not add " +
                             self.__class__.__name__ +
                             " to " +
@@ -63,3 +65,6 @@ class OptixHasChild(object):
         self._remove_child(index)
         self._children.remove(child)
         child._remove_parent(self)
+
+    def get_children(self):
+        return self._children
