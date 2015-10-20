@@ -13,10 +13,7 @@ class OptixHasChild(object):
                 break
 
         if not is_allowed:
-            raise TypeError("You can not add " +
-                            child.__class__.__name__ + " child" +
-                            " to " +
-                            self.__class__.__name__)
+            raise TypeError("You can not add %s to %s as a child" % (child.__class__.__name__, self.__class__.__name__))
 
         total_child_count = self.get_child_count()
         self._set_child_count(total_child_count + 1)
@@ -50,11 +47,7 @@ class OptixHasChild(object):
         else:
             total_child_count = self.get_child_count()
             self._set_child_count(total_child_count - 1)
-
-            raise TypeError("You can not add " +
-                            self.__class__.__name__ +
-                            " to " +
-                            child.__class__.__name__ + " child")
+            raise TypeError("You can not add %s to %s as a child" % (child.__class__.__name__, self.__class__.__name__))
 
         child._add_parent(self)
         self._children.append(child)

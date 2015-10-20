@@ -28,7 +28,7 @@ class OptixVariable(_OptixVariableWrapper):
     @value.setter
     def value(self, value):
         optix_has_type = False
-        if not self.type == RTobjecttype.RT_OBJECTTYPE_UNKNOWN and not self.type == RTobjecttype.RT_OBJECTTYPE_USER:
+        if self.type != RTobjecttype.RT_OBJECTTYPE_UNKNOWN and self.type != RTobjecttype.RT_OBJECTTYPE_USER:
             optix_has_type = True
 
         class_object_type = get_object_type_from_pyoptix_class(value)
@@ -36,7 +36,7 @@ class OptixVariable(_OptixVariableWrapper):
         if class_object_type:
             # OPTION 1: value is a known OptiX object like GeometryGroup, Buffer etc.
             # do a preliminary check on type right now so it won't fail in device-compile time
-            if optix_has_type and self.type != class_object_type:
+            if optix_has_type and self.type != class_object_type and self.type != RTobjecttype.RT_OBJECTTYPE_OBJECT:
                 raise TypeError("Variable type is %s, but %s was given" % (self.type, type(value)))
 
             # call the respective set function of the optix type of the variable
