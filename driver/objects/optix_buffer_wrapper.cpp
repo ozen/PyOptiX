@@ -5,14 +5,12 @@
 
 OptixBufferWrapper::OptixBufferWrapper(optix::Buffer buffer)
 {
-    std::cout<<"OptixBufferWrapper construction"<<std::endl;
     this->buffer = buffer;
     this->set_destroyable_object(this->buffer.get());
 }
 
 OptixBufferWrapper::~OptixBufferWrapper()
 {
-    std::cout<<"OptixBufferWrapper deconstruction"<<std::endl;
     if(buffer.get() != 0)
         this->buffer->destroy();
 }

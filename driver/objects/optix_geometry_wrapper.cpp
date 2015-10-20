@@ -11,7 +11,6 @@ OptixGeometryWrapper::OptixGeometryWrapper(optix::Geometry geometry)
 
 OptixGeometryWrapper::~OptixGeometryWrapper()
 {
-    std::cout<<"OptixGeometryWrapper deconstruction"<<std::endl;
     if(this->geometry.get() != 0)
         this->geometry->destroy();
 }

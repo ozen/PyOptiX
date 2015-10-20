@@ -5,14 +5,12 @@
 
 OptixContextWrapper::OptixContextWrapper(): OptixScopedObjectWrapper()
 {
-    std::cout<<"OptixContextWrapper construction"<<std::endl;
     this->context = optix::Context::create();
     this->set_scoped_object(this->context.get());
 }
 
 OptixContextWrapper::~OptixContextWrapper()
 {
-    std::cout<<"OptixContextWrapper deconstruction"<<std::endl;
     if(this->context.get() != 0)
         this->context->destroy();
 }

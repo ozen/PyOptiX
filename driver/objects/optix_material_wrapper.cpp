@@ -10,7 +10,6 @@ OptixMaterialWrapper::OptixMaterialWrapper(optix::Material material)
 
 OptixMaterialWrapper::~OptixMaterialWrapper()
 {
-    std::cout<<"OptixMaterialWrapper deconstruction"<<std::endl;
     if(this->material.get() != 0)
         this->material->destroy();
 }

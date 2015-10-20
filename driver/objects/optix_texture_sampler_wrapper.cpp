@@ -11,7 +11,6 @@ OptixTextureSamplerWrapper::OptixTextureSamplerWrapper(optix::TextureSampler tex
 
 OptixTextureSamplerWrapper::~OptixTextureSamplerWrapper()
 {
-    std::cout<<"OptixTextureSamplerWrapper deconstruction"<<std::endl;
     if(this->texture_sampler.get() != 0)
         this->texture_sampler->destroy();
 }

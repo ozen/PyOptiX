@@ -11,7 +11,6 @@ OptixProgramWrapper::OptixProgramWrapper(optix::Program program)
 
 OptixProgramWrapper::~OptixProgramWrapper()
 {
-    std::cout<<"OptixProgramWrapper deconstruction"<<std::endl;
     if(this->program.get() != 0)
         this->program->destroy();
 }
