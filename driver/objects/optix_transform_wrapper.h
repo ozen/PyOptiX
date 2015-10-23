@@ -18,8 +18,8 @@ public:
     OptixTransformWrapper(optix::Transform transform);
     ~OptixTransformWrapper();
 
-    void set_matrix();
-    void get_matrix();
+    void set_matrix(bool transpose, const boost::numpy::ndarray& array);
+    boost::numpy::ndarray get_matrix(bool transpose);
 
     void set_child_geometry_group(unsigned int index, OptixGeometryGroupWrapper* child);
     void set_child_group(unsigned int index, OptixGroupWrapper* child);

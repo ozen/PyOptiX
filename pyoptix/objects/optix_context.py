@@ -41,7 +41,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         :rtype : OptixAcceleration
         """
         native = self._create_accelerator(builder, traverser)
-        return OptixAcceleration(native, context=self)
+        return OptixAcceleration(native, self, builder, traverser)
 
     def create_buffer(self, buffer_type):
         """
