@@ -25,3 +25,9 @@ class OptixTransform(_OptixTransformWrapper, OptixObject, OptixHasChild):
     def get(self, column_major=None):
         transpose = column_major if column_major is not None else self.transpose
         return self.get_matrix(transpose)
+
+    def get_child_count(self):
+        return 1
+
+    def _set_child_count(self, count):
+        pass
