@@ -2,27 +2,40 @@
 
 PyOptiX lets you access Nvidia's OptiX Ray Tracing Engine from Python.
 
-## Prerequisites
+## Installation
 
-* CUDA (on /usr/local/cuda [1])
-* OptiX (on /usr/local/optix [1])
-* numpy
-* Boost.Python
-* Boost.NumPy
+1. Download and Install CUDA
 
-[1] Symbolic links can be used if you have installed it to somewhere else.
+Make sure /usr/local/cuda points to your CUDA installation, either directly or using symbolic links.
+
+2. Download and Install OptiX
+
+Make sure /usr/local/optix points to your OptiX installation, either directly or using symbolic links.
+
+3. Install NumPy to your system
+
+    sudo apt-get install pip3
+    sudo pip3 install numpy
+
+4. Install Boost.Python
+
+You can use apt. The package name should be something like:
+
+    sudo apt-get install libboost-python1.55-dev
+
+5. Build and Install Boost.NumPy
+
+You need to download and build Boost.NumPy yourself.
+Check https://bitbucket.org/imcom/boost.numpy where you can find README file explaining the build process.
 
 
-### Before Running
+## Before Using PyOptiX
 
 nvcc binary (CUDA compiler) must be in PATH. Use the following command to add it:
 
-```
-export PATH=/usr/local/cuda/bin:$PATH
-```
+    export PATH=/usr/local/cuda/bin:$PATH
+
 
 OptiX library files must be in LD_LIBRARY_PATH. Use the following command (or a variation for your setup) to add it:
 
-```
-export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib/x86_64-linux-gnu:/usr/local/optix/lib64:$LD_LIBRARY_PATH
-```
+    export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib/x86_64-linux-gnu:/usr/local/optix/lib64:$LD_LIBRARY_PATH
