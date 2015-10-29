@@ -63,7 +63,9 @@ class OptixCompiler(object):
     def compile(self, cu_file_path, ptx_file_name=None):
         if ptx_file_name is None:
             ptx_file_name = '%s.ptx' % os.path.basename(cu_file_path)
+
         output_file_path = os.path.join(self.output_path, ptx_file_name)
+        compiled = True
 
         if _is_compile_required(cu_file_path, output_file_path):
             print("Optix Compiler: compiling " + cu_file_path)
@@ -83,8 +85,9 @@ class OptixCompiler(object):
                 print(e)
         else:
             print("Optix Compiler: no compiling required " + cu_file_path)
+            compiled = False
 
-        return output_file_path
+        return output_file_path, compiled
 
     def clean(self):
         if os.path.exists(self.output_path):
