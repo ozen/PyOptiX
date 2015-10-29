@@ -30,9 +30,9 @@ unsigned int OptixGeometryGroupWrapper::get_child_count()
     return this->geometry_group->getChildCount();
 }
 
-void OptixGeometryGroupWrapper::set_child_geometry_instance(unsigned int index, OptixGeometryInstanceWrapper* geometryinstance)
+void OptixGeometryGroupWrapper::set_child_geometry_instance(unsigned int index, OptixGeometryInstanceWrapper* geometry_instance)
 {
-    this->geometry_group->setChild(index, geometryinstance->get_native());
+    this->geometry_group->setChild(index, geometry_instance->get_native());
 }
 
 void OptixGeometryGroupWrapper::remove_child(unsigned int index)

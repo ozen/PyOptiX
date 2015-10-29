@@ -39,30 +39,25 @@ public:
     void launch_2d(unsigned int entry_point_index, int width, int height);
     void launch_3d(unsigned int entry_point_index, int width, int height, int depth);
 
-    // CPU
     int get_cpu_num_of_threads();
-    void set_cpu_num_of_threads( int threadCount);
+    void set_cpu_num_of_threads(int threadCount);
 
-    // Multi GPU Device
     int get_available_devices_count();
-    std::string get_device_name( int deviceId);
+    std::string get_device_name(int device_id);
+    boost::python::tuple get_device_compute_capability(int device_id);
     int get_enabled_device_count();
     std::vector<int> get_enabled_devices();
     void set_devices(std::vector<int> devices);
 
-    // Memory
     unsigned long get_used_host_memory();
-    unsigned long get_available_device_memory(int deviceId);
+    unsigned long get_available_device_memory(int device_id);
 
-    // Exceptions
     void set_exception_enabled(RTexception exception, bool enabled);
     bool get_exception_enabled(RTexception exception);
 
-    // Print
     void set_print_enabled(bool enabled);
     bool get_print_enabled();
 
-    // Object Creation
     optix::Program create_program_from_file(std::string file_name, std::string function_name);
     optix::Buffer create_buffer(int buffer_type);
     optix::TextureSampler create_texture_sampler();

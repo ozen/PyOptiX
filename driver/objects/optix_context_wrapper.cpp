@@ -75,26 +75,31 @@ void OptixContextWrapper::launch_3d(unsigned int entry_point_index, int width, i
     this->context->launch(entry_point_index, width, height, depth);
 }
 
-// CPU
 int OptixContextWrapper::get_cpu_num_of_threads()
 {
     return context->getCPUNumThreads();
 }
 
-void OptixContextWrapper::set_cpu_num_of_threads( int threadCount)
+void OptixContextWrapper::set_cpu_num_of_threads(int threadCount)
 {
-    context->setCPUNumThreads( threadCount);
+    context->setCPUNumThreads(threadCount);
 }
 
-// Multi GPU Device
 int OptixContextWrapper::get_available_devices_count()
 {
     return optix::Context::getDeviceCount();
 }
 
-std::string OptixContextWrapper::get_device_name( int deviceId)
+std::string OptixContextWrapper::get_device_name(int device_id)
 {
-    return context->getDeviceName( deviceId);
+    return context->getDeviceName(device_id);
+}
+
+boost::python::tuple OptixContextWrapper::get_device_compute_capability(int device_id)
+{
+    int computeCapabilities[2];
+    context->getDeviceAttribute(device_id, RT_DEVICE_ATTRIBUTE_COMPUTE_CAPABILITY, sizeof(computeCapabilities), computeCapabilities);
+    return boost::python::make_tuple(computeCapabilities[0], computeCapabilities[1]);
 }
 
 int OptixContextWrapper::get_enabled_device_count()
@@ -112,17 +117,16 @@ void OptixContextWrapper::set_devices(std::vector<int> devices)
     context->setDevices(devices.begin(), devices.end());
 }
 
-// Memory
 unsigned long OptixContextWrapper::get_used_host_memory()
 {
     return static_cast<unsigned long>(context->getUsedHostMemory());
 }
-unsigned long OptixContextWrapper::get_available_device_memory(int deviceId)
+
+unsigned long OptixContextWrapper::get_available_device_memory(int device_id)
 {
-    return static_cast<unsigned long>( context->getAvailableDeviceMemory(deviceId));
+    return static_cast<unsigned long>(context->getAvailableDeviceMemory(device_id));
 }
 
-// Exceptions
 void OptixContextWrapper::set_exception_enabled(RTexception exception, bool enabled)
 {
     this->context->setExceptionEnabled(exception, enabled);
@@ -133,7 +137,6 @@ bool OptixContextWrapper::get_exception_enabled(RTexception exception)
     return this->context->getExceptionEnabled(exception);
 }
 
-// Print
 void OptixContextWrapper::set_print_enabled(bool enabled)
 {
     this->context->setPrintEnabled(enabled);
@@ -254,6 +257,7 @@ void OptixContextWrapper::export_for_python()
             // Multi GPU Device
             .def("get_available_devices_count", &OptixContextWrapper::get_available_devices_count)
             .def("get_device_name", &OptixContextWrapper::get_device_name)
+            .def("get_device_compute_capability", &OptixContextWrapper::get_device_compute_capability)
             .def("get_enabled_device_count", &OptixContextWrapper::get_enabled_device_count)
             .def("get_enabled_devices", &OptixContextWrapper::get_enabled_devices)
             .def("set_devices", &OptixContextWrapper::set_devices)

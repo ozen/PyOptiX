@@ -22,7 +22,7 @@ public:
     void set_child_count(unsigned int  count);
     unsigned int get_child_count();
 
-    void set_child_geometry_instance(unsigned int index, OptixGeometryInstanceWrapper* geometryinstance);
+    void set_child_geometry_instance(unsigned int index, OptixGeometryInstanceWrapper* geometry_instance);
 
     void remove_child(unsigned int index);
 
