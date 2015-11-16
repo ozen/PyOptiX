@@ -32,6 +32,9 @@ def _has_modified_includes(file_path, modified_after, depth=4):
         content = f.read()
         for included_path in re.findall(include_pattern, content):
             included_file_path = os.path.join(file_directory_path, included_path)
+            if not os.path.exists(included_file_path):
+                continue
+
             included_file_mtime = os.path.getmtime(included_file_path)
             
             if included_file_mtime > modified_after:
@@ -50,10 +53,14 @@ class OptixCompiler(object):
         'use_fast_math': True,
     }
 
-    def __init__(self, output_path=DEFAULTS['output_path'], include_paths=DEFAULTS['include_paths'],
-                 arch=DEFAULTS['arch'], use_fast_math=DEFAULTS['use_fast_math']):
+    def __init__(self, output_path=DEFAULTS['output_path'], include_paths=None, arch=DEFAULTS['arch'],
+                 use_fast_math=DEFAULTS['use_fast_math']):
+
+        self.include_paths = OptixCompiler.DEFAULTS['include_paths']
+        if include_paths:
+            self.include_paths.extend(include_paths)
+
         self.output_path = output_path
-        self.include_paths = include_paths
         self.arch = arch
         self.use_fast_math = use_fast_math
 
