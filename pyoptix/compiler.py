@@ -79,7 +79,7 @@ class OptixCompiler(object):
         compiled = True
 
         if _is_compile_required(cu_file_path, output_file_path):
-            logger.info("Optix Compiler: compiling " + cu_file_path)
+            logger.info("Compiling %s" % cu_file_path)
             bash_command = "nvcc " + cu_file_path
             bash_command += " -ptx"
             bash_command += " -arch=" + self.arch
@@ -89,13 +89,13 @@ class OptixCompiler(object):
                 if os.path.exists(include_path):
                     bash_command += " -I=" + include_path
             bash_command += " -o=" + output_file_path
-            logger.info(bash_command)
+            logger.debug("Executing: %s" % bash_command)
             try:
                 check_call(shlex.split(bash_command))
             except CalledProcessError as e:
                 logger.error(e)
         else:
-            logger.info("Optix Compiler: no compiling required " + cu_file_path)
+            logger.info("No compiling required for %s" % cu_file_path)
             compiled = False
 
         return output_file_path, compiled
