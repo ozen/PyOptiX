@@ -171,15 +171,12 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         return self.compiler.compile(file_path, ptx_name)
 
     def create_program(self, file_path, function_name, ptx_name=None, compiled_file_path=None):
-        """
-        :rtype : OptixProgram
-        """
         if not self.compiler:
             self.init_compiler()
 
         if compiled_file_path is None:
             # Compile program
-            compiled_file_path, compiled = self.compile_program(file_path, ptx_name)
+            compiled_file_path, is_compiled = self.compile_program(file_path, ptx_name)
 
         # Create program object from compiled file
         native = self._create_program_from_file(compiled_file_path, function_name)

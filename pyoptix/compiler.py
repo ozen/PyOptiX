@@ -76,7 +76,7 @@ class OptixCompiler(object):
             ptx_file_name = '%s.ptx' % os.path.basename(cu_file_path)
 
         output_file_path = os.path.join(self.output_path, ptx_file_name)
-        compiled = True
+        is_compiled = True
 
         if _is_compile_required(cu_file_path, output_file_path):
             logger.info("Compiling %s" % cu_file_path)
@@ -96,9 +96,9 @@ class OptixCompiler(object):
                 logger.error(e)
         else:
             logger.info("No compiling required for %s" % cu_file_path)
-            compiled = False
+            is_compiled = False
 
-        return output_file_path, compiled
+        return output_file_path, is_compiled
 
     def clean(self):
         if os.path.exists(self.output_path):
