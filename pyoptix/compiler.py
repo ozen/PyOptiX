@@ -95,7 +95,7 @@ class OptixCompiler(object):
             except CalledProcessError as e:
                 logger.error(e)
         else:
-            logger.info("No compiling required for %s" % cu_file_path)
+            logger.debug("No compiling required for %s" % cu_file_path)
             is_compiled = False
 
         return output_file_path, is_compiled
