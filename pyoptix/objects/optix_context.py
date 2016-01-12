@@ -85,8 +85,8 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         buffer.restructure_and_copy_from_numpy_array(temp_numpy_array, drop_last_dim)
         return buffer
 
-    def create_texture_sampler(self, buffer=None, array_size=1, wrap_mode=None, indexing_mode=None, read_mode=None,
-                               filter_mode=None):
+    def create_texture_sampler(self, buffer=None, wrap_mode=None, indexing_mode=None, read_mode=None, filter_mode=None,
+                               max_anisotropy=16):
         """
         :rtype : OptixTextureSampler
         """
@@ -105,11 +105,9 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
             instance.set_read_mode(read_mode)
 
         if filter_mode is not None:
-            instance.set_filtering_modes(filter_mode, filter_mode, RTfiltermode.RT_FILTER_NONE)
+            instance.set_filtering_modes(filter_mode, filter_mode, filter_mode)
 
-        instance.set_max_anisotropy(1.0)
-        instance.set_mip_level_count(1)
-        instance.set_array_size(array_size)
+        instance.set_max_anisotropy(max_anisotropy)
 
         if buffer is not None:
             if buffer.get_format() == RTformat.RT_FORMAT_USER:

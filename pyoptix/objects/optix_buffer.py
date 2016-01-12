@@ -21,7 +21,11 @@ class OptixBuffer(_OptixBufferWrapper, OptixObject):
 
     @property
     def shape_of_optix_buffer(self):
-        return tuple(self._get_shape())
+        return tuple(self._get_size())
+
+    @property
+    def size_of_optix_buffer(self):
+        return tuple(self._get_size())
 
     @property
     def itemsize_of_optix_buffer(self):
@@ -72,7 +76,7 @@ class OptixBuffer(_OptixBufferWrapper, OptixObject):
 
         # convert numpy dim to optix dim (inverting shape)
         temp_shape = temp_shape[::-1]
-        self._set_shape(list(temp_shape))
+        self._set_size(list(temp_shape))
 
     # NUMPY SUPPORT
     def restructure_according_to_numpy_array(self, numpy_array, drop_last_dim=False):
@@ -88,13 +92,19 @@ class OptixBuffer(_OptixBufferWrapper, OptixObject):
         return numpy_array
 
     def copy_data_from_numpy_array(self, numpy_array):
-        if numpy_array.nbytes != self.nbytes:
+        if numpy_array.nbytes != self._get_size_in_bytes():
             raise BufferError("Arrays size must be equal!")
 
         self._copy_from_numpy_array(numpy_array)
 
+    def copy_level_from_numpy_array(self, level, numpy_array):
+        if numpy_array.nbytes != self._get_mip_level_size_in_bytes(level):
+            raise BufferError("Arrays size must be equal!")
+
+        self._copy_mip_level_from_numpy_array(level, numpy_array)
+
     def copy_data_into_numpy_array(self, numpy_array):
-        if numpy_array.nbytes != self.nbytes:
+        if numpy_array.nbytes != self._get_size_in_bytes():
             raise BufferError("Arrays size must be equal!")
 
         self._copy_into_numpy_array(numpy_array)

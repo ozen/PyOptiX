@@ -15,24 +15,29 @@ OptixTextureSamplerWrapper::~OptixTextureSamplerWrapper()
         this->texture_sampler->destroy();
 }
 
-void OptixTextureSamplerWrapper::set_mip_level_count(unsigned int num_mip_levels)
+void OptixTextureSamplerWrapper::set_mip_level_clamp(float min_level, float max_level)
 {
-    this->texture_sampler->setMipLevelCount(num_mip_levels);
+    this->texture_sampler->setMipLevelClamp(min_level, max_level);
 }
 
-unsigned int OptixTextureSamplerWrapper::get_mip_level_count()
+std::vector<float> OptixTextureSamplerWrapper::get_mip_level_clamp()
 {
-    return this->texture_sampler->getMipLevelCount();
+    std::vector<float> res = std::vector<float>();
+    float min_level, max_level;
+    this->texture_sampler->getMipLevelClamp(min_level, max_level);
+    res.push_back(float(min_level));
+    res.push_back(float(max_level));
+    return res;
 }
 
-void OptixTextureSamplerWrapper::set_array_size(unsigned int num_textures_in_array)
+void OptixTextureSamplerWrapper::set_mip_level_bias(float bias_value)
 {
-    this->texture_sampler->setArraySize(num_textures_in_array);
+    this->texture_sampler->setMipLevelBias(bias_value);
 }
 
-unsigned int OptixTextureSamplerWrapper::get_array_size()
+float OptixTextureSamplerWrapper::get_mip_level_bias()
 {
-    return this->texture_sampler->getArraySize();
+    return this->texture_sampler->getMipLevelBias();
 }
 
 void OptixTextureSamplerWrapper::set_wrap_mode(unsigned int dim, RTwrapmode wrapmode)
@@ -104,20 +109,28 @@ void OptixTextureSamplerWrapper::export_for_python()
                 "_OptixTextureSamplerWrapper docstring",
                 bp::init<optix::TextureSampler>())
 
-            .def("set_mip_level_count", &OptixTextureSamplerWrapper::set_mip_level_count)
-            .def("get_mip_level_count", &OptixTextureSamplerWrapper::get_mip_level_count)
-            .def("set_array_size", &OptixTextureSamplerWrapper::set_array_size)
-            .def("get_array_size", &OptixTextureSamplerWrapper::get_array_size)
+            .def("get_id", &OptixTextureSamplerWrapper::get_id)
+
+            .def("set_mip_level_clamp", &OptixTextureSamplerWrapper::set_mip_level_clamp)
+            .def("get_mip_level_clamp", &OptixTextureSamplerWrapper::get_mip_level_clamp)
+
+            .def("set_mip_level_bias", &OptixTextureSamplerWrapper::set_mip_level_bias)
+            .def("get_mip_level_bias", &OptixTextureSamplerWrapper::get_mip_level_bias)
+
             .def("set_max_anisotropy", &OptixTextureSamplerWrapper::set_max_anisotropy)
             .def("get_max_anisotropy", &OptixTextureSamplerWrapper::get_max_anisotropy)
-            .def("get_wrap_mode", &OptixTextureSamplerWrapper::get_wrap_mode)
-            .def("get_read_mode", &OptixTextureSamplerWrapper::get_read_mode)
-            .def("get_indexing_mode", &OptixTextureSamplerWrapper::get_indexing_mode)
-            .def("get_id", &OptixTextureSamplerWrapper::get_id)
+
             .def("_set_wrap_mode", &OptixTextureSamplerWrapper::set_wrap_mode)
+            .def("get_wrap_mode", &OptixTextureSamplerWrapper::get_wrap_mode)
+
             .def("_set_read_mode", &OptixTextureSamplerWrapper::set_read_mode)
+            .def("get_read_mode", &OptixTextureSamplerWrapper::get_read_mode)
+
             .def("_set_indexing_mode", &OptixTextureSamplerWrapper::set_indexing_mode)
+            .def("get_indexing_mode", &OptixTextureSamplerWrapper::get_indexing_mode)
+
             .def("_set_filtering_modes", &OptixTextureSamplerWrapper::set_filtering_modes)
+
             .def("_set_buffer", &OptixTextureSamplerWrapper::set_buffer);
 }
 
