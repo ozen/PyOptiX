@@ -85,8 +85,8 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         buffer.restructure_and_copy_from_numpy_array(temp_numpy_array, drop_last_dim)
         return buffer
 
-    def create_texture_sampler(self, buffer=None, wrap_mode=None, indexing_mode=None, read_mode=None, filter_mode=None,
-                               max_anisotropy=16):
+    def create_texture_sampler(self, buffer=None, wrap_mode=None, indexing_mode=None,
+                               read_mode=None, filter_mode=None, max_anisotropy=16):
         """
         :rtype : OptixTextureSampler
         """

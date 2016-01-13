@@ -103,6 +103,11 @@ class OptixBuffer(_OptixBufferWrapper, OptixObject):
 
         self._copy_mip_level_from_numpy_array(level, numpy_array)
 
+    def copy_level_from_buffer(self, level, buffer):
+        if not isinstance(buffer, OptixBuffer):
+            raise TypeError('buffer is not of type OptixBuffer')
+        self.copy_level_from_numpy_array(self, level, buffer.get_as_numpy_array())
+
     def copy_data_into_numpy_array(self, numpy_array):
         if numpy_array.nbytes != self._get_size_in_bytes():
             raise BufferError("Arrays size must be equal!")
