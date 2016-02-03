@@ -73,13 +73,16 @@ class OptixCompiler(object):
 
     def compile(self, cu_file_path, ptx_file_name=None):
         if ptx_file_name is None:
-            ptx_file_name = '%s.ptx' % os.path.basename(cu_file_path)
+            ptx_file_name = '{0}.ptx'.format(os.path.basename(cu_file_path))
 
         output_file_path = os.path.join(self.output_path, ptx_file_name)
         is_compiled = True
 
         if _is_compile_required(cu_file_path, output_file_path):
-            logger.info("Compiling %s" % cu_file_path)
+            if os.path.exists(output_file_path):
+                os.remove(output_file_path)
+
+            logger.info("Compiling {0}".format(cu_file_path))
             bash_command = "nvcc " + cu_file_path
             bash_command += " -ptx"
             bash_command += " -arch=" + self.arch
@@ -89,13 +92,17 @@ class OptixCompiler(object):
                 if os.path.exists(include_path):
                     bash_command += " -I=" + include_path
             bash_command += " -o=" + output_file_path
-            logger.debug("Executing: %s" % bash_command)
+            logger.debug("Executing: {0}".format(bash_command))
             try:
                 check_call(shlex.split(bash_command))
             except CalledProcessError as e:
                 logger.error(e)
+
+            if not os.path.exists(output_file_path):
+                logger.error("Could not compile {0}".format(cu_file_path))
+                raise RuntimeError("Could not compile {0}".format(cu_file_path))
         else:
-            logger.debug("No compiling required for %s" % cu_file_path)
+            logger.debug("No compiling required for {0}".format(cu_file_path))
             is_compiled = False
 
         return output_file_path, is_compiled

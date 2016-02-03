@@ -40,7 +40,7 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
             kwargs['arch'] = arch
         else:
             sm_major, sm_minor = self.get_device_compute_capability(0)
-            kwargs['arch'] = "sm_%s%s" % (sm_major, sm_minor)
+            kwargs['arch'] = "sm_{0}{1}".format(sm_major, sm_minor)
 
         self.compiler = OptixCompiler(**kwargs)
 

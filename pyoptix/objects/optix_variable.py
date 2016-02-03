@@ -37,7 +37,7 @@ class OptixVariable(_OptixVariableWrapper):
             # OPTION 1: value is a known OptiX object like GeometryGroup, Buffer etc.
             # do a preliminary check on type right now so it won't fail in device-compile time
             if optix_has_type and self.type != class_object_type and self.type != RTobjecttype.RT_OBJECTTYPE_OBJECT:
-                raise TypeError("Variable type is %s, but %s was given" % (self.type, type(value)))
+                raise TypeError("Variable type is {0}, but {1} was given".format(self.type, type(value)))
 
             # call the respective set function of the optix type of the variable
             getattr(self, OBJECT_TYPE_TO_SET_FUNCTION[class_object_type])(value)
@@ -54,11 +54,11 @@ class OptixVariable(_OptixVariableWrapper):
                 if len(value.shape) != 1:
                     value = value.reshape(1)
                 if value.shape[0] != dim:
-                    raise TypeError("Cannot convert the value to a numpy array matching %s." % self.type)
+                    raise TypeError("Cannot convert the value to a numpy array matching {0}.".format(self.type))
                 self._set_from_numpy_with_type(value, self.type)
                 self._value = value
             except (ValueError, AttributeError):
-                raise TypeError("Variable type is %s, but %s was given" % (self.type, type(value)))
+                raise TypeError("Variable type is {0}, but {1} was given".format(self.type, type(value)))
 
         elif isinstance(value, numpy.ndarray) and not optix_has_type:
             # OPTION 3: OptiX variable type is unknown or it is user-type, but the value is a numpy array.
