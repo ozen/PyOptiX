@@ -1,4 +1,4 @@
-from pyoptix._driver import _OptixContextWrapper, RTbuffertype, RTfiltermode, RTformat
+from pyoptix._driver import _OptixContextWrapper, RTbuffertype, RTfiltermode, RTformat, OPTIX_VERSION
 from pyoptix.objects.commons.optix_scoped_object import OptixScopedObject
 from pyoptix.compiler import OptixCompiler
 from pyoptix.objects.optix_program import OptixProgram
@@ -85,11 +85,14 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
         buffer.restructure_and_copy_from_numpy_array(temp_numpy_array, drop_last_dim)
         return buffer
 
-    def create_texture_sampler(self, buffer=None, wrap_mode=None, indexing_mode=None,
-                               read_mode=None, filter_mode=None, max_anisotropy=16):
+    def create_texture_sampler(self, buffer, wrap_mode=None, indexing_mode=None,
+                               read_mode=None, filter_mode=None, max_anisotropy=1):
         """
         :rtype : OptixTextureSampler
         """
+        if buffer.get_format() == RTformat.RT_FORMAT_USER:
+            raise TypeError("Texture sampler cannot be associated with a user-typed buffer")
+
         native = self._create_texture_sampler()
         instance = OptixTextureSampler(native, context=self)
 
@@ -105,14 +108,19 @@ class OptixContext(_OptixContextWrapper, OptixScopedObject):
             instance.set_read_mode(read_mode)
 
         if filter_mode is not None:
-            instance.set_filtering_modes(filter_mode, filter_mode, filter_mode)
+            if OPTIX_VERSION >= 3090 and buffer.get_mip_level_count() > 1:
+                instance.set_filtering_modes(filter_mode, filter_mode, filter_mode)
+            else:
+                instance.set_filtering_modes(filter_mode, filter_mode, RTfiltermode.RT_FILTER_NONE)
 
         instance.set_max_anisotropy(max_anisotropy)
 
-        if buffer is not None:
-            if buffer.get_format() == RTformat.RT_FORMAT_USER:
-                raise TypeError("Texture sampler cannot be associated with a user-typed buffer")
-            instance.set_buffer(0, 0, buffer)
+        if OPTIX_VERSION < 3090:
+            # required with OptiX < 3.9.0
+            instance.set_mip_level_count(1)
+            instance.set_array_size(1)
+
+        instance.set_buffer(0, 0, buffer)
 
         return instance
 

@@ -62,6 +62,26 @@ float OptixTextureSamplerWrapper::get_mip_level_bias()
     #endif
 }
 
+void OptixTextureSamplerWrapper::set_mip_level_count(unsigned int num_mip_levels)
+{
+    this->texture_sampler->setMipLevelCount(num_mip_levels);
+}
+
+unsigned int OptixTextureSamplerWrapper::get_mip_level_count()
+{
+    return this->texture_sampler->getMipLevelCount();
+}
+
+void OptixTextureSamplerWrapper::set_array_size(unsigned int num_textures_in_array)
+{
+    this->texture_sampler->setArraySize(num_textures_in_array);
+}
+
+unsigned int OptixTextureSamplerWrapper::get_array_size()
+{
+    return this->texture_sampler->getArraySize();
+}
+
 void OptixTextureSamplerWrapper::set_wrap_mode(unsigned int dim, RTwrapmode wrapmode)
 {
     this->texture_sampler->setWrapMode(dim, wrapmode);
@@ -141,6 +161,12 @@ void OptixTextureSamplerWrapper::export_for_python()
 
             .def("set_max_anisotropy", &OptixTextureSamplerWrapper::set_max_anisotropy)
             .def("get_max_anisotropy", &OptixTextureSamplerWrapper::get_max_anisotropy)
+
+            .def("set_mip_level_count", &OptixTextureSamplerWrapper::set_mip_level_count)
+            .def("get_mip_level_count", &OptixTextureSamplerWrapper::get_mip_level_count)
+
+            .def("set_array_size", &OptixTextureSamplerWrapper::set_array_size)
+            .def("get_array_size", &OptixTextureSamplerWrapper::get_array_size)
 
             .def("_set_wrap_mode", &OptixTextureSamplerWrapper::set_wrap_mode)
             .def("get_wrap_mode", &OptixTextureSamplerWrapper::get_wrap_mode)

@@ -29,6 +29,7 @@ BOOST_PYTHON_MODULE(_driver)
     /*
     *   CORE
     */
+    bp::scope().attr("OPTIX_VERSION") = OPTIX_VERSION;
     OptixDestroyableObject::export_for_python();
     OptixVariableWrapper::export_for_python();
     OptixScopedObjectWrapper::export_for_python();

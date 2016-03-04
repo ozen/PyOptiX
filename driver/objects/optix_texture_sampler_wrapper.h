@@ -23,6 +23,12 @@ public:
     void set_mip_level_bias(float bias_value);
     float get_mip_level_bias();
 
+    void set_mip_level_count(unsigned int num_mip_levels);
+    unsigned int get_mip_level_count();
+
+    void set_array_size(unsigned int  num_textures_in_array);
+    unsigned int get_array_size();
+
     void set_wrap_mode(unsigned int dim, RTwrapmode wrapmode);
     RTwrapmode get_wrap_mode(unsigned int dim);
 
