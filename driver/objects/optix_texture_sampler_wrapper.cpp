@@ -17,27 +17,49 @@ OptixTextureSamplerWrapper::~OptixTextureSamplerWrapper()
 
 void OptixTextureSamplerWrapper::set_mip_level_clamp(float min_level, float max_level)
 {
-    this->texture_sampler->setMipLevelClamp(min_level, max_level);
+    #if OPTIX_VERSION < 3090
+        PyErr_SetString(PyExc_NotImplementedError, "OptiX versions before 3.9.0 don't have mipmapping functions");
+        boost::python::throw_error_already_set();
+    #else
+        this->texture_sampler->setMipLevelClamp(min_level, max_level);
+    #endif
 }
 
 std::vector<float> OptixTextureSamplerWrapper::get_mip_level_clamp()
 {
-    std::vector<float> res = std::vector<float>();
-    float min_level, max_level;
-    this->texture_sampler->getMipLevelClamp(min_level, max_level);
-    res.push_back(float(min_level));
-    res.push_back(float(max_level));
-    return res;
+    #if OPTIX_VERSION < 3090
+        PyErr_SetString(PyExc_NotImplementedError, "OptiX versions before 3.9.0 don't have mipmapping functions");
+        boost::python::throw_error_already_set();
+        return std::vector<float>();
+    #else
+        std::vector<float> res = std::vector<float>();
+        float min_level, max_level;
+        this->texture_sampler->getMipLevelClamp(min_level, max_level);
+        res.push_back(float(min_level));
+        res.push_back(float(max_level));
+        return res;
+    #endif
 }
 
 void OptixTextureSamplerWrapper::set_mip_level_bias(float bias_value)
 {
-    this->texture_sampler->setMipLevelBias(bias_value);
+    #if OPTIX_VERSION < 3090
+        PyErr_SetString(PyExc_NotImplementedError, "OptiX versions before 3.9.0 don't have mipmapping functions");
+        boost::python::throw_error_already_set();
+    #else
+        this->texture_sampler->setMipLevelBias(bias_value);
+    #endif
 }
 
 float OptixTextureSamplerWrapper::get_mip_level_bias()
 {
-    return this->texture_sampler->getMipLevelBias();
+    #if OPTIX_VERSION < 3090
+        PyErr_SetString(PyExc_NotImplementedError, "OptiX versions before 3.9.0 don't have mipmapping functions");
+        boost::python::throw_error_already_set();
+        return 0.0;
+    #else
+        return this->texture_sampler->getMipLevelBias();
+    #endif
 }
 
 void OptixTextureSamplerWrapper::set_wrap_mode(unsigned int dim, RTwrapmode wrapmode)
