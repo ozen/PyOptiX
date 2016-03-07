@@ -85,6 +85,17 @@ void OptixContextWrapper::set_cpu_num_of_threads(int threadCount)
     context->setCPUNumThreads(threadCount);
 }
 
+int OptixContextWrapper::get_stack_size()
+{
+    return context->getStackSize();
+}
+
+void OptixContextWrapper::set_stack_size(int stack_size_bytes)
+{
+    context->setStackSize(stack_size_bytes);
+}
+
+
 int OptixContextWrapper::get_available_devices_count()
 {
     return optix::Context::getDeviceCount();
@@ -253,6 +264,9 @@ void OptixContextWrapper::export_for_python()
             // CPU
             .def("get_cpu_num_of_threads", &OptixContextWrapper::get_cpu_num_of_threads)
             .def("set_cpu_num_of_threads", &OptixContextWrapper::set_cpu_num_of_threads)
+
+            .def("get_stack_size", &OptixContextWrapper::get_stack_size)
+            .def("set_stack_size", &OptixContextWrapper::set_stack_size)
 
             // Multi GPU Device
             .def("get_available_devices_count", &OptixContextWrapper::get_available_devices_count)

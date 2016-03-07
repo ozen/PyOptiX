@@ -42,6 +42,9 @@ public:
     int get_cpu_num_of_threads();
     void set_cpu_num_of_threads(int threadCount);
 
+    int get_stack_size();
+    void set_stack_size(int stack_size_bytes);
+
     int get_available_devices_count();
     std::string get_device_name(int device_id);
     boost::python::tuple get_device_compute_capability(int device_id);
