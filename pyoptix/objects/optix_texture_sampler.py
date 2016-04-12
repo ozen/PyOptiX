@@ -76,13 +76,13 @@ class OptixTextureSampler(_OptixTextureSamplerWrapper, OptixObject):
         magnification = convert_filtering_mode(magnification)
         mipmapping = convert_filtering_mode(mipmapping)
 
-        if not minification:
+        if minification is None:
             minification = RTfiltermode.RT_FILTER_NONE
 
-        if not magnification:
+        if magnification is None:
             magnification = RTfiltermode.RT_FILTER_NONE
 
-        if not mipmapping:
+        if mipmapping is None:
             mipmapping = RTfiltermode.RT_FILTER_NONE
 
         self.filtering_mode_minification = minification
