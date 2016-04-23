@@ -1,0 +1,13 @@
+#pragma once
+#include <stdio.h>
+#include <string>
+#include <memory>
+#include <iostream>
+#include <optixu/optixpp_namespace.h>
+#include <optixu/optixu_math_namespace.h>
+#include <optixu/optixu_aabb_namespace.h>
+#include "Python.h"
+#include "boost/python.hpp"
+#include "numpy_boost_helpers.h"
+#include <boost/python.hpp>
+#include <boost/numpy.hpp>
