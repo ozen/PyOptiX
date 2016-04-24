@@ -134,26 +134,22 @@ DTYPE_TO_FORMAT = {
     'default': RTformat.RT_FORMAT_USER
 }
 
-OBJECT_TYPE_TO_PYOPTIX_CLASS = {
-    RTobjecttype.RT_OBJECTTYPE_BUFFER: 'Buffer',
-    RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER: 'TextureSampler',
-    RTobjecttype.RT_OBJECTTYPE_PROGRAM: 'Program',
-    RTobjecttype.RT_OBJECTTYPE_GROUP: 'Group',
-    RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP: 'GeometryGroup',
-    RTobjecttype.RT_OBJECTTYPE_SELECTOR: 'Selector',
-    RTobjecttype.RT_OBJECTTYPE_TRANSFORM: 'Transform',
-
-    'default': None,
-}
 
 PYOPTIX_CLASS_TO_OBJECT_TYPE = {
     'Buffer': RTobjecttype.RT_OBJECTTYPE_BUFFER,
+    'BufferObj': RTobjecttype.RT_OBJECTTYPE_BUFFER,
     'TextureSampler': RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER,
+    'TextureSamplerObj': RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER,
     'Program': RTobjecttype.RT_OBJECTTYPE_PROGRAM,
+    'ProgramObj': RTobjecttype.RT_OBJECTTYPE_PROGRAM,
     'Group': RTobjecttype.RT_OBJECTTYPE_GROUP,
+    'GroupObj': RTobjecttype.RT_OBJECTTYPE_GROUP,
     'GeometryGroup': RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP,
+    'GeometryGroupObj': RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP,
     'Selector': RTobjecttype.RT_OBJECTTYPE_SELECTOR,
+    'SelectorObj': RTobjecttype.RT_OBJECTTYPE_SELECTOR,
     'Transform': RTobjecttype.RT_OBJECTTYPE_TRANSFORM,
+    'TransformObj': RTobjecttype.RT_OBJECTTYPE_TRANSFORM,
 
     'default': None,
 }
@@ -192,14 +188,6 @@ def get_pyoptix_class_by_name(class_name):
         return locals()[class_name]
     except KeyError:
         return None
-
-
-def get_pyoptix_class_from_object_type(object_type):
-    if object_type in OBJECT_TYPE_TO_PYOPTIX_CLASS:
-        class_name = OBJECT_TYPE_TO_PYOPTIX_CLASS[object_type]
-    else:
-        class_name = OBJECT_TYPE_TO_PYOPTIX_CLASS['default']
-    return get_pyoptix_class_by_name(class_name)
 
 
 def get_object_type_from_pyoptix_class(instance):
