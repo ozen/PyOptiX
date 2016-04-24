@@ -40,5 +40,5 @@ class EntryPoint(object):
         # launch
         context.validate()
         context.compile()
-        logger.debug("Launching {0} with {1} threads".format(self.ray_generation_program, size))
+        logger.debug("Launching {0} with {1} threads".format(self.ray_generation_program.name, size))
         context.launch(0, *size)

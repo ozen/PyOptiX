@@ -1,6 +1,6 @@
-from pyoptix._driver import RTobjecttype, RTformat, RTfiltermode, RTwrapmode, RTtexturereadmode, RTtextureindexmode
+from pyoptix._driver import RTobjecttype, RTformat, RTfiltermode, RTwrapmode, RTtexturereadmode, RTtextureindexmode, \
+    RTbuffertype
 import numpy
-
 
 OBJECT_TYPE_TO_DTYPE = {
     RTobjecttype.RT_OBJECTTYPE_FLOAT: (numpy.float32, 1),
@@ -18,7 +18,6 @@ OBJECT_TYPE_TO_DTYPE = {
     RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT3: (numpy.uint32, 3),
     RTobjecttype.RT_OBJECTTYPE_UNSIGNED_INT4: (numpy.uint32, 4),
 }
-
 
 DTYPE_TO_OBJECT_TYPE = {
     numpy.dtype(numpy.float32): {
@@ -44,7 +43,6 @@ DTYPE_TO_OBJECT_TYPE = {
 
     'default': RTobjecttype.RT_OBJECTTYPE_USER,
 }
-
 
 FORMAT_TO_DTYPE = {
     RTformat.RT_FORMAT_FLOAT: (numpy.float32, 1),
@@ -82,7 +80,6 @@ FORMAT_TO_DTYPE = {
     RTformat.RT_FORMAT_UNSIGNED_BYTE3: (numpy.uint8, 3),
     RTformat.RT_FORMAT_UNSIGNED_BYTE4: (numpy.uint8, 4),
 }
-
 
 DTYPE_TO_FORMAT = {
     numpy.dtype(numpy.float32): {
@@ -137,27 +134,26 @@ DTYPE_TO_FORMAT = {
     'default': RTformat.RT_FORMAT_USER
 }
 
-
 OBJECT_TYPE_TO_PYOPTIX_CLASS = {
-    RTobjecttype.RT_OBJECTTYPE_BUFFER: 'OptixBuffer',
-    RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER: 'OptixTextureSampler',
-    RTobjecttype.RT_OBJECTTYPE_PROGRAM: 'OptixProgram',
-    RTobjecttype.RT_OBJECTTYPE_GROUP: 'OptixGroup',
-    RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP: 'OptixGeometryGroup',
-    RTobjecttype.RT_OBJECTTYPE_SELECTOR: 'OptixSelector',
-    RTobjecttype.RT_OBJECTTYPE_TRANSFORM: 'OptixTransform',
+    RTobjecttype.RT_OBJECTTYPE_BUFFER: 'Buffer',
+    RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER: 'TextureSampler',
+    RTobjecttype.RT_OBJECTTYPE_PROGRAM: 'Program',
+    RTobjecttype.RT_OBJECTTYPE_GROUP: 'Group',
+    RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP: 'GeometryGroup',
+    RTobjecttype.RT_OBJECTTYPE_SELECTOR: 'Selector',
+    RTobjecttype.RT_OBJECTTYPE_TRANSFORM: 'Transform',
 
     'default': None,
 }
 
 PYOPTIX_CLASS_TO_OBJECT_TYPE = {
-    'OptixBuffer': RTobjecttype.RT_OBJECTTYPE_BUFFER,
-    'OptixTextureSampler': RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER,
-    'OptixProgram': RTobjecttype.RT_OBJECTTYPE_PROGRAM,
-    'OptixGroup': RTobjecttype.RT_OBJECTTYPE_GROUP,
-    'OptixGeometryGroup': RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP,
-    'OptixSelector': RTobjecttype.RT_OBJECTTYPE_SELECTOR,
-    'OptixTransform': RTobjecttype.RT_OBJECTTYPE_TRANSFORM,
+    'Buffer': RTobjecttype.RT_OBJECTTYPE_BUFFER,
+    'TextureSampler': RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER,
+    'Program': RTobjecttype.RT_OBJECTTYPE_PROGRAM,
+    'Group': RTobjecttype.RT_OBJECTTYPE_GROUP,
+    'GeometryGroup': RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP,
+    'Selector': RTobjecttype.RT_OBJECTTYPE_SELECTOR,
+    'Transform': RTobjecttype.RT_OBJECTTYPE_TRANSFORM,
 
     'default': None,
 }
@@ -208,13 +204,16 @@ def get_pyoptix_class_from_object_type(object_type):
 
 def get_object_type_from_pyoptix_class(instance):
     try:
-        name = instance.__class__.__name__
-        if name in PYOPTIX_CLASS_TO_OBJECT_TYPE:
-            return PYOPTIX_CLASS_TO_OBJECT_TYPE[name]
+        if instance.__class__.__name__ in PYOPTIX_CLASS_TO_OBJECT_TYPE:
+            return PYOPTIX_CLASS_TO_OBJECT_TYPE[instance.__class__.__name__]
         else:
+            for base in instance.__class__.__bases__:
+                if base.__name__ in PYOPTIX_CLASS_TO_OBJECT_TYPE:
+                    return PYOPTIX_CLASS_TO_OBJECT_TYPE[base.__name__]
             return PYOPTIX_CLASS_TO_OBJECT_TYPE['default']
     except Exception:
         return None
+
 
 WRAP_STRING_TO_OPTIX_ENUM = {
     'repeat': RTwrapmode.RT_WRAP_REPEAT,
@@ -266,3 +265,17 @@ def convert_indexing_mode(string):
         return INDEXING_STRING_TO_OPTIX_ENUM[string]
     else:
         return string
+
+
+BUFFER_STRING_TO_OPTIX_ENUM = {
+    'io': RTbuffertype.RT_BUFFER_INPUT_OUTPUT,
+    'i': RTbuffertype.RT_BUFFER_INPUT,
+    'o': RTbuffertype.RT_BUFFER_OUTPUT,
+}
+
+
+def convert_buffer_type(string):
+    if isinstance(string, str) and string.lower() in BUFFER_STRING_TO_OPTIX_ENUM:
+        return BUFFER_STRING_TO_OPTIX_ENUM[string]
+    else:
+        raise ValueError("Buffer type must be 'i' 'o' or 'io'")

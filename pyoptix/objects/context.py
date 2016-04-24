@@ -13,14 +13,21 @@ from pyoptix.objects.material import MaterialObj
 from pyoptix.objects.geometry import GeometryObj
 from pyoptix.objects.texture_sampler import TextureSamplerObj
 from pyoptix.objects.buffer import BufferObj
+from pyoptix.types import convert_buffer_type
 
 
 class OptixContext(NativeContextWrapper, OptixScopedObject):
     def __init__(self):
         NativeContextWrapper.__init__(self)
         OptixScopedObject.__init__(self)
-        self.compiler = None
+        self._compiler = None
         self._miss_programs = {}
+
+    @property
+    def compiler(self):
+        if self._compiler is None:
+            self.init_compiler()
+        return self._compiler
 
     def init_compiler(self, output_path=None, include_paths=None, arch=None, use_fast_math=None):
         kwargs = {}
@@ -40,7 +47,7 @@ class OptixContext(NativeContextWrapper, OptixScopedObject):
             sm_major, sm_minor = self.get_device_compute_capability(0)
             kwargs['arch'] = "sm_{0}{1}".format(sm_major, sm_minor)
 
-        self.compiler = OptixCompiler(**kwargs)
+        self._compiler = OptixCompiler(**kwargs)
 
     def create_acceleration(self, builder, traverser):
         """
@@ -54,17 +61,7 @@ class OptixContext(NativeContextWrapper, OptixScopedObject):
         :param buffer_type
         :rtype : BufferObj
         """
-        native_buffer_type = None
-        if buffer_type == 'i':
-            native_buffer_type = RTbuffertype.RT_BUFFER_INPUT
-        elif buffer_type == 'o':
-            native_buffer_type = RTbuffertype.RT_BUFFER_OUTPUT
-        elif buffer_type == 'io':
-            native_buffer_type = RTbuffertype.RT_BUFFER_INPUT_OUTPUT
-        if native_buffer_type is None:
-            raise ValueError("Buffer type must be 'i' 'o' or 'io'")
-
-        native = self._create_buffer(native_buffer_type)
+        native = self._create_buffer(convert_buffer_type(buffer_type))
         return BufferObj(native, context=self)
 
     def create_buffer_from_numpy_array(self, buffer_type, numpy_array, drop_last_dim=False):
@@ -172,12 +169,9 @@ class OptixContext(NativeContextWrapper, OptixScopedObject):
         return SelectorObj(native, context=self)
 
     def compile_program(self, file_path, ptx_name=None):
-        return self.compiler.compile(file_path, ptx_name)
+        return self._compiler.compile(file_path, ptx_name)
 
     def create_program(self, file_path, function_name, ptx_name=None, compiled_file_path=None):
-        if not self.compiler:
-            self.init_compiler()
-
         if compiled_file_path is None:
             # Compile program
             compiled_file_path, is_compiled = self.compile_program(file_path, ptx_name)

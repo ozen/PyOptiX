@@ -10,7 +10,7 @@ def find_sub_path(sub_path, search_paths):
         if os.path.exists(path):
             return path
 
-    return None
+    raise ValueError('Sub-path not found in searched paths: {0}'.format(sub_path))
 
 
 def is_2_string_tuple(obj):

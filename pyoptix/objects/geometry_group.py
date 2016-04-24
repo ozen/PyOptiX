@@ -45,12 +45,12 @@ class GeometryGroupObj(NativeGeometryGroupWrapper, OptixObject, OptixParent):
 
     def get_materials(self):
         materials = set()
-        for geometry_instance in self.children:
+        for geometry_instance in self._children:
             materials = materials | set(geometry_instance.get_materials())
         return list(materials)
 
     def get_geometries(self):
         geometries = set()
-        for geometry_instance in self.children:
+        for geometry_instance in self._children:
             geometries.add(geometry_instance.get_geometry())
         return list(geometries)

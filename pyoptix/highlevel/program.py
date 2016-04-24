@@ -14,11 +14,14 @@ class Program(ProgramObj):
         if ptx_name is None:
             ptx_name = self._get_ptx_name(file_path)
 
-        internal = context.create_program(file_path=file_path,
-                                          function_name=function_name,
-                                          ptx_name=ptx_name,
-                                          compiled_file_path=compiled_file_path)
-        ProgramObj.__init__(self, native=internal.native, context=context)
+        if compiled_file_path is None:
+            # Compile program
+            compiled_file_path, is_compiled = context.compile_program(file_path, ptx_name)
+
+        # Create program object from compiled file
+        native = context._create_program_from_file(compiled_file_path, function_name)
+
+        ProgramObj.__init__(self, native=native, context=context, file_path=file_path, function_name=function_name)
 
     @classmethod
     def enable_dynamic_programs(cls):
@@ -49,7 +52,7 @@ class Program(ProgramObj):
 
         if program_tuple in cls.__program_cache:
             # program object exists
-            if cls.dynamic_programs:
+            if cls.__dynamic_programs:
                 # check if program recompiles (if program file was changed)
                 compiled_path, is_compiled = context.compile_program(file_path, ptx_name)
                 if is_compiled:
