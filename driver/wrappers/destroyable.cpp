@@ -12,6 +12,7 @@ void NativeDestroyableWrapper::set_destroyable_object(optix::DestroyableObj* obj
 void NativeDestroyableWrapper::destroy() {
     object->destroy();
 }
+
 void NativeDestroyableWrapper::validate() {
     object->validate();
 }

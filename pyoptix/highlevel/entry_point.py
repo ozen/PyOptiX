@@ -5,6 +5,12 @@ logger = logging.getLogger(__name__)
 
 
 class EntryPoint(object):
+    __default_exception_program = None
+
+    @classmethod
+    def set_default_exception_program(cls, exception_program):
+        cls.__default_exception_program = exception_program
+
     def __init__(self, ray_generation_program, exception_program=None, size=None):
         self.ray_generation_program = ray_generation_program
         self.exception_program = exception_program
@@ -26,6 +32,11 @@ class EntryPoint(object):
     def __contains__(self, item):
         return item in self.ray_generation_program
 
+    def destroy(self):
+        self.ray_generation_program.destroy()
+        if self.exception_program is not None:
+            self.exception_program.destroy()
+
     def launch(self, size=None):
         if self.size is None and size is None:
             raise ValueError("Launch size must be set before or while launching")
@@ -36,6 +47,8 @@ class EntryPoint(object):
         context.set_ray_generation_program(0, self.ray_generation_program)
         if self.exception_program is not None:
             context.set_exception_program(0, self.exception_program)
+        elif self.__default_exception_program is not None:
+            context.set_exception_program(0, self.__default_exception_program)
 
         # launch
         context.validate()

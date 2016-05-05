@@ -33,8 +33,9 @@ class Program(ProgramObj):
 
     @classmethod
     def add_program_directory(cls, directory):
-        cls.__program_directories.append(directory)
-        context.compiler.include_paths.append(directory)
+        if directory not in cls.__program_directories:
+            cls.__program_directories.append(directory)
+            context.compiler.include_paths.append(directory)
 
     @classmethod
     def compile_all_directories(cls):
