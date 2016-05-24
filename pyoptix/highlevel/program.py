@@ -1,6 +1,6 @@
 import os
 from pyoptix.objects import ProgramObj
-from pyoptix.highlevel.shared import context
+from pyoptix.highlevel.shared import get_context
 from pyoptix.utils import glob_recursive, find_sub_path
 
 
@@ -8,11 +8,14 @@ class Program(ProgramObj):
     __program_cache = {}
     __program_directories = []
     __dynamic_programs = False
+    __last_context = None
 
     def __init__(self, file_path, function_name, ptx_name=None, compiled_file_path=None):
         file_path = self._get_abs_program_path(file_path)
         if ptx_name is None:
             ptx_name = self._get_ptx_name(file_path)
+
+        context = get_context()
 
         if compiled_file_path is None:
             # Compile program
@@ -33,12 +36,16 @@ class Program(ProgramObj):
 
     @classmethod
     def add_program_directory(cls, directory):
+        context = get_context()
+
         if directory not in cls.__program_directories:
             cls.__program_directories.append(directory)
             context.compiler.include_paths.append(directory)
 
     @classmethod
     def compile_all_directories(cls):
+        context = get_context()
+
         for program_dir in cls.__program_directories:
             for program_path in glob_recursive(program_dir, '*.cu'):
                 file_path = os.path.abspath(program_path)
@@ -51,22 +58,29 @@ class Program(ProgramObj):
         ptx_name = cls._get_ptx_name(file_path)
         program_tuple = (file_path, function_name)
 
-        if program_tuple in cls.__program_cache:
+        context = get_context()
+
+        if context not in cls.__program_cache:
+            cls.__program_cache[context] = {}
+
+        program_cache = cls.__program_cache[context]
+
+        if program_tuple in program_cache:
             # program object exists
             if cls.__dynamic_programs:
                 # check if program recompiles (if program file was changed)
                 compiled_path, is_compiled = context.compile_program(file_path, ptx_name)
                 if is_compiled:
                     # recreate program if it was changed
-                    cls.__program_cache[program_tuple] = cls(file_path, function_name, ptx_name, compiled_path)
+                    program_cache[program_tuple] = cls(file_path, function_name, ptx_name, compiled_path)
             else:
                 # return cached program if dynamic programs are disabled
-                return cls.__program_cache[program_tuple]
+                return program_cache[program_tuple]
         else:
             # compile and create if program object does not exist
-            cls.__program_cache[program_tuple] = cls(file_path, function_name, ptx_name)
+            program_cache[program_tuple] = cls(file_path, function_name, ptx_name)
 
-        return cls.__program_cache[program_tuple]
+        return program_cache[program_tuple]
 
     @classmethod
     def _get_ptx_name(cls, file_path):

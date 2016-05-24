@@ -1,10 +1,11 @@
 import six
 from pyoptix.objects import MaterialObj
-from pyoptix.highlevel.shared import context
+from pyoptix.highlevel.shared import get_context
 
 
 class Material(MaterialObj):
     def __init__(self, closest_hit=None, any_hit=None):
+        context = get_context()
         native = context._create_material()
         MaterialObj.__init__(self, native=native, context=context)
 

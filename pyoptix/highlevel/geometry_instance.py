@@ -1,9 +1,10 @@
 from pyoptix.objects import MaterialObj, GeometryInstanceObj
-from pyoptix.highlevel.shared import context
+from pyoptix.highlevel.shared import get_context
 
 
 class GeometryInstance(GeometryInstanceObj):
     def __init__(self, geometry=None, materials=None):
+        context = get_context()
         native = context._create_geometry_instance()
         GeometryInstanceObj.__init__(self, native=native, context=context)
 

@@ -1,5 +1,5 @@
 import logging
-from pyoptix.highlevel.shared import context
+from pyoptix.highlevel.shared import get_context
 
 logger = logging.getLogger(__name__)
 
@@ -43,6 +43,7 @@ class EntryPoint(object):
         elif size is None:
             size = self.size
 
+        context = get_context()
         context.set_entry_point_count(1)
         context.set_ray_generation_program(0, self.ray_generation_program)
         if self.exception_program is not None:

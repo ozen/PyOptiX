@@ -169,7 +169,7 @@ class OptixContext(NativeContextWrapper, OptixScopedObject):
         return SelectorObj(native, context=self)
 
     def compile_program(self, file_path, ptx_name=None):
-        return self._compiler.compile(file_path, ptx_name)
+        return self.compiler.compile(file_path, ptx_name)
 
     def create_program(self, file_path, function_name, ptx_name=None, compiled_file_path=None):
         if compiled_file_path is None:

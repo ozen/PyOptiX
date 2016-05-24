@@ -1,13 +1,25 @@
 from pyoptix import OptixContext
 
-context = OptixContext()
+_context = OptixContext()
+
+
+def get_context():
+    return _context
 
 
 def use_context(ctx):
     if not isinstance(ctx, OptixContext):
         raise TypeError('context must be an instance of OptixContext')
-    global context
-    context = ctx
+
+    global _context
+    _context.destroy()
+    _context = ctx
+
+
+def reset_context():
+    global _context
+    _context.destroy()
+    _context = OptixContext()
 
 
 class InitChildrenMixin(object):

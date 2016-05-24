@@ -1,11 +1,12 @@
 from pyoptix._driver import OPTIX_VERSION, RTfiltermode
 from pyoptix.objects import TextureSamplerObj
-from pyoptix.highlevel.shared import context
+from pyoptix.highlevel.shared import get_context
 
 
 class TextureSampler(TextureSamplerObj):
     def __init__(self, buffer, wrap_mode=None, indexing_mode=None,
                  read_mode=None, filter_mode=None, max_anisotropy=1):
+        context = get_context()
         native = context._create_texture_sampler()
         TextureSamplerObj.__init__(self, native=native, context=context)
 

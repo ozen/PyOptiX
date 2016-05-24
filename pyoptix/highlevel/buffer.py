@@ -1,11 +1,12 @@
 import numpy
 from pyoptix.objects import BufferObj
-from pyoptix.highlevel.shared import context
+from pyoptix.highlevel.shared import get_context
 from pyoptix.types import convert_buffer_type
 
 
 class Buffer(BufferObj):
     def __init__(self, buffer_type='io'):
+        context = get_context()
         native = context._create_buffer(convert_buffer_type(buffer_type))
         BufferObj.__init__(self, native=native, context=context)
 
