@@ -93,13 +93,13 @@ class BufferObj(NativeBufferWrapper, OptixObject):
         if numpy_array.nbytes != self._get_size_in_bytes():
             raise BufferError("Arrays size must be equal!")
 
-        self._copy_from_numpy_array(numpy_array)
+        self._copy_from_array(numpy_array)
 
     def copy_level_from_numpy_array(self, level, numpy_array):
         if numpy_array.nbytes != self._get_mip_level_size_in_bytes(level):
             raise BufferError("Arrays size must be equal!")
 
-        self._copy_mip_level_from_numpy_array(level, numpy_array)
+        self._copy_mip_level_from_array(level, numpy_array)
 
     def copy_level_from_buffer(self, level, buffer):
         if not isinstance(buffer, BufferObj):
@@ -110,4 +110,4 @@ class BufferObj(NativeBufferWrapper, OptixObject):
         if numpy_array.nbytes != self._get_size_in_bytes():
             raise BufferError("Arrays size must be equal!")
 
-        self._copy_into_numpy_array(numpy_array)
+        self._copy_into_array(numpy_array)

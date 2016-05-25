@@ -36,3 +36,14 @@ class TransformObj(NativeTransformWrapper, OptixObject, OptixParent):
 
     def _set_child_count(self, count):
         pass
+
+    def set_matrix(self, transpose, matrix):
+        matrix = numpy.array(matrix, dtype=numpy.float32)
+
+        if matrix.shape != (4, 4):
+            raise ValueError('Transformation matrix must be 4 by 4')
+
+        self._set_matrix(transpose, matrix.tolist())
+
+    def get_matrix(self, transpose):
+        return numpy.array(self._get_matrix(transpose), dtype=numpy.float32)

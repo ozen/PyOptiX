@@ -19,7 +19,6 @@
 BOOST_PYTHON_MODULE(_driver)
 {
     Py_Initialize();
-    boost::numpy::initialize();
 
     /*
     *   CORE

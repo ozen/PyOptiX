@@ -30,8 +30,7 @@ public:
     void set_geometry_group(NativeGeometryGroupWrapper* geometry_group_wrapper);
     void set_transform(NativeTransformWrapper* transform_wrapper);
     void set_selector(NativeSelectorWrapper* selector_wrapper);
-    void set_from_numpy(const boost::numpy::ndarray& numpy_array);
-    void set_from_numpy_with_type(const boost::numpy::ndarray& numpy_array, RTobjecttype object_type);
+    void set_from_array(PyObject* array, RTobjecttype object_type);
     optix::Variable get_native();
     static void export_for_python();
 };

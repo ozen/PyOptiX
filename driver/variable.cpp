@@ -65,60 +65,57 @@ void NativeVariableWrapper::set_program_id_with_program(NativeProgramWrapper* pr
     this->variable->setProgramId(program_wrapper->get_native());
 }
 
-void NativeVariableWrapper::set_from_numpy_with_type(const boost::numpy::ndarray& numpy_array, RTobjecttype object_type) {
-    long size_in_bytes = get_array_size_in_bytes(numpy_array);
-    void* ptr = numpy_array.get_data();
+void NativeVariableWrapper::set_from_array(PyObject* array, RTobjecttype object_type) {
+    Py_buffer pb;
+    PyObject_GetBuffer(array, &pb, PyBUF_SIMPLE);
 
     switch(object_type)
     {
     case RT_OBJECTTYPE_FLOAT:
-        this->variable->setFloat(((float*)ptr)[0]);
+        this->variable->setFloat(((float*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_FLOAT2:
-        this->variable->setFloat(((optix::float2*)ptr)[0]);
+        this->variable->setFloat(((optix::float2*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_FLOAT3:
-        this->variable->setFloat(((optix::float3*)ptr)[0]);
+        this->variable->setFloat(((optix::float3*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_FLOAT4:
-        this->variable->setFloat(((optix::float3*)ptr)[0]);
+        this->variable->setFloat(((optix::float3*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_INT:
-        this->variable->setInt(((int*)ptr)[0]);
+        this->variable->setInt(((int*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_INT2:
-        this->variable->setInt(((optix::int2*)ptr)[0]);
+        this->variable->setInt(((optix::int2*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_INT3:
-        this->variable->setInt(((optix::int3*)ptr)[0]);
+        this->variable->setInt(((optix::int3*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_INT4:
-        this->variable->setInt(((optix::int4*)ptr)[0]);
+        this->variable->setInt(((optix::int4*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_UNSIGNED_INT:
-        this->variable->setUint(((unsigned int*)ptr)[0]);
+        this->variable->setUint(((unsigned int*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_UNSIGNED_INT2:
-        this->variable->setUint(((optix::uint2*)ptr)[0]);
+        this->variable->setUint(((optix::uint2*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_UNSIGNED_INT3:
-        this->variable->setUint(((optix::uint3*)ptr)[0]);
+        this->variable->setUint(((optix::uint3*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_UNSIGNED_INT4:
-        this->variable->setUint(((optix::uint4*)ptr)[0]);
+        this->variable->setUint(((optix::uint4*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_USER:
-        this->variable->setUserData(size_in_bytes, ptr);
+        this->variable->setUserData(pb.len, pb.buf);
         break;
     default:
         PyErr_SetString(PyExc_RuntimeError, "Cannot assign variable");
         boost::python::throw_error_already_set();
     };
-}
 
-void NativeVariableWrapper::set_from_numpy(const boost::numpy::ndarray& numpy_array) {
-    long size_in_bytes = get_array_size_in_bytes(numpy_array);
-    this->variable->setUserData(size_in_bytes, numpy_array.get_data());
+    PyBuffer_Release(&pb);
 }
 
 optix::Variable NativeVariableWrapper::get_native() {
@@ -144,6 +141,5 @@ void NativeVariableWrapper::export_for_python() {
             .def("_set_geometry_group", &NativeVariableWrapper::set_geometry_group)
             .def("_set_transform", &NativeVariableWrapper::set_transform)
             .def("_set_selector", &NativeVariableWrapper::set_selector)
-            .def("_set_from_numpy", &NativeVariableWrapper::set_from_numpy)
-            .def("_set_from_numpy_with_type", &NativeVariableWrapper::set_from_numpy_with_type);
+            .def("_set_from_array", &NativeVariableWrapper::set_from_array);
 }

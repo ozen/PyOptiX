@@ -22,9 +22,9 @@ public:
     unsigned long get_mip_level_size_in_bytes(unsigned int level);
     void set_element_size(int size_in_bytes);
     int get_element_size();
-    void copy_into_numpy_array(const boost::numpy::ndarray& numpy_array);
-    void copy_from_numpy_array(const boost::numpy::ndarray& numpy_array);
-    void copy_mip_level_from_numpy_array(unsigned int level, const boost::numpy::ndarray& numpy_array);
+    void copy_into_array(PyObject* array);
+    void copy_from_array(PyObject* array);
+    void copy_mip_level_from_array(unsigned int level, PyObject* array);
     unsigned int get_mip_level_count();
     void set_mip_level_count(unsigned int level_count);
     std::vector<int> get_mip_level_size(unsigned int level);

@@ -108,28 +108,34 @@ int NativeBufferWrapper::get_element_size() {
     return this->buffer->getElementSize();
 }
 
-void NativeBufferWrapper::copy_into_numpy_array(const boost::numpy::ndarray& numpy_array) {
+void NativeBufferWrapper::copy_into_array(PyObject* array) {
     void* buff_ptr = this->buffer->map();
-    long size_in_bytes = get_array_size_in_bytes(numpy_array);
-    memcpy(numpy_array.get_data(), buff_ptr, size_in_bytes);
+    Py_buffer pb;
+    PyObject_GetBuffer(array, &pb, PyBUF_SIMPLE);
+    memcpy(pb.buf, buff_ptr, pb.len);
+    PyBuffer_Release(&pb);
     this->buffer->unmap();
 }
 
-void NativeBufferWrapper::copy_from_numpy_array(const boost::numpy::ndarray& numpy_array) {
+void NativeBufferWrapper::copy_from_array(PyObject* array) {
     void* buff_ptr = this->buffer->map();
-    long size_in_bytes = get_array_size_in_bytes(numpy_array);
-    memcpy(buff_ptr, numpy_array.get_data(), size_in_bytes);
+    Py_buffer pb;
+    PyObject_GetBuffer(array, &pb, PyBUF_SIMPLE);
+    memcpy(buff_ptr, pb.buf, pb.len);
+    PyBuffer_Release(&pb);
     this->buffer->unmap();
 }
 
-void NativeBufferWrapper::copy_mip_level_from_numpy_array(unsigned int level, const boost::numpy::ndarray& numpy_array) {
+void NativeBufferWrapper::copy_mip_level_from_array(unsigned int level, PyObject* array) {
     #if OPTIX_VERSION < 3090
         PyErr_SetString(PyExc_NotImplementedError, "OptiX versions before 3.9.0 don't have mipmapping functions");
         boost::python::throw_error_already_set();
     #else
         void* buff_ptr = this->buffer->map(level);
-        long size_in_bytes = get_array_size_in_bytes(numpy_array);
-        memcpy(buff_ptr, numpy_array.get_data(), size_in_bytes);
+        Py_buffer pb;
+        PyObject_GetBuffer(array, &pb, PyBUF_SIMPLE);
+        memcpy(buff_ptr, pb.buf, pb.len);
+        PyBuffer_Release(&pb);
         this->buffer->unmap(level);
     #endif
 }
@@ -196,9 +202,9 @@ void NativeBufferWrapper::export_for_python() {
             .def("_get_size_in_bytes", &NativeBufferWrapper::get_buffer_size_in_bytes)
             .def("_set_element_size", &NativeBufferWrapper::set_element_size)
             .def("_get_element_size", &NativeBufferWrapper::get_element_size)
-            .def("_copy_into_numpy_array", &NativeBufferWrapper::copy_into_numpy_array)
-            .def("_copy_from_numpy_array", &NativeBufferWrapper::copy_from_numpy_array)
-            .def("_copy_mip_level_from_numpy_array", &NativeBufferWrapper::copy_mip_level_from_numpy_array)
+            .def("_copy_into_array", &NativeBufferWrapper::copy_into_array)
+            .def("_copy_from_array", &NativeBufferWrapper::copy_from_array)
+            .def("_copy_mip_level_from_array", &NativeBufferWrapper::copy_mip_level_from_array)
             .def("set_mip_level_count", &NativeBufferWrapper::set_mip_level_count)
             .def("get_mip_level_count", &NativeBufferWrapper::get_mip_level_count)
             .def("get_mip_level_size", &NativeBufferWrapper::get_mip_level_size)
