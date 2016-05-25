@@ -1,7 +1,7 @@
 import sys
 import os
 import fnmatch
-from setuptools import setup, Extension
+from setuptools import setup, Extension, find_packages
 
 
 def glob_recursive(path, pattern):
@@ -21,12 +21,12 @@ EXTENSION_SOURCES = glob_recursive('driver', '*.cpp')
 
 setup(
     name='pyoptix',
-    version='0.7.0a1',
+    version='0.7.0a2',
     description='Python wrapper for NVIDIA OptiX',
     author='Yigit Ozen',
     author_email='ozen@computer.org',
     url='http://github.com/ozen/pyoptix',
-    packages=['pyoptix'],
+    packages=find_packages(),
     ext_modules=[Extension(name='pyoptix._driver',
                            sources=EXTENSION_SOURCES,
                            include_dirs=LIBRARY_INCLUDE + EXTENSION_INCLUDE,
