@@ -53,7 +53,7 @@ class VariableObj(NativeVariableWrapper):
                     value = value.reshape(1)
                 if value.shape[0] != dim:
                     raise TypeError("Cannot convert the value to a numpy array matching {0}.".format(self.type))
-                self._set_from_array(memoryview(value), self.type)
+                self._set_from_array(value, self.type)
                 self._value = value
             except (ValueError, AttributeError):
                 raise TypeError("Variable type is {0}, but {1} was given".format(self.type, type(value)))
@@ -64,7 +64,7 @@ class VariableObj(NativeVariableWrapper):
             if len(value.shape) == 0:
                 value = value.reshape(1)
             object_type = get_object_type_from_dtype(value.dtype, value.shape[-1])
-            self._set_from_array(memoryview(value), object_type)
+            self._set_from_array(value, object_type)
             self._value = value
 
         else:

@@ -33,7 +33,7 @@ EXTENSION_SOURCES = glob_recursive('driver', '*.cpp')
 
 setup(
     name='pyoptix',
-    version='0.7.0',
+    version='0.7.1',
     description='Python wrapper for NVIDIA OptiX',
     author='Yigit Ozen',
     author_email='ozen@computer.org',
