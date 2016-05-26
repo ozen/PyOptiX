@@ -2,6 +2,11 @@
 
 PyOptiX lets you access Nvidia's OptiX Ray Tracing Engine from Python.
 
+## Important Note
+
+setup.py was written for Ubuntu and currently it is not distro-independent.
+You may need to edit some paths for other distros.
+Thankfully it is simply enough.
 
 ## Prerequisites
 
@@ -22,23 +27,28 @@ PyOptiX lets you access Nvidia's OptiX Ray Tracing Engine from Python.
 
 ## Environment Variables
 
-nvcc binary (CUDA compiler) must be in PATH. OptiX library files must be in LD_LIBRARY_PATH.
+nvcc binary (CUDA compiler) must be in PATH. CUDA and OptiX library files must be in LD_LIBRARY_PATH.
 
     export PATH=/usr/local/cuda/bin:$PATH
-    export LD_LIBRARY_PATH=/usr/local/lib:/usr/lib/x86_64-linux-gnu:/usr/local/optix/lib64:$LD_LIBRARY_PATH
+    export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/optix/lib64:$LD_LIBRARY_PATH
 
 To make these changes persistent, edit your ```/etc/environment``` file. Here is an example of /etc/environment file:
 
     PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/cuda/bin"
     LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/lib:/usr/lib/x86_64-linux-gnu:/usr/local/optix/lib64"
 
-Changes in /etc/environment file take effect after re-log.
+Note: Changes in /etc/environment file take effect after re-log.
 
 
 ## Installation
 
+You can use pip
+
     pip install pyoptix
 
+or setup.py directly
+
+    python setup.py install
 
 ## Interface
 
@@ -64,7 +74,7 @@ from pyoptix.highlevel import Group
 main_group = Group()
 ```
 
-### Contributors
+## Contributors
 
 [Yigit Ozen]  
 Mert Kucuk  
