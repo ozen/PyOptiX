@@ -37,7 +37,7 @@ void NativeGeometryInstanceWrapper::export_for_python() {
                 boost::python::init<optix::GeometryInstance>())
 
             .def("_set_geometry", &NativeGeometryInstanceWrapper::set_geometry)
-            .def("_set_material_count", &NativeGeometryInstanceWrapper::set_material_count)
+            .def("set_material_count", &NativeGeometryInstanceWrapper::set_material_count)
             .def("_get_material_count", &NativeGeometryInstanceWrapper::get_material_count)
             .def("_set_material", &NativeGeometryInstanceWrapper::set_material);
 }
