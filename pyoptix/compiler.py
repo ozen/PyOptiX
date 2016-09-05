@@ -9,46 +9,6 @@ from subprocess import check_call, CalledProcessError
 logger = logging.getLogger(__name__)
 
 
-def _is_compile_required(cu_file_path, output_file_path):
-        if os.path.isfile(output_file_path):
-            ptx_file_mtime = os.path.getmtime(output_file_path)
-            cu_file_mtime = os.path.getmtime(cu_file_path)
-            
-            if cu_file_mtime > ptx_file_mtime:
-                return True
-            elif _has_modified_includes(cu_file_path, ptx_file_mtime):
-                return True
-            else:
-                return False
-
-        else:
-            return True
-
-
-def _has_modified_includes(file_path, modified_after, depth=4):
-    if depth == 0:
-        return False
-
-    include_pattern = '#include\s*"(.*)"'
-    file_directory_path = os.path.dirname(file_path)
-
-    with open(file_path) as f:
-        content = f.read()
-        for included_path in re.findall(include_pattern, content):
-            included_file_path = os.path.join(file_directory_path, included_path)
-            if not os.path.exists(included_file_path):
-                continue
-
-            included_file_mtime = os.path.getmtime(included_file_path)
-            
-            if included_file_mtime > modified_after:
-                return True
-            elif _has_modified_includes(included_file_path, modified_after, depth=depth-1):
-                return True
-
-    return False
-
-
 class OptixCompiler(object):
     DEFAULTS = {
         'output_path': '/tmp/pyoptix/ptx',
@@ -71,6 +31,44 @@ class OptixCompiler(object):
         if not os.path.exists(self.output_path):
             os.makedirs(self.output_path)
 
+    def _is_compile_required(self, cu_file_path, output_file_path):
+        if os.path.isfile(output_file_path):
+            ptx_file_mtime = os.path.getmtime(output_file_path)
+            cu_file_mtime = os.path.getmtime(cu_file_path)
+
+            if cu_file_mtime > ptx_file_mtime:
+                return True
+            elif self._has_modified_includes(cu_file_path, ptx_file_mtime):
+                return True
+            else:
+                return False
+
+        else:
+            return True
+
+    def _has_modified_includes(self, file_path, modified_after, depth=4):
+        if depth == 0:
+            return False
+
+        include_pattern = '#include\s*"(.*)"'
+
+        with open(file_path) as f:
+            content = f.read()
+            for included_path in re.findall(include_pattern, content):
+                for compiler_include_path in self.include_paths:
+                    included_file_path = os.path.join(compiler_include_path, included_path)
+                    if not os.path.exists(included_file_path):
+                        continue
+
+                    included_file_mtime = os.path.getmtime(included_file_path)
+
+                    if included_file_mtime > modified_after:
+                        return True
+                    elif self._has_modified_includes(included_file_path, modified_after, depth=depth - 1):
+                        return True
+
+        return False
+
     def compile(self, cu_file_path, ptx_file_name=None):
         if ptx_file_name is None:
             ptx_file_name = '{0}.ptx'.format(os.path.basename(cu_file_path))
@@ -78,7 +76,7 @@ class OptixCompiler(object):
         output_file_path = os.path.join(self.output_path, ptx_file_name)
         is_compiled = True
 
-        if _is_compile_required(cu_file_path, output_file_path):
+        if self._is_compile_required(cu_file_path, output_file_path):
             if os.path.exists(output_file_path):
                 os.remove(output_file_path)
 
