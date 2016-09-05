@@ -15,7 +15,7 @@ class GeometryInstanceObj(NativeGeometryInstanceWrapper, OptixObject, OptixScope
         self._materials = []
 
     def add_material(self, material):
-        self._set_material_count(len(self._materials))
+        self.set_material_count(len(self._materials))
         self._set_material(len(self._materials), material)
 
     def set_material(self, idx, material):
@@ -30,7 +30,7 @@ class GeometryInstanceObj(NativeGeometryInstanceWrapper, OptixObject, OptixScope
         else:
             self._materials[idx] = material
 
-        self._set_material_count(len(self._materials))
+        self.set_material_count(len(self._materials))
         self._set_material(idx, material)
 
     def get_material(self, idx=0):
