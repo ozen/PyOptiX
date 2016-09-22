@@ -1,4 +1,4 @@
-from .shared import use_context
+from .shared import get_context, push_context, pop_context, create_context, destroy_context
 from .acceleration import Acceleration
 from .buffer import Buffer
 from .geometry import Geometry

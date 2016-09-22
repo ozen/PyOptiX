@@ -78,7 +78,7 @@ class PyOptiXInstallCommand(install):
 
 setup(
     name='pyoptix',
-    version='0.7.2',
+    version='0.8.0',
     description='Python wrapper for NVIDIA OptiX',
     author='Yigit Ozen',
     author_email='ozen@computer.org',

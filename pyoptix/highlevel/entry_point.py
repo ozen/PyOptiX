@@ -1,5 +1,5 @@
 import logging
-from pyoptix.highlevel.shared import get_context
+from pyoptix.highlevel import Program, get_context
 
 logger = logging.getLogger(__name__)
 
@@ -8,8 +8,8 @@ class EntryPoint(object):
     __default_exception_program = None
 
     @classmethod
-    def set_default_exception_program(cls, exception_program):
-        cls.__default_exception_program = exception_program
+    def set_default_exception_program(cls, file_path, function_name):
+        cls.__default_exception_program = (file_path, function_name)
 
     def __init__(self, ray_generation_program, exception_program=None, size=None):
         self.ray_generation_program = ray_generation_program
@@ -49,7 +49,7 @@ class EntryPoint(object):
         if self.exception_program is not None:
             context.set_exception_program(0, self.exception_program)
         elif self.__default_exception_program is not None:
-            context.set_exception_program(0, self.__default_exception_program)
+            context.set_exception_program(0, Program.get_or_create(*self.__default_exception_program))
 
         # launch
         context.validate()
