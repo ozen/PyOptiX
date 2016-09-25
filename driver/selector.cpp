@@ -6,10 +6,6 @@ NativeSelectorWrapper::NativeSelectorWrapper(optix::Selector selector){
     this->set_destroyable_object(this->selector.get());
 }
 
-NativeSelectorWrapper::~NativeSelectorWrapper() {
-    if(this->selector.get() != 0) this->selector->destroy();
-}
-
 void NativeSelectorWrapper::set_visit_program(NativeProgramWrapper* program) {
     this->selector->setVisitProgram(program->get_native());
 }

@@ -17,7 +17,6 @@ private:
 
 public:
     NativeVariableWrapper(optix::Variable variable);
-    ~NativeVariableWrapper();
     bool is_valid();
     std::string get_name();
     std::string get_annotation();

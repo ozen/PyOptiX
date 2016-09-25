@@ -9,10 +9,6 @@ NativeTransformWrapper::NativeTransformWrapper(optix::Transform transform) {
     this->set_destroyable_object(this->transform.get());
 }
 
-NativeTransformWrapper::~NativeTransformWrapper() {
-    if(this->transform.get() != 0) this->transform->destroy();
-}
-
 void NativeTransformWrapper::set_matrix(bool transpose, boost::python::list& matrix) {
     float flat_matrix[16];
     int i, j;

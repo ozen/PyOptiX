@@ -13,7 +13,6 @@ private:
 
 public:
     NativeGeometryGroupWrapper(optix::GeometryGroup geometry_group);
-    ~NativeGeometryGroupWrapper();
     void set_acceleration(NativeAccelerationWrapper* acceleration);
     void set_child_count(unsigned int count);
     unsigned int get_child_count();

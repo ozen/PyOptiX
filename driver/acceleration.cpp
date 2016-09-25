@@ -6,11 +6,6 @@ NativeAccelerationWrapper::NativeAccelerationWrapper(optix::Acceleration acceler
     this->set_destroyable_object(this->acceleration.get());
 }
 
-NativeAccelerationWrapper::~NativeAccelerationWrapper() {
-    if(acceleration.get() != 0)
-        this->acceleration->destroy();
-}
-
 void NativeAccelerationWrapper::set_property(std::string name, std::string value_name) {
     this->acceleration->setProperty(name, value_name);
 }

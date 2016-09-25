@@ -1,8 +1,6 @@
 #include "scoped.h"
 
 
-NativeScopedWrapper::NativeScopedWrapper() {}
-
 void NativeScopedWrapper::set_scoped_object(optix::ScopedObj* scoped_object) {
     this->scoped_object = scoped_object;
     this->set_destroyable_object(scoped_object);

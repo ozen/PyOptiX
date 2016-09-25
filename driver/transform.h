@@ -14,7 +14,6 @@ private:
 
 public:
     NativeTransformWrapper(optix::Transform transform);
-    ~NativeTransformWrapper();
     void set_matrix(bool transpose, boost::python::list &matrix);
     boost::python::list get_matrix(bool transpose);
     void set_child_geometry_group(unsigned int index, NativeGeometryGroupWrapper* child);

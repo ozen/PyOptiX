@@ -1,3 +1,4 @@
+import weakref
 from pyoptix._driver import NativeContextWrapper, RTexception
 from pyoptix.compiler import Compiler
 from pyoptix.mixins.scoped import ScopedMixin
@@ -26,8 +27,16 @@ class Context(NativeContextWrapper, ScopedMixin):
         ScopedMixin.__init__(self)
         self._compiler = None
         self._miss_programs = {}
+        self._destroyables = []
 
         _push_context(self)
+
+    def __del__(self):
+        for destroyable in self._destroyables:
+            if destroyable() is not None:
+                destroyable()._set_destroyed()
+
+        NativeContextWrapper.__del__(self)
 
     def push(self):
         if current_context() == self:
@@ -87,6 +96,61 @@ class Context(NativeContextWrapper, ScopedMixin):
 
     def set_all_exceptions_enabled(self, is_enabled):
         self.set_exception_enabled(RTexception.RT_EXCEPTION_ALL, is_enabled)
+
+    def _create_accelerator(self, builder, traverser):
+        obj = NativeContextWrapper._create_accelerator(self, builder, traverser)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
+
+    def _create_geometry(self):
+        obj = NativeContextWrapper._create_geometry(self)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
+
+    def _create_buffer(self, buffer_type):
+        obj = NativeContextWrapper._create_buffer(self)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
+
+    def _create_geometry_group(self):
+        obj = NativeContextWrapper._create_geometry_group(self)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
+
+    def _create_geometry_instance(self):
+        obj = NativeContextWrapper._create_geometry_instance(self)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
+
+    def _create_group(self):
+        obj = NativeContextWrapper._create_group(self)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
+
+    def _create_material(self):
+        obj = NativeContextWrapper._create_material(self)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
+
+    def _create_program_from_file(self, file_name, function_name):
+        obj = NativeContextWrapper._create_program_from_file(self, file_name, function_name)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
+
+    def _create_selector(self):
+        obj = NativeContextWrapper._create_selector(self)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
+
+    def _create_texture_sampler(self):
+        obj = NativeContextWrapper._create_texture_sampler(self)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
+
+    def _create_transform(self):
+        obj = NativeContextWrapper._create_transform(self)
+        self._destroyables.append(weakref.ref(obj))
+        return obj
 
 
 # Create a context automatically

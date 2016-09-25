@@ -21,7 +21,6 @@ private:
 
 public:
     NativeContextWrapper();
-    ~NativeContextWrapper();
     optix::Variable get_assignable_variable(const std::string& variable_name);
     unsigned int get_ray_type_count();
     unsigned int get_entry_point_count();

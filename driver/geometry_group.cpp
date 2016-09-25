@@ -6,10 +6,6 @@ NativeGeometryGroupWrapper::NativeGeometryGroupWrapper(optix::GeometryGroup geom
     this->set_destroyable_object(this->geometry_group.get());
 }
 
-NativeGeometryGroupWrapper::~NativeGeometryGroupWrapper() {
-    if(this->geometry_group.get() != 0) this->geometry_group->destroy();
-}
-
 void NativeGeometryGroupWrapper::set_acceleration(NativeAccelerationWrapper* acceleration) {
     this->geometry_group->setAcceleration(acceleration->get_native());
 }

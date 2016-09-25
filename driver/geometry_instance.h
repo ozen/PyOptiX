@@ -12,7 +12,6 @@ private:
 
 public:
     NativeGeometryInstanceWrapper(optix::GeometryInstance geometry_instance);
-    ~NativeGeometryInstanceWrapper();
     void set_geometry(NativeGeometryWrapper* geometry);
     void set_material_count(unsigned int count);
     unsigned int get_material_count();

@@ -9,7 +9,6 @@ private:
     optix::ScopedObj* scoped_object;
 
 protected:
-    NativeScopedWrapper();
     void set_scoped_object(optix::ScopedObj* scoped_object);
 
 public:

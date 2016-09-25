@@ -6,10 +6,6 @@ NativeTextureSamplerWrapper::NativeTextureSamplerWrapper(optix::TextureSampler t
     this->set_destroyable_object(this->texture_sampler.get());
 }
 
-NativeTextureSamplerWrapper::~NativeTextureSamplerWrapper() {
-    if(this->texture_sampler.get() != 0) this->texture_sampler->destroy();
-}
-
 void NativeTextureSamplerWrapper::set_mip_level_clamp(float min_level, float max_level) {
     #if OPTIX_VERSION < 3090
         PyErr_SetString(PyExc_NotImplementedError, "OptiX versions before 3.9.0 don't have mipmapping functions");

@@ -11,7 +11,6 @@ private:
 
 public:
     NativeTextureSamplerWrapper(optix::TextureSampler texture_sampler);
-    ~NativeTextureSamplerWrapper();
     int get_id();
     void set_mip_level_clamp(float min_level, float max_level);
     std::vector<float> get_mip_level_clamp();

@@ -8,10 +8,6 @@ NativeGroupWrapper::NativeGroupWrapper(optix::Group group) {
     this->set_destroyable_object(this->group.get());
 }
 
-NativeGroupWrapper::~NativeGroupWrapper() {
-    if(this->group.get() != 0) this->group->destroy();
-}
-
 void NativeGroupWrapper::set_acceleration(NativeAccelerationWrapper* acceleration) {
     this->group->setAcceleration(acceleration->get_native());
 }

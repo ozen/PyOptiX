@@ -6,10 +6,6 @@ NativeMaterialWrapper::NativeMaterialWrapper(optix::Material material) {
     this->set_scoped_object(this->material.get());
 }
 
-NativeMaterialWrapper::~NativeMaterialWrapper() {
-    if(this->material.get() != 0) this->material->destroy();
-}
-
 void NativeMaterialWrapper::set_closest_hit_program(unsigned int ray_type_index, NativeProgramWrapper* program) {
     this->material->setClosestHitProgram(ray_type_index, program->get_native());
 }
