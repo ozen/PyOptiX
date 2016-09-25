@@ -43,7 +43,7 @@ Changes in /etc/environment file take effect after re-log. Here is an example of
 
 ## Installation
 
-1) Using pip
+#### Using pip
 
     pip install pyoptix
     
@@ -51,7 +51,7 @@ Use the following format to override default CUDA and OptiX paths:
 
     pip install pyoptix --install-option="--cuda=/usr/local/cuda-7.5" --install-option="--optix=/opt/NVIDIA-OptiX-SDK-4.0.0-linux64"
 
-2) From source
+#### From Source
 
     git clone https://github.com/ozen/PyOptiX.git
     cd pyoptix
