@@ -63,31 +63,4 @@ Use the following format to override default CUDA and OptiX paths:
 
 ## API Reference
 
-`pyoptix.objects` module mimics OptiX interface. Start by creating an OptiX context:
-
-```python
-from pyoptix.objects import OptixContext
-context = OptixContext()
-```
-
-Then, OptiX objects are created through context
-
-```python
-main_group = context.create_group()
-```
-
-`pyoptix.highlevel` module extends objects to provide an easier interface. It creates a default context and use it. 
-
-You can provide your own context if you wish. Whenever a call to `pyoptix.highlevel` needs a context, it uses the last set context.
-
-```python
-from pyoptix.highlevel import Group
-main_group = Group()
-```
-
-## Contributors
-
-[Yigit Ozen]  
-Mert Kucuk  
-
-[Yigit Ozen]: github.com/ozen
+Will be added soon.
