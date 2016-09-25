@@ -9,7 +9,7 @@ from subprocess import check_call, CalledProcessError
 logger = logging.getLogger(__name__)
 
 
-class OptixCompiler(object):
+class Compiler(object):
     DEFAULTS = {
         'output_path': '/tmp/pyoptix/ptx',
         'include_paths': ['/usr/local/optix/include'],
@@ -20,7 +20,7 @@ class OptixCompiler(object):
     def __init__(self, output_path=DEFAULTS['output_path'], include_paths=None, arch=DEFAULTS['arch'],
                  use_fast_math=DEFAULTS['use_fast_math']):
 
-        self.include_paths = OptixCompiler.DEFAULTS['include_paths']
+        self.include_paths = Compiler.DEFAULTS['include_paths']
         if include_paths:
             self.include_paths.extend(include_paths)
 

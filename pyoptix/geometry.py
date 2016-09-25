@@ -1,16 +1,18 @@
 from pyoptix._driver import NativeGeometryWrapper
-from pyoptix.objects.shared.optix_scoped_object import OptixScopedObject
-from pyoptix.objects.shared.optix_object import OptixObject
+from pyoptix.context import current_context
 
 
-class GeometryObj(NativeGeometryWrapper, OptixObject, OptixScopedObject):
-    def __init__(self, native, context):
-        OptixObject.__init__(self, context, native)
+class Geometry(NativeGeometryWrapper):
+    def __init__(self, bounding_box_program, intersection_program):
+        self._context = current_context()
+        native = self._context._create_geometry()
         NativeGeometryWrapper.__init__(self, native)
-        OptixScopedObject.__init__(self)
 
         self._bounding_box_program = None
         self._intersection_program = None
+
+        self.set_bounding_box_program(bounding_box_program)
+        self.set_intersection_program(intersection_program)
 
     def set_bounding_box_program(self, program):
         self._bounding_box_program = program

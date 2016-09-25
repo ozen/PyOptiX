@@ -14,7 +14,7 @@ OBJECT_TYPE_TO_SET_FUNCTION = {
 }
 
 
-class VariableObj(NativeVariableWrapper):
+class Variable(NativeVariableWrapper):
     def __init__(self, wrapped_variable):
         NativeVariableWrapper.__init__(self, wrapped_variable._native)
         self._value = None

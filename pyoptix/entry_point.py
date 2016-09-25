@@ -1,5 +1,6 @@
 import logging
-from pyoptix.highlevel import Program, get_context
+from pyoptix.context import current_context
+from pyoptix.program import Program
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +13,7 @@ class EntryPoint(object):
         cls.__default_exception_program = (file_path, function_name)
 
     def __init__(self, ray_generation_program, exception_program=None, size=None):
+        self.context = current_context()
         self.ray_generation_program = ray_generation_program
         self.exception_program = exception_program
         self.size = size
@@ -37,15 +39,18 @@ class EntryPoint(object):
         if self.exception_program is not None:
             self.exception_program.destroy()
 
-    def launch(self, size=None):
+    def launch(self, context=None, size=None):
         if self.size is None and size is None:
             raise ValueError("Launch size must be set before or while launching")
         elif size is None:
             size = self.size
 
-        context = get_context()
+        if context is None:
+            context = self.context
+
         context.set_entry_point_count(1)
         context.set_ray_generation_program(0, self.ray_generation_program)
+
         if self.exception_program is not None:
             context.set_exception_program(0, self.exception_program)
         elif self.__default_exception_program is not None:

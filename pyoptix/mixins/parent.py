@@ -1,13 +1,21 @@
-class OptixParent(object):
-    def __init__(self, allowed_children):
+class ParentMixin(object):
+    def __init__(self, allowed_children, children=None):
         self._children = []
         self._allowed_children = allowed_children
 
+        if children is not None:
+            if not isinstance(children, list):
+                raise TypeError('children parameter must be a list')
+
+            for child in children:
+                self.add_child(child)
+
     def add_child(self, child):
+
         is_allowed = False
 
-        for allowed_children in self._allowed_children:
-            if isinstance(child, allowed_children):
+        for allowed_child_name in self._allowed_children:
+            if allowed_child_name in locals() and isinstance(child, locals()[allowed_child_name]):
                 is_allowed = True
                 break
 
@@ -30,30 +38,30 @@ class OptixParent(object):
         return total_child_count
 
     def _set_optix_child(self, index, child):
-        from pyoptix.objects.acceleration import AccelerationObj
-        from pyoptix.objects.geometry import GeometryObj
-        from pyoptix.objects.geometry_group import GeometryGroupObj
-        from pyoptix.objects.geometry_instance import GeometryInstanceObj
-        from pyoptix.objects.group import GroupObj
-        from pyoptix.objects.material import MaterialObj
-        from pyoptix.objects.selector import SelectorObj
-        from pyoptix.objects.transform import TransformObj
+        from pyoptix.acceleration import Acceleration
+        from pyoptix.geometry import Geometry
+        from pyoptix.geometry_group import GeometryGroup
+        from pyoptix.geometry_instance import GeometryInstance
+        from pyoptix.group import Group
+        from pyoptix.material import Material
+        from pyoptix.selector import Selector
+        from pyoptix.transform import Transform
 
-        if isinstance(child, AccelerationObj):
+        if isinstance(child, Acceleration):
             self._set_child_acceleration(index, child)
-        elif isinstance(child, TransformObj):
+        elif isinstance(child, Transform):
             self._set_child_transform(index, child)
-        elif isinstance(child, GeometryGroupObj):
+        elif isinstance(child, GeometryGroup):
             self._set_child_geometry_group(index, child)
-        elif isinstance(child, SelectorObj):
+        elif isinstance(child, Selector):
             self._set_child_selector(index, child)
-        elif isinstance(child, GroupObj):
+        elif isinstance(child, Group):
             self._set_child_group(index, child)
-        elif isinstance(child, GeometryInstanceObj):
+        elif isinstance(child, GeometryInstance):
             self._set_child_geometry_instance(index, child)
-        elif isinstance(child, GeometryObj):
+        elif isinstance(child, Geometry):
             self._set_child_geometry(index, child)
-        elif isinstance(child, MaterialObj):
+        elif isinstance(child, Material):
             self._set_child_material(index, child)
         else:
             raise TypeError(

@@ -1,11 +1,10 @@
-from pyoptix.objects.variable import VariableObj
-
-
-class OptixScopedObject(object):
+class ScopedMixin(object):
     def __init__(self):
-        self._variables = dict()
+        self._variables = {}
 
     def __setitem__(self, key, value):
+        from pyoptix.variable import Variable
+
         added_variable_to_optix = False
 
         wrapped_variable = self._query_variable(key)
@@ -14,7 +13,7 @@ class OptixScopedObject(object):
             added_variable_to_optix = True
 
         try:
-            optix_variable = VariableObj(wrapped_variable)
+            optix_variable = Variable(wrapped_variable)
             optix_variable.value = value
             self._variables[key] = optix_variable
         except Exception as e:

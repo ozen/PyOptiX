@@ -1,16 +1,29 @@
+import six
 from pyoptix._driver import NativeMaterialWrapper
-from pyoptix.objects.shared.optix_object import OptixObject
-from pyoptix.objects.shared.optix_scoped_object import OptixScopedObject
+from pyoptix.context import current_context
+from pyoptix.mixins.scoped import ScopedMixin
 
 
-class MaterialObj(NativeMaterialWrapper, OptixObject, OptixScopedObject):
-    def __init__(self, native, context):
-        OptixObject.__init__(self, context, native)
+class Material(NativeMaterialWrapper, ScopedMixin):
+    def __init__(self, closest_hit=None, any_hit=None):
+        self._context = current_context()
+        native = self._context._create_material()
         NativeMaterialWrapper.__init__(self, native)
-        OptixScopedObject.__init__(self)
+        ScopedMixin.__init__(self)
 
         self._closest_hit_programs = {}
         self._any_hit_programs = {}
+
+        if closest_hit is None:
+            closest_hit = {}
+        if any_hit is None:
+            any_hit = {}
+
+        for key, value in six.iteritems(closest_hit):
+            self.set_closest_hit_program(key, value)
+
+        for key, value in six.iteritems(any_hit):
+            self.set_any_hit_program(key, value)
 
     def set_closest_hit_program(self, ray_type_index, program):
         self._closest_hit_programs[ray_type_index] = program

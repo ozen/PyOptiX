@@ -1,25 +1,41 @@
 from pyoptix._driver import NativeGeometryInstanceWrapper
-from pyoptix.objects.material import MaterialObj
-from pyoptix.objects.geometry import GeometryObj
-from pyoptix.objects.shared.optix_object import OptixObject
-from pyoptix.objects.shared.optix_scoped_object import OptixScopedObject
+from pyoptix.context import current_context
+from pyoptix.geometry import Geometry
+from pyoptix.material import Material
+from pyoptix.mixins.scoped import ScopedMixin
 
 
-class GeometryInstanceObj(NativeGeometryInstanceWrapper, OptixObject, OptixScopedObject):
-    def __init__(self, native, context):
-        OptixObject.__init__(self, context, native)
+class GeometryInstance(NativeGeometryInstanceWrapper, ScopedMixin):
+    def __init__(self, geometry=None, materials=None):
+        self._context = current_context()
+        native = self._context._create_geometry_instance()
         NativeGeometryInstanceWrapper.__init__(self, native)
-        OptixScopedObject.__init__(self)
+        ScopedMixin.__init__(self)
 
         self._geometry = None
         self._materials = []
+
+        if geometry is not None and isinstance(materials, Geometry):
+            self.set_geometry(geometry)
+
+        if materials is not None:
+            # allow single material parameter
+            if isinstance(materials, Material):
+                materials = [materials]
+
+            if not isinstance(materials, list):
+                raise TypeError('materials parameter must be a list')
+
+            self.set_material_count(len(materials))
+            for idx, material in enumerate(materials):
+                self.set_material(idx, material)
 
     def add_material(self, material):
         self.set_material_count(len(self._materials))
         self._set_material(len(self._materials), material)
 
     def set_material(self, idx, material):
-        if not isinstance(material, MaterialObj):
+        if not isinstance(material, Material):
             raise TypeError('Parameter material is not of type MaterialObj')
 
         if idx > len(self._materials):
@@ -46,7 +62,7 @@ class GeometryInstanceObj(NativeGeometryInstanceWrapper, OptixObject, OptixScope
         return len(self._materials)
 
     def set_geometry(self, geometry):
-        if not isinstance(geometry, GeometryObj):
+        if not isinstance(geometry, Geometry):
             raise TypeError('Parameter geometry is not of type GeometryObj')
 
         self._geometry = geometry

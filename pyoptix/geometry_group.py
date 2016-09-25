@@ -1,16 +1,18 @@
 from pyoptix._driver import NativeGeometryGroupWrapper
-from pyoptix.objects.shared.optix_parent import OptixParent
-from pyoptix.objects.shared.optix_object import OptixObject
-from pyoptix.objects.geometry_instance import GeometryInstanceObj
-from pyoptix.objects.acceleration import AccelerationObj
+from pyoptix.context import current_context
+from pyoptix.mixins.parent import ParentMixin
 
 
-class GeometryGroupObj(NativeGeometryGroupWrapper, OptixObject, OptixParent):
-    def __init__(self, native, context):
-        OptixObject.__init__(self, context, native)
+class GeometryGroup(NativeGeometryGroupWrapper, ParentMixin):
+    def __init__(self, children=None):
+        from pyoptix.acceleration import Acceleration
+        from pyoptix.geometry_instance import GeometryInstance
+
+        self._context = current_context()
+        native = self._context._create_geometry_group()
         NativeGeometryGroupWrapper.__init__(self, native)
-        allowed_children = [GeometryInstanceObj, AccelerationObj]
-        OptixParent.__init__(self, allowed_children)
+        ParentMixin.__init__(self, [Acceleration, GeometryInstance], children)
+
         self._acceleration = None
 
     def set_acceleration(self, acceleration):
@@ -25,20 +27,20 @@ class GeometryGroupObj(NativeGeometryGroupWrapper, OptixObject, OptixParent):
     Use Context scope when a variable is assigned to GeometryGroup
     """
     def __getitem__(self, item):
-        return self.context[item]
+        return self._context[item]
 
     def __setitem__(self, key, value):
         if value is not None:
-            self.context[key] = value
+            self._context[key] = value
 
     def __delitem__(self, key):
-        del self.context[key]
+        del self._context[key]
 
     def __contains__(self, item):
-        return item in self.context
+        return item in self._context
 
     """
-    Override get children methods because GeometryGroupObj's children must be GeometryInstanceObjs
+    Override get children methods because GeometryGroup's children must be of type GeometryInstance
     """
     def get_geometry_instances(self):
         return self._children
