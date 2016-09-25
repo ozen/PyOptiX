@@ -3,7 +3,6 @@ from pyoptix._driver import NativeContextWrapper, RTexception
 from pyoptix.compiler import Compiler
 from pyoptix.mixins.scoped import ScopedMixin
 
-
 _context_stack = []
 
 
@@ -26,15 +25,23 @@ class Context(NativeContextWrapper, ScopedMixin):
         NativeContextWrapper.__init__(self)
         ScopedMixin.__init__(self)
         self._compiler = None
+        self._program_cache = {}
         self._miss_programs = {}
         self._destroyables = []
 
         _push_context(self)
 
+        sm_major, sm_minor = self.get_device_compute_capability(0)
+        Compiler._arch = "sm_{0}{1}".format(sm_major, sm_minor)
+
     def __del__(self):
         for destroyable in self._destroyables:
             if destroyable() is not None:
                 destroyable()._set_destroyed()
+
+    @property
+    def program_cache(self):
+        return self._program_cache
 
     def push(self):
         if current_context() == self:
@@ -47,35 +54,6 @@ class Context(NativeContextWrapper, ScopedMixin):
             _pop_context()
         else:
             raise RuntimeError("Cannot pop: Context is not at the top of the stack")
-
-    @property
-    def compiler(self):
-        if self._compiler is None:
-            self.init_compiler()
-        return self._compiler
-
-    def init_compiler(self, output_path=None, include_paths=None, arch=None, use_fast_math=None):
-        kwargs = {}
-
-        if output_path:
-            kwargs['output_path'] = output_path
-
-        if include_paths:
-            kwargs['include_paths'] = include_paths
-
-        if use_fast_math:
-            kwargs['use_fast_math'] = use_fast_math
-
-        if arch:
-            kwargs['arch'] = arch
-        else:
-            sm_major, sm_minor = self.get_device_compute_capability(0)
-            kwargs['arch'] = "sm_{0}{1}".format(sm_major, sm_minor)
-
-        self._compiler = Compiler(**kwargs)
-
-    def compile_program(self, file_path, ptx_name=None):
-        return self.compiler.compile(file_path, ptx_name)
 
     def launch(self, entry_point_index, width, height=None, depth=None):
         if not height:

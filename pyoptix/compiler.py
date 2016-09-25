@@ -3,42 +3,38 @@ import re
 import os
 import shlex
 import fnmatch
+import six
 from subprocess import check_call, CalledProcessError
-
+from pyoptix.utils import glob_recursive, find_sub_path
 
 logger = logging.getLogger(__name__)
 
 
-class Compiler(object):
-    DEFAULTS = {
-        'output_path': '/tmp/pyoptix/ptx',
-        'include_paths': ['/usr/local/optix/include'],
-        'arch': 'sm_21',
-        'use_fast_math': True,
-    }
+class CompilerMeta(type):
+    def __init__(cls, name, bases, attrs):
+        super(CompilerMeta, cls).__init__(name, bases, attrs)
 
-    def __init__(self, output_path=DEFAULTS['output_path'], include_paths=None, arch=DEFAULTS['arch'],
-                 use_fast_math=DEFAULTS['use_fast_math']):
+        if not os.path.exists(attrs['output_path']):
+            os.makedirs(attrs['output_path'])
 
-        self.include_paths = Compiler.DEFAULTS['include_paths']
-        if include_paths:
-            self.include_paths.extend(include_paths)
 
-        self.output_path = output_path
-        self.arch = arch
-        self.use_fast_math = use_fast_math
+class Compiler(six.with_metaclass(CompilerMeta, object)):
+    optix_include_path = '/usr/local/optix/include'
+    program_directories = []
+    output_path = '/tmp/pyoptix/ptx'
+    use_fast_math = True
+    dynamic_programs = False
+    _arch = 'sm_21'
 
-        if not os.path.exists(self.output_path):
-            os.makedirs(self.output_path)
+    @classmethod
+    def is_compile_required(cls, source_path, ptx_path):
+        if os.path.isfile(ptx_path):
+            ptx_mtime = os.path.getmtime(ptx_path)
+            source_mtime = os.path.getmtime(source_path)
 
-    def _is_compile_required(self, cu_file_path, output_file_path):
-        if os.path.isfile(output_file_path):
-            ptx_file_mtime = os.path.getmtime(output_file_path)
-            cu_file_mtime = os.path.getmtime(cu_file_path)
-
-            if cu_file_mtime > ptx_file_mtime:
+            if source_mtime > ptx_mtime:
                 return True
-            elif self._has_modified_includes(cu_file_path, ptx_file_mtime):
+            elif cls._has_modified_includes(source_path, ptx_mtime):
                 return True
             else:
                 return False
@@ -46,7 +42,8 @@ class Compiler(object):
         else:
             return True
 
-    def _has_modified_includes(self, file_path, modified_after, depth=4):
+    @classmethod
+    def _has_modified_includes(cls, file_path, modified_after, depth=4):
         if depth == 0:
             return False
 
@@ -55,7 +52,7 @@ class Compiler(object):
         with open(file_path) as f:
             content = f.read()
             for included_path in re.findall(include_pattern, content):
-                for compiler_include_path in self.include_paths:
+                for compiler_include_path in cls.program_directories:
                     included_file_path = os.path.join(compiler_include_path, included_path)
                     if not os.path.exists(included_file_path):
                         continue
@@ -64,29 +61,30 @@ class Compiler(object):
 
                     if included_file_mtime > modified_after:
                         return True
-                    elif self._has_modified_includes(included_file_path, modified_after, depth=depth - 1):
+                    elif cls._has_modified_includes(included_file_path, modified_after, depth=depth - 1):
                         return True
 
         return False
 
-    def compile(self, cu_file_path, ptx_file_name=None):
+    @classmethod
+    def compile(cls, cu_file_path, ptx_file_name=None):
         if ptx_file_name is None:
             ptx_file_name = '{0}.ptx'.format(os.path.basename(cu_file_path))
 
-        output_file_path = os.path.join(self.output_path, ptx_file_name)
+        output_file_path = os.path.join(cls.output_path, ptx_file_name)
         is_compiled = True
 
-        if self._is_compile_required(cu_file_path, output_file_path):
+        if cls.is_compile_required(cu_file_path, output_file_path):
             if os.path.exists(output_file_path):
                 os.remove(output_file_path)
 
             logger.info("Compiling {0}".format(cu_file_path))
             bash_command = "nvcc " + cu_file_path
             bash_command += " -ptx"
-            bash_command += " -arch=" + self.arch
-            if self.use_fast_math:
+            bash_command += " -arch=" + cls._arch
+            if cls.use_fast_math:
                 bash_command += " --use_fast_math"
-            for include_path in self.include_paths:
+            for include_path in cls.program_directories + [cls.optix_include_path]:
                 if os.path.exists(include_path):
                     bash_command += " -I=" + include_path
             bash_command += " -o=" + output_file_path
@@ -105,8 +103,32 @@ class Compiler(object):
 
         return output_file_path, is_compiled
 
-    def clean(self):
-        if os.path.exists(self.output_path):
-            for dirpath, dirnames, filenames in os.walk(self.output_path):
+    @classmethod
+    def compile_all_directories(cls):
+        for program_dir in cls.program_directories:
+            for program_path in glob_recursive(program_dir, '*.cu'):
+                file_path = os.path.abspath(program_path)
+                ptx_name = cls.get_ptx_name(file_path)
+                Compiler.compile(file_path, ptx_name)
+
+    @classmethod
+    def clean(cls):
+        if os.path.exists(cls.output_path):
+            for dirpath, dirnames, filenames in os.walk(cls.output_path):
                 for filename in fnmatch.filter(filenames, '*.ptx'):
                     os.remove(os.path.join(dirpath, filename))
+
+    @staticmethod
+    def get_ptx_name(file_path):
+        return '%s.ptx' % file_path.replace(os.sep, '_')
+
+    @classmethod
+    def get_abs_program_path(cls, file_path):
+        if os.path.exists(file_path):
+            return file_path
+        else:
+            abs_path = find_sub_path(file_path, cls.program_directories)
+            if os.path.exists(abs_path):
+                return abs_path
+            else:
+                raise ValueError('File not found')

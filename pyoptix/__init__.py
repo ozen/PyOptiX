@@ -1,5 +1,6 @@
 from .acceleration import Acceleration
 from .buffer import Buffer
+from .compiler import Compiler
 from .context import Context, current_context
 from .entry_point import EntryPoint
 from .geometry import Geometry
