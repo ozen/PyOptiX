@@ -119,6 +119,10 @@ class Compiler(six.with_metaclass(CompilerMeta, object)):
                     os.remove(os.path.join(dirpath, filename))
 
     @staticmethod
+    def is_ptx(file_path):
+        return os.path.splitext(file_path)[1].lower() == '.ptx'
+
+    @staticmethod
     def get_ptx_name(file_path):
         return '%s.ptx' % file_path.replace(os.sep, '_')
 

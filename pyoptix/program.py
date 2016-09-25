@@ -6,32 +6,34 @@ from pyoptix.mixins.scoped import ScopedMixin
 
 
 class Program(NativeProgramWrapper, ScopedMixin):
-    def __init__(self, file_path, function_name, ptx_name=None, compiled_file_path=None):
+    def __init__(self, file_path, function_name, output_ptx_name=None):
         self._context = current_context()
-
-        self._file_path = Compiler.get_abs_program_path(file_path)
         self._function_name = function_name
 
-        if ptx_name is None:
-            ptx_name = Compiler.get_ptx_name(self._file_path)
+        file_path = Compiler.get_abs_program_path(file_path)
 
-        if compiled_file_path is None:
+        if Compiler.is_ptx(file_path):
+            self._ptx_path = file_path
+        else:
+            # if not ptx, compile to ptx
+            if output_ptx_name is None:
+                output_ptx_name = Compiler.get_ptx_name(file_path)
+
             # Compile program
-            compiled_file_path, is_compiled = Compiler.compile(file_path, ptx_name)
+            self._ptx_path, _ = Compiler.compile(file_path, output_ptx_name)
 
         # Create program object from compiled file
-        native = self._context._create_program_from_file(compiled_file_path, function_name)
-
+        native = self._context._create_program_from_file(self._ptx_path, self._function_name)
         NativeProgramWrapper.__init__(self, native)
         ScopedMixin.__init__(self)
 
     @property
     def name(self):
-        return "({0}, {1})".format(os.path.basename(self._file_path), self._function_name)
+        return "({0}, {1})".format(os.path.basename(self._ptx_path), self._function_name)
 
     @property
     def file_path(self):
-        return self._file_path
+        return self._ptx_path
 
     @property
     def function_name(self):
@@ -40,21 +42,18 @@ class Program(NativeProgramWrapper, ScopedMixin):
     @classmethod
     def get_or_create(cls, file_path, function_name):
         file_path = Compiler.get_abs_program_path(file_path)
-        ptx_name = Compiler.get_ptx_name(file_path)
-        program_tuple = (file_path, function_name)
-
+        cache_key = (file_path, function_name)
         context = current_context()
 
-        if program_tuple in context.program_cache:
-            # program object exists
-            if Compiler.dynamic_programs:
-                # check if program recompiles (if program file was changed)
-                compiled_path, is_compiled = Compiler.compile(file_path, ptx_name)
-                if is_compiled:
-                    # recreate program since it was changed
-                    context.program_cache[program_tuple] = cls(file_path, function_name, ptx_name, compiled_path)
-        else:
-            # compile and create if program object does not exist
-            context.program_cache[program_tuple] = cls(file_path, function_name, ptx_name)
+        if cache_key not in context.program_cache:
+            # create new if it does not exist in cache
+            context.program_cache[cache_key] = cls(file_path, function_name)
+        elif not Compiler.is_ptx(file_path) and Compiler.dynamic_programs:
+            # check if the source file was changed. it is compiled if it was changed
+            ptx_path, is_compiled = Compiler.compile(file_path, Compiler.get_ptx_name(file_path))
 
-        return context.program_cache[program_tuple]
+            # recreate program object if it was changed
+            if is_compiled:
+                context.program_cache[cache_key] = cls(ptx_path, function_name)
+
+        return context.program_cache[cache_key]
