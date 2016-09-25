@@ -16,10 +16,6 @@ class Program(NativeProgramWrapper, ScopedMixin):
             self._ptx_path = file_path
         else:
             # if not ptx, compile to ptx
-            if output_ptx_name is None:
-                output_ptx_name = Compiler.get_ptx_name(file_path)
-
-            # Compile program
             self._ptx_path, _ = Compiler.compile(file_path, output_ptx_name)
 
         # Create program object from compiled file
@@ -50,7 +46,7 @@ class Program(NativeProgramWrapper, ScopedMixin):
             context.program_cache[cache_key] = cls(file_path, function_name)
         elif not Compiler.is_ptx(file_path) and Compiler.dynamic_programs:
             # check if the source file was changed. it is compiled if it was changed
-            ptx_path, is_compiled = Compiler.compile(file_path, Compiler.get_ptx_name(file_path))
+            ptx_path, is_compiled = Compiler.compile(file_path)
 
             # recreate program object if it was changed
             if is_compiled:
