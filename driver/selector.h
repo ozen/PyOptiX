@@ -15,6 +15,7 @@ private:
 
 public:
     NativeSelectorWrapper(optix::Selector selector);
+    ~NativeSelectorWrapper();
     void set_visit_program(NativeProgramWrapper* program);
     void set_child_count(unsigned int count);
     unsigned int get_child_count();

@@ -1,6 +1,7 @@
 import logging
 from pyoptix.context import current_context
 from pyoptix.program import Program
+from pyoptix.utils import is_2_string_tuple
 
 logger = logging.getLogger(__name__)
 
@@ -14,8 +15,17 @@ class EntryPoint(object):
 
     def __init__(self, ray_generation_program, exception_program=None, size=None):
         self.context = current_context()
-        self.ray_generation_program = ray_generation_program
-        self.exception_program = exception_program
+
+        if is_2_string_tuple(ray_generation_program):
+            self.ray_generation_program = Program(*ray_generation_program)
+        elif isinstance(ray_generation_program, Program):
+            self.ray_generation_program = ray_generation_program
+
+        if is_2_string_tuple(exception_program):
+            self.exception_program = Program(*exception_program)
+        elif isinstance(exception_program, Program):
+            self.exception_program = exception_program
+
         self.size = size
 
     def __call__(self):
@@ -33,11 +43,6 @@ class EntryPoint(object):
         
     def __contains__(self, item):
         return item in self.ray_generation_program
-
-    def destroy(self):
-        self.ray_generation_program.destroy()
-        if self.exception_program is not None:
-            self.exception_program.destroy()
 
     def launch(self, context=None, size=None):
         if self.size is None and size is None:

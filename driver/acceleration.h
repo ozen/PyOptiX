@@ -9,6 +9,7 @@ private:
 
 public:
     NativeAccelerationWrapper(optix::Acceleration acceleration);
+    ~NativeAccelerationWrapper();
     void set_property(std::string name, std::string value_name);
     void mark_dirty();
     bool is_dirty();

@@ -6,6 +6,13 @@ NativeGeometryInstanceWrapper::NativeGeometryInstanceWrapper(optix::GeometryInst
     this->set_scoped_object(this->geometry_instance.get());
 }
 
+NativeGeometryInstanceWrapper::~NativeGeometryInstanceWrapper() {
+    if (!is_destroyed) {
+        this->geometry_instance->destroy();
+        is_destroyed = true;
+    }
+}
+
 void NativeGeometryInstanceWrapper::set_geometry(NativeGeometryWrapper* geometry) {
     return this->geometry_instance->setGeometry(geometry->get_native());
 }

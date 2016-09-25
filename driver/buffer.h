@@ -10,6 +10,7 @@ private:
 
 public:
     NativeBufferWrapper(optix::Buffer buffer);
+    ~NativeBufferWrapper();
     int get_id();
     void mark_dirty();
     void set_format(RTformat format);

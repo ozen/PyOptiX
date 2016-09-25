@@ -6,6 +6,13 @@ NativeProgramWrapper::NativeProgramWrapper(optix::Program program) {
     this->set_scoped_object(this->program.get());
 }
 
+NativeProgramWrapper::~NativeProgramWrapper() {
+    if (!is_destroyed) {
+        this->program->destroy();
+        is_destroyed = true;
+    }
+}
+
 int NativeProgramWrapper::get_id() {
     return this->program->getId();
 }

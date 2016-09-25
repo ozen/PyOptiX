@@ -6,6 +6,13 @@ NativeBufferWrapper::NativeBufferWrapper(optix::Buffer buffer) {
     this->set_destroyable_object(this->buffer.get());
 }
 
+NativeBufferWrapper::~NativeBufferWrapper() {
+    if (!is_destroyed) {
+        this->buffer->destroy();
+        is_destroyed = true;
+    }
+}
+
 int NativeBufferWrapper::get_id() {
     return this->buffer->getId();
 }

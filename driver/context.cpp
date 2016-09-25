@@ -6,6 +6,13 @@ NativeContextWrapper::NativeContextWrapper(): NativeScopedWrapper() {
     this->set_scoped_object(this->context.get());
 }
 
+NativeContextWrapper::~NativeContextWrapper() {
+    if (!is_destroyed) {
+        this->context->destroy();
+        is_destroyed = true;
+    }
+}
+
 optix::Variable NativeContextWrapper::get_assignable_variable(const std::string& variable_name) {
     return this->context[variable_name];
 }

@@ -6,6 +6,13 @@ NativeGeometryWrapper::NativeGeometryWrapper(optix::Geometry geometry) {
     this->set_scoped_object(this->geometry.get());
 }
 
+NativeGeometryWrapper::~NativeGeometryWrapper() {
+    if (!is_destroyed) {
+        this->geometry->destroy();
+        is_destroyed = true;
+    }
+}
+
 void NativeGeometryWrapper::mark_dirty() {
     this->geometry->markDirty();
 }

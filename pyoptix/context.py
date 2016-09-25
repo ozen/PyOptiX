@@ -36,8 +36,6 @@ class Context(NativeContextWrapper, ScopedMixin):
             if destroyable() is not None:
                 destroyable()._set_destroyed()
 
-        NativeContextWrapper.__del__(self)
-
     def push(self):
         if current_context() == self:
             raise RuntimeError("Cannot push: Context is already at the top of the stack")
@@ -108,7 +106,7 @@ class Context(NativeContextWrapper, ScopedMixin):
         return obj
 
     def _create_buffer(self, buffer_type):
-        obj = NativeContextWrapper._create_buffer(self)
+        obj = NativeContextWrapper._create_buffer(self, buffer_type)
         self._destroyables.append(weakref.ref(obj))
         return obj
 
@@ -154,4 +152,4 @@ class Context(NativeContextWrapper, ScopedMixin):
 
 
 # Create a context automatically
-_context_stack.append(Context())
+Context()

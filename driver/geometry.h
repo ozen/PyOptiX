@@ -11,6 +11,7 @@ private:
 
 public:
     NativeGeometryWrapper(optix::Geometry geometry);
+    ~NativeGeometryWrapper();
     void mark_dirty();
     bool is_dirty();
     void set_primitive_count(unsigned int num_primitives);

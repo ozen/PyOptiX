@@ -16,6 +16,7 @@ private:
 
 public:
     NativeGroupWrapper(optix::Group group);
+    ~NativeGroupWrapper();
     void set_acceleration(NativeAccelerationWrapper* acceleration);
     void set_child_count(unsigned int count);
     unsigned int get_child_count();
