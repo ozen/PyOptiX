@@ -1,9 +1,22 @@
 import sys
-import platform
 import os
 import fnmatch
-from setuptools import setup, Extension, find_packages
+from subprocess import check_call
+from tempfile import NamedTemporaryFile
+from setuptools import setup, Extension, find_packages, Command
 from setuptools.command.install import install
+from setuptools.command.build_ext import build_ext
+
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import SafeConfigParser as ConfigParser
+
+# Modify variables below according to your system.
+CUDA_ROOT = '/usr/local/cuda'
+OPTIX_ROOT = '/usr/local/optix'
+BOOST_LIB_DIR = None
+BOOST_PYTHON_LIBNAME = "boost_python-py%s%s" % (sys.version_info.major, sys.version_info.minor)
 
 
 def glob_recursive(path, pattern):
@@ -13,68 +26,98 @@ def glob_recursive(path, pattern):
             matches.append(os.path.join(dirpath, filename))
     return matches
 
-DEFAULT_CUDA_PATH = '/usr/local/cuda'
-DEFAULT_OPTIX_PATH = '/usr/local/optix'
 
-dist_name = platform.linux_distribution()[0]
-
-if dist_name.upper() in ["RHEL", "CENTOS", "FEDORA"]:
-    PYTHON_VERSION_SUFFIX = str(sys.version_info.major)
-elif dist_name.upper() in ["DEBIAN", "UBUNTU"]:
-    PYTHON_VERSION_SUFFIX = "-py%s%s" % (sys.version_info.major, sys.version_info.minor)
-else:
-    # I don't know
-    PYTHON_VERSION_SUFFIX = "-py%s%s" % (sys.version_info.major, sys.version_info.minor)
-
-
-LIBRARIES = ['optix',
-             'optixu',
-             'cudart',
-             'boost_python%s' % PYTHON_VERSION_SUFFIX]
-
-LIBRARY_DIRS = [os.path.join(DEFAULT_CUDA_PATH, 'lib64'),
-                os.path.join(DEFAULT_OPTIX_PATH, 'lib64')]
-
-LIBRARY_INCLUDE = [os.path.join(DEFAULT_CUDA_PATH, 'include'),
-                   os.path.join(DEFAULT_OPTIX_PATH, 'include')]
-
-EXTENSION_INCLUDE = [x[0] for x in os.walk('driver')]
-EXTENSION_SOURCES = glob_recursive('driver', '*.cpp')
-
-
-class PyOptiXInstallCommand(install):
-    user_options = install.user_options + [
-        ('cuda=', None, 'installation directory of CUDA'),
-        ('optix=', None, 'installation directory of OptiX'),
+class PyOptiXCommand(Command):
+    user_options = [
+        ('cuda-root=', None, 'installation directory of CUDA'),
+        ('optix-root=', None, 'installation directory of OptiX'),
+        ('boost-lib-dir=', None, 'directory that Boost library resides'),
+        ('boost-python-libname=', None, 'name of the Boost.Python library file, e.g. boost_python-py32'),
     ]
 
     def initialize_options(self):
-        super(PyOptiXInstallCommand, self).initialize_options()
-        self.cuda = DEFAULT_CUDA_PATH
-        self.optix = DEFAULT_OPTIX_PATH
+        self.cuda_root = CUDA_ROOT
+        self.optix_root = OPTIX_ROOT
+        self.boost_lib_dir = BOOST_LIB_DIR
+        self.boost_python_libname = BOOST_PYTHON_LIBNAME
 
     def finalize_options(self):
-        super(PyOptiXInstallCommand, self).finalize_options()
+        if not os.path.isdir(self.cuda_root):
+            raise OSError('CUDA directory does not exist: {0}. \n'
+                          'Provide a valid directory with cuda-root=<path> option.'.format(self.cuda_root))
 
-        if not os.path.isdir(self.cuda):
-            raise OSError('CUDA directory does not exist: {0}'.format(self.cuda))
+        if not os.path.isdir(self.optix_root):
+            raise OSError('OptiX directory does not exist: {0} \n'
+                          'Provide a valid directory with optix-root=<path> option.'.format(self.optix_root))
 
-        if not os.path.isdir(self.optix):
-            raise OSError('OptiX directory does not exist: {0}'.format(self.optix))
+        if self.boost_lib_dir is not None and not os.path.isdir(self.boost_lib_dir):
+            raise OSError('Boost Library directory does not exist: {0}'.format(self.boost_lib_dir))
 
-        include_dirs = self.distribution.ext_modules[0].include_dirs
-        include_dirs = [item for item in include_dirs if item not in LIBRARY_INCLUDE] + [
-            os.path.join(self.cuda, 'include'),
-            os.path.join(self.optix, 'include')
-        ]
-        self.distribution.ext_modules[0].include_dirs = include_dirs
+        cuda_include = os.path.join(self.cuda_root, 'include')
+        optix_include = os.path.join(self.optix_root, 'include')
+        cuda_lib = os.path.join(self.cuda_root, 'lib64')
+        optix_lib = os.path.join(self.optix_root, 'lib64')
 
-        library_dirs = self.distribution.ext_modules[0].library_dirs
-        library_dirs = [item for item in library_dirs if item not in LIBRARY_DIRS] + [
-            os.path.join(self.cuda, 'lib64'),
-            os.path.join(self.optix, 'lib64')
-        ]
-        self.distribution.ext_modules[0].library_dirs = library_dirs
+        self.distribution.ext_modules[0].include_dirs.extend([cuda_include, optix_include])
+        self.distribution.ext_modules[0].library_dirs.extend([cuda_lib, optix_lib])
+        self.distribution.ext_modules[0].runtime_library_dirs.extend([cuda_lib, optix_lib])
+        self.distribution.ext_modules[0].libraries.append(self.boost_python_libname)
+
+        if self.boost_lib_dir is not None:
+            self.distribution.ext_modules[0].library_dirs.append(self.boost_lib_dir)
+            self.distribution.ext_modules[0].runtime_library_dirs.append(self.boost_lib_dir)
+
+    def run(self):
+        nvcc_path = os.path.join(self.cuda_root, 'bin', 'nvcc')
+        cuda_include = os.path.join(self.cuda_root, 'include')
+        optix_include = os.path.join(self.optix_root, 'include')
+        cuda_lib = os.path.join(self.cuda_root, 'lib64')
+        optix_lib = os.path.join(self.optix_root, 'lib64')
+
+        try:
+            config = ConfigParser()
+            config.add_section('pyoptix')
+            nvcc_command = "{0} -I{1} -I{2} -L{3} -L{4} -loptix -loptixu -lcudart".format(
+                nvcc_path, cuda_include, optix_include, cuda_lib, optix_lib)
+            config.set('pyoptix', 'nvcc_command', nvcc_command)
+
+            tmp = NamedTemporaryFile(mode='w+', delete=False)
+            config.write(tmp)
+            tmp.close()
+            check_call(['sudo', 'cp', tmp.name, '/etc/pyoptix.conf'])
+            check_call(['sudo', 'chmod', '444', '/etc/pyoptix.conf'])
+        except Exception as e:
+            print("nvcc configuration could not be saved. When you use PyOptiX Compiler, "
+                  "nvcc path must be in PATH and OptiX library paths must be in LD_LIBRARY_PATH")
+
+
+class PyOptiXInstallCommand(install, PyOptiXCommand):
+    user_options = install.user_options + PyOptiXCommand.user_options
+
+    def initialize_options(self):
+        install.initialize_options(self)
+        PyOptiXCommand.initialize_options(self)
+
+    def finalize_options(self):
+        install.finalize_options(self)
+        PyOptiXCommand.finalize_options(self)
+
+    def run(self):
+        install.run(self)
+        PyOptiXCommand.run(self)
+
+
+class PyOptiXBuildExtCommand(build_ext, PyOptiXCommand):
+    user_options = build_ext.user_options + PyOptiXCommand.user_options
+
+    def initialize_options(self):
+        build_ext.initialize_options(self)
+        PyOptiXCommand.initialize_options(self)
+
+    def finalize_options(self):
+        build_ext.finalize_options(self)
+        PyOptiXCommand.finalize_options(self)
+
 
 setup(
     name='pyoptix',
@@ -86,13 +129,13 @@ setup(
     url='http://github.com/ozen/pyoptix',
     packages=find_packages(),
     cmdclass={
-        'install': PyOptiXInstallCommand
+        'install': PyOptiXInstallCommand,
+        'build_ext': PyOptiXBuildExtCommand,
     },
     ext_modules=[Extension(name='pyoptix._driver',
-                           sources=EXTENSION_SOURCES,
-                           include_dirs=LIBRARY_INCLUDE + EXTENSION_INCLUDE,
-                           library_dirs=LIBRARY_DIRS,
-                           libraries=LIBRARIES)],
+                           sources=glob_recursive('driver', '*.cpp'),
+                           include_dirs=[x[0] for x in os.walk('driver')],
+                           libraries=['optix', 'optixu', 'cudart'])],
     install_requires=['six', 'numpy'],
     classifiers=[
         'Development Status :: 5 - Production/Stable',

@@ -2,64 +2,66 @@
 
 PyOptiX lets you access Nvidia's OptiX Ray Tracing Engine from Python.
 
-## Important Note
-
-We have made our best efforts to make setup.py compatible with most Linux distributions, but you may need to pull the source 
-and modify it if it doesn't work for you, for example by not being able to determine Boost.Python library file name correctly.
-
-
-## Prerequisites
-
-1. CUDA
-
-    Default directory is `/usr/local/cuda`. If it's different in your system, 
-    either use symlinks or pass `--cuda=<path>` option to setup.
-
-2. OptiX
-
-    Default directory is `/usr/local/optix`. If it's different in your system, 
-    either use symlinks or pass `--optix=<path>` option to setup.
-
-3. Boost.Python
-
-    Boost.Python must be installed. For Ubuntu, the install command will look like this:
-
-        sudo apt-get install libboost-python-dev
-        
-
-## Environment Variables
-
-nvcc binary (CUDA compiler) must be in `PATH`. CUDA and OptiX library files must be in `LD_LIBRARY_PATH`.
-
-    export PATH=/usr/local/cuda/bin:$PATH
-    export LD_LIBRARY_PATH=/usr/local/cuda/lib64:/usr/local/optix/lib64:$LD_LIBRARY_PATH
-
-To make these changes persistent, edit your `/etc/environment` file. 
-Changes in /etc/environment file take effect after re-log. Here is an example of /etc/environment file:
-
-    PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/local/cuda/bin"
-    LD_LIBRARY_PATH="/usr/local/cuda/lib64:/usr/local/lib:/usr/lib/x86_64-linux-gnu:/usr/local/optix/lib64"
-
-
 ## Installation
+
+#### Prerequisites
+
+    * Install the necessary libraries. For Ubuntu, the install command will look like this:
+
+        sudo apt-get install -y build-essential python-dev python-setuptools python3-dev python3-setuptools libboost-python-dev
+
+    * CUDA and OptiX SDK's must be installed before installing PyOptiX.
+
+
+#### Paths to libraries
+
+    The setup script must be able to locate CUDA, OptiX, and Boost.Python library files.
+    If their paths are different in your system than the defaults, you can pass the paths through command line options.
+
+    1. CUDA:
+        Default location is `/usr/local/cuda`. You can use symlinks or pass `--cuda-root=<path>` option to setup script.
+    2. OptiX:
+        Default location is `/usr/local/optix`. You can use symlinks or pass `--optix-root=<path>` option to setup script.
+    3. Boost.Python:
+        Searched in LD_LIBRARY_PATH. Default library file name is boost_python-py<version suffix>
+        e.g. boost_python-py34 for Python 3.4. You can pass a different directory to find Boost.Python
+        using --boost-lib-dir=<path> option. You can pass the library file name using boost-python-libname=<name> option.
+
 
 #### Using pip
 
     pip install pyoptix
     
-Use the following format to override default CUDA and OptiX paths:
+Example usage of setup options:
 
-    pip install pyoptix --install-option="--cuda=/usr/local/cuda-7.5" --install-option="--optix=/opt/NVIDIA-OptiX-SDK-4.0.0-linux64"
+    pip install pyoptix \
+    --install-option="--cuda-root=/usr/local/cuda-7.5" \
+    --install-option="--optix-root=/opt/NVIDIA-OptiX-SDK-4.0.0-linux64" \
+    --install-option="--boost-lib-dir=/usr/lib/weird-path" \
+    --install-option="--boost-python-libname=boost_python3"
 
-#### From Source
+#### From source
 
     git clone https://github.com/ozen/PyOptiX.git
     cd pyoptix
     python setup.py install
     
-Use the following format to override default CUDA and OptiX paths:
+Example usage of setup options:
 
-    python setup.py install --cuda=/usr/local/cuda-7.5 --optix=/opt/NVIDIA-OptiX-SDK-4.0.0-linux64
+    python setup.py install \
+    --cuda-root=/usr/local/cuda-7.5 \
+    --optix-root=/opt/NVIDIA-OptiX-SDK-4.0.0-linux64 \
+    --boost-lib-dir=/usr/lib/weird-path \
+    --boost-python-libname=boost_python3
+
+#### Root access to create config file
+
+Setup script will ask for root access to create /etc/pyoptix.conf file which consists of nvcc configuration that is
+used by PyOptiX compiler while compiling program sources to ptx files during runtime.
+
+If the creation succeeds, PyOptiX compiler will work out of the box.
+If it fails, in order to PyOptiX compiler work, nvcc binary path must be in PATH, and required library file paths
+including CUDA and OptiX must be in LD_LIBRARY_PATH environment variables.
 
 ## API Reference
 

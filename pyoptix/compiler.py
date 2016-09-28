@@ -7,6 +7,11 @@ import six
 from subprocess import check_call, CalledProcessError
 from pyoptix.utils import glob_recursive, find_sub_path
 
+try:
+    from configparser import ConfigParser
+except ImportError:
+    from ConfigParser import SafeConfigParser as ConfigParser
+
 logger = logging.getLogger(__name__)
 
 
@@ -14,13 +19,19 @@ class CompilerMeta(type):
     def __init__(cls, name, bases, attrs):
         super(CompilerMeta, cls).__init__(name, bases, attrs)
 
+        if os.path.exists('/etc/pyoptix.conf'):
+            config = ConfigParser()
+            config.read('/etc/pyoptix.conf')
+            nvcc_command = config.get('pyoptix', 'nvcc_command')
+            if nvcc_command is not None:
+                attrs['nvcc_command'] = nvcc_command
+
         if not os.path.exists(attrs['output_path']):
             os.makedirs(attrs['output_path'])
 
 
 class Compiler(six.with_metaclass(CompilerMeta, object)):
-    nvcc_path = 'nvcc'
-    optix_include_path = '/usr/local/optix/include'
+    nvcc_command = 'nvcc'
     program_directories = []
     output_path = '/tmp/pyoptix/ptx'
     use_fast_math = True
@@ -80,12 +91,12 @@ class Compiler(six.with_metaclass(CompilerMeta, object)):
                 os.remove(output_ptx_path)
 
             logger.info("Compiling {0}".format(source_path))
-            bash_command = cls.nvcc_path + " " + source_path
+            bash_command = cls.nvcc_command + " " + source_path
             bash_command += " -ptx"
             bash_command += " -arch=" + cls._arch
             if cls.use_fast_math:
                 bash_command += " --use_fast_math"
-            for include_path in cls.program_directories + [cls.optix_include_path]:
+            for include_path in cls.program_directories:
                 if os.path.exists(include_path):
                     bash_command += " -I=" + include_path
             bash_command += " -o=" + output_ptx_path

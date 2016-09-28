@@ -20,11 +20,15 @@ class EntryPoint(object):
             self.ray_generation_program = Program(*ray_generation_program)
         elif isinstance(ray_generation_program, Program):
             self.ray_generation_program = ray_generation_program
+        else:
+            raise ValueError('Invalid ray generation program given')
 
         if is_2_string_tuple(exception_program):
             self.exception_program = Program(*exception_program)
-        elif isinstance(exception_program, Program):
+        elif isinstance(exception_program, Program) or exception_program is None:
             self.exception_program = exception_program
+        else:
+            raise ValueError('Invalid exception program given')
 
         self.size = size
 

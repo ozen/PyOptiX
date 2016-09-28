@@ -1,5 +1,1 @@
-* Remove platform.linux_distribution from setup.py
-* Remove CUDA dependency
-* Create setup config file?
-* Automatically insert paths to environmental variables
-* Remove buffer shape reversing?
+* Allow setting matrices to optix variables through numpy

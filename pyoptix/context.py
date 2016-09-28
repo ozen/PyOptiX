@@ -1,5 +1,6 @@
 import weakref
-from pyoptix._driver import NativeContextWrapper, RTexception
+from pyoptix._driver import NativeContextWrapper
+from pyoptix.enums import Exception
 from pyoptix.compiler import Compiler
 from pyoptix.mixins.scoped import ScopedMixin
 
@@ -71,7 +72,7 @@ class Context(NativeContextWrapper, ScopedMixin):
         return self._miss_programs[ray_type_index]
 
     def set_all_exceptions_enabled(self, is_enabled):
-        self.set_exception_enabled(RTexception.RT_EXCEPTION_ALL, is_enabled)
+        self.set_exception_enabled(Exception.all, is_enabled)
 
     def _create_accelerator(self, builder, traverser):
         obj = NativeContextWrapper._create_accelerator(self, builder, traverser)

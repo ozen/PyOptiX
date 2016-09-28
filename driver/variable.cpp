@@ -79,7 +79,7 @@ void NativeVariableWrapper::set_from_array(PyObject* array, RTobjecttype object_
         this->variable->setFloat(((optix::float3*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_FLOAT4:
-        this->variable->setFloat(((optix::float3*)pb.buf)[0]);
+        this->variable->setFloat(((optix::float4*)pb.buf)[0]);
         break;
     case RT_OBJECTTYPE_INT:
         this->variable->setInt(((int*)pb.buf)[0]);

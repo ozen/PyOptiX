@@ -1,16 +1,17 @@
 import numpy
-from pyoptix._driver import NativeVariableWrapper, RTobjecttype
+from pyoptix._driver import NativeVariableWrapper
+from pyoptix.enums import ObjectType
 from pyoptix.types import get_object_type_from_dtype, get_dtype_from_object_type, \
     get_object_type_from_pyoptix_class
 
 OBJECT_TYPE_TO_SET_FUNCTION = {
-    RTobjecttype.RT_OBJECTTYPE_BUFFER: '_set_buffer',
-    RTobjecttype.RT_OBJECTTYPE_TEXTURE_SAMPLER: '_set_texture',
-    RTobjecttype.RT_OBJECTTYPE_PROGRAM: '_set_program_id_with_program',
-    RTobjecttype.RT_OBJECTTYPE_GROUP: '_set_group',
-    RTobjecttype.RT_OBJECTTYPE_GEOMETRY_GROUP: '_set_geometry_group',
-    RTobjecttype.RT_OBJECTTYPE_SELECTOR: '_set_selector',
-    RTobjecttype.RT_OBJECTTYPE_TRANSFORM: '_set_transform',
+    ObjectType.buffer: '_set_buffer',
+    ObjectType.texture_sampler: '_set_texture',
+    ObjectType.program: '_set_program_id_with_program',
+    ObjectType.group: '_set_group',
+    ObjectType.geometry_group: '_set_geometry_group',
+    ObjectType.selector: '_set_selector',
+    ObjectType.transform: '_set_transform',
 }
 
 
@@ -26,7 +27,7 @@ class Variable(NativeVariableWrapper):
     @value.setter
     def value(self, value):
         optix_has_type = False
-        if self.type != RTobjecttype.RT_OBJECTTYPE_UNKNOWN and self.type != RTobjecttype.RT_OBJECTTYPE_USER:
+        if self.type != ObjectType.unknown and self.type != ObjectType.user:
             optix_has_type = True
 
         class_object_type = get_object_type_from_pyoptix_class(value)
@@ -34,7 +35,7 @@ class Variable(NativeVariableWrapper):
         if class_object_type:
             # OPTION 1: value is a known OptiX object like GeometryGroup, Buffer etc.
             # do a preliminary check on type right now so it won't fail in device-compile time
-            if optix_has_type and self.type != class_object_type and self.type != RTobjecttype.RT_OBJECTTYPE_OBJECT:
+            if optix_has_type and self.type != class_object_type and self.type != ObjectType.object:
                 raise TypeError("Variable type is {0}, but {1} was given".format(self.type, type(value)))
 
             # call the respective set function of the optix type of the variable

@@ -1,4 +1,5 @@
-from pyoptix._driver import NativeTextureSamplerWrapper, OPTIX_VERSION, RTfiltermode, RTfiltermode
+from pyoptix._driver import NativeTextureSamplerWrapper, OPTIX_VERSION
+from pyoptix.enums import FilterMode
 from pyoptix.context import current_context
 from pyoptix.types import convert_filtering_mode, convert_wrap_mode, convert_read_mode, convert_indexing_mode
 
@@ -30,7 +31,7 @@ class TextureSampler(NativeTextureSamplerWrapper):
             if OPTIX_VERSION >= 3090 and buffer.get_mip_level_count() > 1:
                 self.set_filtering_modes(filter_mode, filter_mode, filter_mode)
             else:
-                self.set_filtering_modes(filter_mode, filter_mode, RTfiltermode.RT_FILTER_NONE)
+                self.set_filtering_modes(filter_mode, filter_mode, FilterMode.none)
 
         self.set_max_anisotropy(max_anisotropy)
 
@@ -54,13 +55,13 @@ class TextureSampler(NativeTextureSamplerWrapper):
         mipmapping = convert_filtering_mode(mipmapping)
 
         if minification is None:
-            minification = RTfiltermode.RT_FILTER_NONE
+            minification = FilterMode.none
 
         if magnification is None:
-            magnification = RTfiltermode.RT_FILTER_NONE
+            magnification = FilterMode.none
 
         if mipmapping is None:
-            mipmapping = RTfiltermode.RT_FILTER_NONE
+            mipmapping = FilterMode.none
 
         self.filtering_mode_minification = minification
         self.filtering_mode_magnification = magnification
