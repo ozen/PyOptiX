@@ -6,26 +6,26 @@ PyOptiX lets you access Nvidia's OptiX Ray Tracing Engine from Python.
 
 #### Prerequisites
 
-    * Install the necessary libraries. For Ubuntu, the install command will look like this:
+* Install the necessary libraries. For Ubuntu, the install command will look like this:
 
-        sudo apt-get install -y build-essential python-dev python-setuptools python3-dev python3-setuptools libboost-python-dev
+    sudo apt-get install -y build-essential python-dev python-setuptools python3-dev python3-setuptools libboost-python-dev
 
-    * CUDA and OptiX SDK's must be installed before installing PyOptiX.
+* CUDA and OptiX SDK's must be installed before installing PyOptiX.
 
 
 #### Paths to libraries
 
-    The setup script must be able to locate CUDA, OptiX, and Boost.Python library files.
-    If their paths are different in your system than the defaults, you can pass the paths through command line options.
+The setup script must be able to locate CUDA, OptiX, and Boost.Python library files.
+If their paths are different in your system than the defaults, you can pass the paths through command line options.
 
-    1. CUDA:
-        Default location is `/usr/local/cuda`. You can use symlinks or pass `--cuda-root=<path>` option to setup script.
-    2. OptiX:
-        Default location is `/usr/local/optix`. You can use symlinks or pass `--optix-root=<path>` option to setup script.
-    3. Boost.Python:
-        Searched in LD_LIBRARY_PATH. Default library file name is boost_python-py<version suffix>
-        e.g. boost_python-py34 for Python 3.4. You can pass a different directory to find Boost.Python
-        using --boost-lib-dir=<path> option. You can pass the library file name using boost-python-libname=<name> option.
+1. CUDA:
+    Default location is `/usr/local/cuda`. You can use symlinks or pass `--cuda-root=<path>` option to setup script.
+2. OptiX:
+    Default location is `/usr/local/optix`. You can use symlinks or pass `--optix-root=<path>` option to setup script.
+3. Boost.Python:
+    Searched in LD_LIBRARY_PATH. Default library file name is boost_python-py<version suffix>
+    e.g. boost_python-py34 for Python 3.4. You can pass a different directory to find Boost.Python
+    using --boost-lib-dir=<path> option. You can pass the library file name using boost-python-libname=<name> option.
 
 
 #### Using pip
