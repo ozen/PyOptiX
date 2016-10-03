@@ -37,13 +37,7 @@ class Buffer(NativeBufferWrapper):
                 raise TypeError('array parameter must be a numpy array or castable to numpy array')
 
         instance = cls(buffer_type=buffer_type)
-        instance.restructure_and_copy_from_numpy_array(array, drop_last_dim)
-        return instance
-
-    @classmethod
-    def zeros(cls, shape, dtype=numpy.float32, buffer_type='io', drop_last_dim=False):
-        instance = cls(buffer_type=buffer_type)
-        instance.restructure_and_copy_from_numpy_array(numpy.zeros(shape, dtype=dtype), drop_last_dim)
+        instance._restructure_and_copy_from_numpy_array(array, drop_last_dim)
         return instance
 
     def set_format(self, format=None, dtype=None, type_size=1):
@@ -85,25 +79,31 @@ class Buffer(NativeBufferWrapper):
         temp_shape = temp_shape[::-1]
         self._set_size(list(temp_shape))
 
-    def restructure_according_to_numpy_array(self, numpy_array, drop_last_dim=False):
+    def _restructure_according_to_numpy_array(self, numpy_array, drop_last_dim=False):
         self.reset_buffer(numpy_shape=numpy_array.shape, dtype=numpy_array.dtype, drop_last_dim=drop_last_dim)
 
-    def restructure_and_copy_from_numpy_array(self, numpy_array, drop_last_dim=False):
-        self.restructure_according_to_numpy_array(numpy_array, drop_last_dim)
-        self.copy_data_from_numpy_array(numpy_array)
+    def _restructure_and_copy_from_numpy_array(self, numpy_array, drop_last_dim=False):
+        self._restructure_according_to_numpy_array(numpy_array, drop_last_dim)
+        self.copy_from_array(numpy_array)
 
-    def get_as_numpy_array(self):
+    def to_array(self):
         numpy_array = numpy.empty(self._numpy_shape, dtype=self.dtype)
-        self.copy_data_into_numpy_array(numpy_array)
+        self.copy_to_array(numpy_array)
         return numpy_array
 
-    def copy_data_from_numpy_array(self, numpy_array):
+    def copy_to_array(self, numpy_array):
+        if numpy_array.nbytes != self._get_size_in_bytes():
+            raise BufferError("Arrays size must be equal!")
+
+        self._copy_into_array(numpy_array)
+
+    def copy_from_array(self, numpy_array):
         if numpy_array.nbytes != self._get_size_in_bytes():
             raise BufferError("Arrays size must be equal!")
 
         self._copy_from_array(numpy_array)
 
-    def copy_level_from_numpy_array(self, level, numpy_array):
+    def copy_level_from_array(self, level, numpy_array):
         if numpy_array.nbytes != self._get_mip_level_size_in_bytes(level):
             raise BufferError("Arrays size must be equal!")
 
@@ -112,10 +112,4 @@ class Buffer(NativeBufferWrapper):
     def copy_level_from_buffer(self, level, buffer):
         if not isinstance(buffer, Buffer):
             raise TypeError('buffer is not of type Buffer')
-        self.copy_level_from_numpy_array(self, level, buffer.get_as_numpy_array())
-
-    def copy_data_into_numpy_array(self, numpy_array):
-        if numpy_array.nbytes != self._get_size_in_bytes():
-            raise BufferError("Arrays size must be equal!")
-
-        self._copy_into_array(numpy_array)
+        self.copy_level_from_array(self, level, buffer.to_array())

@@ -16,27 +16,28 @@ logger = logging.getLogger(__name__)
 
 
 class CompilerMeta(type):
-    def __init__(cls, name, bases, attrs):
-        super(CompilerMeta, cls).__init__(name, bases, attrs)
+    def __new__(cls, name, parents, dct):
+        dct['nvcc_command'] = 'nvcc'
 
         if os.path.exists('/etc/pyoptix.conf'):
             config = ConfigParser()
             config.read('/etc/pyoptix.conf')
             nvcc_command = config.get('pyoptix', 'nvcc_command')
             if nvcc_command is not None:
-                attrs['nvcc_command'] = nvcc_command
+                dct['nvcc_command'] = nvcc_command
 
-        if not os.path.exists(attrs['output_path']):
-            os.makedirs(attrs['output_path'])
+        if not os.path.exists(dct['output_path']):
+            os.makedirs(dct['output_path'])
+
+        return super(CompilerMeta, cls).__new__(cls, name, parents, dct)
 
 
 class Compiler(six.with_metaclass(CompilerMeta, object)):
-    nvcc_command = 'nvcc'
     program_directories = []
     output_path = '/tmp/pyoptix/ptx'
     use_fast_math = True
     dynamic_programs = False
-    _arch = 'sm_21'
+    arch = 'sm_21'
 
     @classmethod
     def is_compile_required(cls, source_path, ptx_path):
@@ -93,7 +94,7 @@ class Compiler(six.with_metaclass(CompilerMeta, object)):
             logger.info("Compiling {0}".format(source_path))
             bash_command = cls.nvcc_command + " " + source_path
             bash_command += " -ptx"
-            bash_command += " -arch=" + cls._arch
+            bash_command += " -arch=" + cls.arch
             if cls.use_fast_math:
                 bash_command += " --use_fast_math"
             for include_path in cls.program_directories:

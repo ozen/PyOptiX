@@ -16,6 +16,16 @@ OBJECT_TYPE_TO_DTYPE = {
     ObjectType.unsigned_int2: (numpy.uint32, 2),
     ObjectType.unsigned_int3: (numpy.uint32, 3),
     ObjectType.unsigned_int4: (numpy.uint32, 4),
+
+    ObjectType.matrix2x2: (numpy.float32, (2, 2)),
+    ObjectType.matrix2x3: (numpy.float32, (2, 3)),
+    ObjectType.matrix2x4: (numpy.float32, (2, 4)),
+    ObjectType.matrix3x2: (numpy.float32, (3, 2)),
+    ObjectType.matrix3x3: (numpy.float32, (3, 3)),
+    ObjectType.matrix3x4: (numpy.float32, (3, 4)),
+    ObjectType.matrix4x2: (numpy.float32, (4, 2)),
+    ObjectType.matrix4x3: (numpy.float32, (4, 3)),
+    ObjectType.matrix4x4: (numpy.float32, (4, 4)),
 }
 
 DTYPE_TO_OBJECT_TYPE = {
@@ -23,21 +33,31 @@ DTYPE_TO_OBJECT_TYPE = {
         1: ObjectType.float,
         2: ObjectType.float2,
         3: ObjectType.float3,
-        4: ObjectType.float4
+        4: ObjectType.float4,
+
+        (2, 2): ObjectType.matrix2x2,
+        (2, 3): ObjectType.matrix2x3,
+        (2, 4): ObjectType.matrix2x4,
+        (3, 2): ObjectType.matrix3x2,
+        (3, 3): ObjectType.matrix3x3,
+        (3, 4): ObjectType.matrix3x4,
+        (4, 2): ObjectType.matrix4x2,
+        (4, 3): ObjectType.matrix4x3,
+        (4, 4): ObjectType.matrix4x4,
     },
 
     numpy.dtype(numpy.int32): {
         1: ObjectType.int,
         2: ObjectType.int2,
         3: ObjectType.int3,
-        4: ObjectType.int4
+        4: ObjectType.int4,
     },
 
     numpy.dtype(numpy.uint32): {
         1: ObjectType.unsigned_int,
         2: ObjectType.unsigned_int2,
         3: ObjectType.unsigned_int3,
-        4: ObjectType.unsigned_int4
+        4: ObjectType.unsigned_int4,
     },
 
     'default': ObjectType.user,

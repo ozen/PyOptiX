@@ -105,6 +105,33 @@ void NativeVariableWrapper::set_from_array(PyObject* array, RTobjecttype object_
     case RT_OBJECTTYPE_UNSIGNED_INT4:
         this->variable->setUint(((optix::uint4*)pb.buf)[0]);
         break;
+    case RT_OBJECTTYPE_MATRIX_FLOAT2x2:
+        this->variable->setMatrix2x2fv(false, (float*) pb.buf);
+        break;
+    case RT_OBJECTTYPE_MATRIX_FLOAT2x3:
+        this->variable->setMatrix2x3fv(false, (float*) pb.buf);
+        break;
+    case RT_OBJECTTYPE_MATRIX_FLOAT2x4:
+        this->variable->setMatrix2x4fv(false, (float*) pb.buf);
+        break;
+    case RT_OBJECTTYPE_MATRIX_FLOAT3x2:
+        this->variable->setMatrix3x2fv(false, (float*) pb.buf);
+        break;
+    case RT_OBJECTTYPE_MATRIX_FLOAT3x3:
+        this->variable->setMatrix3x3fv(false, (float*) pb.buf);
+        break;
+    case RT_OBJECTTYPE_MATRIX_FLOAT3x4:
+        this->variable->setMatrix3x4fv(false, (float*) pb.buf);
+        break;
+    case RT_OBJECTTYPE_MATRIX_FLOAT4x2:
+        this->variable->setMatrix4x2fv(false, (float*) pb.buf);
+        break;
+    case RT_OBJECTTYPE_MATRIX_FLOAT4x3:
+        this->variable->setMatrix4x3fv(false, (float*) pb.buf);
+        break;
+    case RT_OBJECTTYPE_MATRIX_FLOAT4x4:
+        this->variable->setMatrix4x4fv(false, (float*) pb.buf);
+        break;
     case RT_OBJECTTYPE_USER:
         this->variable->setUserData(pb.len, pb.buf);
         break;

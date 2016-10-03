@@ -25,7 +25,6 @@ class Context(NativeContextWrapper, ScopedMixin):
     def __init__(self):
         NativeContextWrapper.__init__(self)
         ScopedMixin.__init__(self)
-        self._compiler = None
         self._program_cache = {}
         self._miss_programs = {}
         self._destroyables = []
@@ -33,7 +32,7 @@ class Context(NativeContextWrapper, ScopedMixin):
         _push_context(self)
 
         sm_major, sm_minor = self.get_device_compute_capability(0)
-        Compiler._arch = "sm_{0}{1}".format(sm_major, sm_minor)
+        Compiler.arch = "sm_{0}{1}".format(sm_major, sm_minor)
 
     def __del__(self):
         for destroyable in self._destroyables:

@@ -11,9 +11,11 @@ except ImportError:
     from ConfigParser import SafeConfigParser as ConfigParser
 
 BOOST_PYTHON_LIBNAMES = [
-    "libboost_python-py%s%s.so" % (sys.version_info.major, sys.version_info.minor),
-    "libboost_python%s.so" % sys.version_info.major,
+    'boost_python-py%s%s' % (sys.version_info.major, sys.version_info.minor),
+    'boost_python%s' % sys.version_info.major,
 ]
+
+BOOST_PYTHON_FILENAMES = {'lib%s.so' % libname: libname for libname in BOOST_PYTHON_LIBNAMES}
 
 ld_paths = None
 
@@ -36,8 +38,7 @@ def glob_recursive(path, pattern):
 
 
 def search_library(filenames):
-    if not isinstance(filenames, list):
-        filenames = [filenames]
+    filenames = list(filenames)
 
     if ld_paths is None:
         populate_ld_paths()
@@ -50,8 +51,7 @@ def search_library(filenames):
 
 
 def search_on_path(filenames):
-    if not isinstance(filenames, list):
-        filenames = [filenames]
+    filenames = list(filenames)
 
     for path in os.environ["PATH"].split(os.pathsep):
         for filename in filenames:
@@ -75,9 +75,9 @@ def main():
     ]
 
     if sys.platform.startswith('win'):
-        optix_lib_path = search_on_path('optix.1.dll')
+        optix_lib_path = search_on_path(['optix.1.dll'])
     else:
-        optix_lib_path = search_library('liboptix.so')
+        optix_lib_path = search_library(['liboptix.so'])
 
     if optix_lib_path is None:
         raise OSError('OptiX Library not found. '
@@ -92,9 +92,9 @@ def main():
     ]
 
     if sys.platform.startswith('win'):
-        boost_python_lib_file = search_on_path('boost_python.dll')
+        boost_python_lib_file = search_on_path(['boost_python.dll'])
     else:
-        boost_python_lib_file = search_library(BOOST_PYTHON_LIBNAMES)
+        boost_python_lib_file = search_library(BOOST_PYTHON_FILENAMES)
 
     if boost_python_lib_file is None:
         raise OSError('Boost.Python library not found. '
@@ -105,7 +105,7 @@ def main():
     sources = glob_recursive('driver', '*.cpp')
     include_dirs = [x[0] for x in os.walk('driver')] + [cuda_include, optix_include]
     library_dirs = cuda_libs + optix_libs + [boost_python_lib_dir]
-    libraries = ['optix', 'optixu', 'cudart', boost_python_lib_name]
+    libraries = ['optix', 'optixu', 'cudart', BOOST_PYTHON_FILENAMES[boost_python_lib_name]]
 
     try:
         config = ConfigParser()

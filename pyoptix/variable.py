@@ -26,10 +26,7 @@ class Variable(NativeVariableWrapper):
 
     @value.setter
     def value(self, value):
-        optix_has_type = False
-        if self.type != ObjectType.unknown and self.type != ObjectType.user:
-            optix_has_type = True
-
+        optix_has_type = self.type != ObjectType.unknown and self.type != ObjectType.user
         class_object_type = get_object_type_from_pyoptix_class(value)
 
         if class_object_type:
@@ -47,15 +44,18 @@ class Variable(NativeVariableWrapper):
             # Try to form a numpy array from value that is compatible with the variable type.
             try:
                 dtype, dim = get_dtype_from_object_type(self.type)
+
                 if dtype is None or dim is None:
                     raise ValueError()
+
                 value = numpy.array(value, dtype=dtype)
-                if len(value.shape) != 1:
-                    value = value.reshape(1)
-                if value.shape[0] != dim:
-                    raise TypeError("Cannot convert the value to a numpy array matching {0}.".format(self.type))
+
+                if value.shape != dim:
+                    raise TypeError("Array shape does not match to the shape of {0}.".format(self.type))
+
                 self._set_from_array(value, self.type)
                 self._value = value
+
             except (ValueError, AttributeError):
                 raise TypeError("Variable type is {0}, but {1} was given".format(self.type, type(value)))
 
@@ -64,7 +64,8 @@ class Variable(NativeVariableWrapper):
             # Use ndarray's dtype to determine variable type
             if len(value.shape) == 0:
                 value = value.reshape(1)
-            object_type = get_object_type_from_dtype(value.dtype, value.shape[-1])
+
+            object_type = get_object_type_from_dtype(value.dtype, value.shape)
             self._set_from_array(value, object_type)
             self._value = value
 
