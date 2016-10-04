@@ -76,67 +76,56 @@ class Context(NativeContextWrapper, ScopedMixin):
     def _create_accelerator(self, builder, traverser):
         obj = NativeContextWrapper._create_accelerator(self, builder, traverser)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed Accelerator!")
         return obj
 
     def _create_geometry(self):
         obj = NativeContextWrapper._create_geometry(self)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed Geometry!")
         return obj
 
     def _create_buffer(self, buffer_type):
         obj = NativeContextWrapper._create_buffer(self, buffer_type)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed Buffer!")
         return obj
 
     def _create_geometry_group(self):
         obj = NativeContextWrapper._create_geometry_group(self)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed GeometryGroup!")
         return obj
 
     def _create_geometry_instance(self):
         obj = NativeContextWrapper._create_geometry_instance(self)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed GeometryInstance!")
         return obj
 
     def _create_group(self):
         obj = NativeContextWrapper._create_group(self)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed Group!")
         return obj
 
     def _create_material(self):
         obj = NativeContextWrapper._create_material(self)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed Material!")
         return obj
 
     def _create_program_from_file(self, file_name, function_name):
         obj = NativeContextWrapper._create_program_from_file(self, file_name, function_name)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed Program!")
         return obj
 
     def _create_selector(self):
         obj = NativeContextWrapper._create_selector(self)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed Selector!")
         return obj
 
     def _create_texture_sampler(self):
         obj = NativeContextWrapper._create_texture_sampler(self)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed TextureSampler!")
         return obj
 
     def _create_transform(self):
         obj = NativeContextWrapper._create_transform(self)
         self._destroyables.append(weakref.ref(obj))
-        weakref.finalize(obj, print, "You killed Transform!")
         return obj
 
 
