@@ -8,8 +8,8 @@ class TextureSampler(NativeTextureSamplerWrapper):
     def __init__(self, buffer, wrap_mode=None, indexing_mode=None,
                  read_mode=None, filter_mode=None, max_anisotropy=1):
         self._context = current_context()
-        native = self._context._create_texture_sampler()
-        NativeTextureSamplerWrapper.__init__(self, native)
+        self._native = self._context._create_texture_sampler()
+        NativeTextureSamplerWrapper.__init__(self, self._native)
 
         self.buffer = None
         self.filtering_mode_minification = None

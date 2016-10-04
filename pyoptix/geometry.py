@@ -1,12 +1,16 @@
 from pyoptix._driver import NativeGeometryWrapper
 from pyoptix.context import current_context
+from pyoptix.mixins.graphnode import GraphNodeMixin
+from pyoptix.mixins.scoped import ScopedMixin
 
 
-class Geometry(NativeGeometryWrapper):
+class Geometry(NativeGeometryWrapper, GraphNodeMixin, ScopedMixin):
     def __init__(self, bounding_box_program, intersection_program):
         self._context = current_context()
-        native = self._context._create_geometry()
-        NativeGeometryWrapper.__init__(self, native)
+        self._native = self._context._create_geometry()
+        NativeGeometryWrapper.__init__(self, self._native)
+        GraphNodeMixin.__init__(self)
+        ScopedMixin.__init__(self)
 
         self._bounding_box_program = None
         self._intersection_program = None

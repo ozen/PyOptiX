@@ -1,14 +1,16 @@
 import six
 from pyoptix._driver import NativeMaterialWrapper
 from pyoptix.context import current_context
+from pyoptix.mixins.graphnode import GraphNodeMixin
 from pyoptix.mixins.scoped import ScopedMixin
 
 
-class Material(NativeMaterialWrapper, ScopedMixin):
+class Material(NativeMaterialWrapper, GraphNodeMixin, ScopedMixin):
     def __init__(self, closest_hit=None, any_hit=None):
         self._context = current_context()
-        native = self._context._create_material()
-        NativeMaterialWrapper.__init__(self, native)
+        self._native = self._context._create_material()
+        NativeMaterialWrapper.__init__(self, self._native)
+        GraphNodeMixin.__init__(self)
         ScopedMixin.__init__(self)
 
         self._closest_hit_programs = {}

@@ -13,8 +13,12 @@ NativeAccelerationWrapper::~NativeAccelerationWrapper() {
     }
 }
 
-void NativeAccelerationWrapper::set_property(std::string name, std::string value_name) {
-    this->acceleration->setProperty(name, value_name);
+void NativeAccelerationWrapper::set_property(const std::string& name, const std::string& value) {
+    this->acceleration->setProperty(name, value);
+}
+
+std::string NativeAccelerationWrapper::get_property(const std::string& name) {
+    return this->acceleration->getProperty(name);
 }
 
 void NativeAccelerationWrapper::mark_dirty() {
@@ -35,7 +39,8 @@ void NativeAccelerationWrapper::export_for_python() {
                 "NativeAccelerationWrapper docstring",
                 boost::python::init<optix::Acceleration>())
 
-            .def("_set_property", &NativeAccelerationWrapper::set_property)
+            .def("set_property", &NativeAccelerationWrapper::set_property)
+            .def("get_property", &NativeAccelerationWrapper::get_property)
             .def("mark_dirty", &NativeAccelerationWrapper::mark_dirty)
             .def("is_dirty", &NativeAccelerationWrapper::is_dirty);
 }

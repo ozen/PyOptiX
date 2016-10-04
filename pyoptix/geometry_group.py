@@ -1,16 +1,18 @@
 from pyoptix._driver import NativeGeometryGroupWrapper
 from pyoptix.context import current_context
+from pyoptix.mixins.graphnode import GraphNodeMixin
 from pyoptix.mixins.parent import ParentMixin
 
 
-class GeometryGroup(NativeGeometryGroupWrapper, ParentMixin):
+class GeometryGroup(NativeGeometryGroupWrapper, GraphNodeMixin, ParentMixin):
     def __init__(self, children=None):
         from pyoptix.acceleration import Acceleration
         from pyoptix.geometry_instance import GeometryInstance
 
         self._context = current_context()
-        native = self._context._create_geometry_group()
-        NativeGeometryGroupWrapper.__init__(self, native)
+        self._native = self._context._create_geometry_group()
+        NativeGeometryGroupWrapper.__init__(self, self._native)
+        GraphNodeMixin.__init__(self)
         ParentMixin.__init__(self, [Acceleration, GeometryInstance], children)
 
         self._acceleration = None

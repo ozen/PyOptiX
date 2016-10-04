@@ -48,7 +48,7 @@ class EntryPoint(object):
     def __contains__(self, item):
         return item in self.ray_generation_program
 
-    def launch(self, context=None, size=None):
+    def launch(self, size=None, context=None):
         if self.size is None and size is None:
             raise ValueError("Launch size must be set before or while launching")
         elif size is None:

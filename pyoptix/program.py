@@ -19,8 +19,8 @@ class Program(NativeProgramWrapper, ScopedMixin):
             self._ptx_path, _ = Compiler.compile(file_path, output_ptx_name)
 
         # Create program object from compiled file
-        native = self._context._create_program_from_file(self._ptx_path, self._function_name)
-        NativeProgramWrapper.__init__(self, native)
+        self._native = self._context._create_program_from_file(self._ptx_path, self._function_name)
+        NativeProgramWrapper.__init__(self, self._native)
         ScopedMixin.__init__(self)
 
     @property

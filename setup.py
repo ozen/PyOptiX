@@ -119,8 +119,9 @@ def main():
         tmp = NamedTemporaryFile(mode='w+', delete=False)
         config.write(tmp)
         tmp.close()
-        check_call(['sudo', 'cp', tmp.name, '/etc/pyoptix.conf'])
-        check_call(['sudo', 'chmod', '444', '/etc/pyoptix.conf'])
+        config_path = os.path.join(os.path.dirname(sys.executable), 'pyoptix.conf')
+        check_call(['sudo', 'cp', tmp.name, config_path])
+        check_call(['sudo', 'chmod', '444', config_path])
     except Exception as e:
         print("nvcc configuration could not be saved. When you use PyOptiX Compiler, "
               "nvcc path must be in PATH and OptiX library paths must be in LD_LIBRARY_PATH")

@@ -10,7 +10,8 @@ private:
 public:
     NativeAccelerationWrapper(optix::Acceleration acceleration);
     ~NativeAccelerationWrapper();
-    void set_property(std::string name, std::string value_name);
+    void set_property(const std::string& name, const std::string& value);
+    std::string get_property(const std::string& name);
     void mark_dirty();
     bool is_dirty();
     optix::Acceleration get_native();

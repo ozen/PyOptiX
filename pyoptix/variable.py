@@ -43,14 +43,17 @@ class Variable(NativeVariableWrapper):
             # OPTION 2: OptiX variable has a type but value is not a known OptiX object.
             # Try to form a numpy array from value that is compatible with the variable type.
             try:
-                dtype, dim = get_dtype_from_object_type(self.type)
+                dtype, shape = get_dtype_from_object_type(self.type)
 
-                if dtype is None or dim is None:
+                if dtype is None or shape is None:
                     raise ValueError()
 
                 value = numpy.array(value, dtype=dtype)
 
-                if value.shape != dim:
+                if len(value.shape) == 0:
+                    value = value.reshape(1)
+
+                if value.shape != shape:
                     raise TypeError("Array shape does not match to the shape of {0}.".format(self.type))
 
                 self._set_from_array(value, self.type)

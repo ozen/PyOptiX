@@ -11,15 +11,7 @@ class ParentMixin(object):
                 self.add_child(child)
 
     def add_child(self, child):
-
-        is_allowed = False
-
-        for allowed_child_name in self._allowed_children:
-            if allowed_child_name in locals() and isinstance(child, locals()[allowed_child_name]):
-                is_allowed = True
-                break
-
-        if not is_allowed:
+        if not any([isinstance(child, allowed) for allowed in self._allowed_children]):
             raise TypeError(
                 "You can not add {0} to {1} as a child".format(child.__class__.__name__, self.__class__.__name__))
 

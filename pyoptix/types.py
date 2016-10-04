@@ -1,21 +1,21 @@
 import numpy
 from pyoptix.enums import ObjectType, Format, WrapMode, FilterMode, TextureIndexMode, TextureReadMode, BufferType
 
-OBJECT_TYPE_TO_DTYPE = {
-    ObjectType.float: (numpy.float32, 1),
-    ObjectType.float2: (numpy.float32, 2),
-    ObjectType.float3: (numpy.float32, 3),
-    ObjectType.float4: (numpy.float32, 4),
+OBJECT_TYPE_TO_DTYPE_SHAPE = {
+    ObjectType.float: (numpy.float32, (1, )),
+    ObjectType.float2: (numpy.float32, (2, )),
+    ObjectType.float3: (numpy.float32, (3, )),
+    ObjectType.float4: (numpy.float32, (4, )),
 
-    ObjectType.int: (numpy.int32, 1),
-    ObjectType.int2: (numpy.int32, 2),
-    ObjectType.int3: (numpy.int32, 3),
-    ObjectType.int4: (numpy.int32, 4),
+    ObjectType.int: (numpy.int32, (1, )),
+    ObjectType.int2: (numpy.int32, (2, )),
+    ObjectType.int3: (numpy.int32, (3, )),
+    ObjectType.int4: (numpy.int32, (4, )),
 
-    ObjectType.unsigned_int: (numpy.uint32, 1),
-    ObjectType.unsigned_int2: (numpy.uint32, 2),
-    ObjectType.unsigned_int3: (numpy.uint32, 3),
-    ObjectType.unsigned_int4: (numpy.uint32, 4),
+    ObjectType.unsigned_int: (numpy.uint32, (1, )),
+    ObjectType.unsigned_int2: (numpy.uint32, (2, )),
+    ObjectType.unsigned_int3: (numpy.uint32, (3, )),
+    ObjectType.unsigned_int4: (numpy.uint32, (4, )),
 
     ObjectType.matrix2x2: (numpy.float32, (2, 2)),
     ObjectType.matrix2x3: (numpy.float32, (2, 3)),
@@ -28,12 +28,12 @@ OBJECT_TYPE_TO_DTYPE = {
     ObjectType.matrix4x4: (numpy.float32, (4, 4)),
 }
 
-DTYPE_TO_OBJECT_TYPE = {
+DTYPE_SHAPE_TO_OBJECT_TYPE = {
     numpy.dtype(numpy.float32): {
-        1: ObjectType.float,
-        2: ObjectType.float2,
-        3: ObjectType.float3,
-        4: ObjectType.float4,
+        (1, ): ObjectType.float,
+        (2, ): ObjectType.float2,
+        (3, ): ObjectType.float3,
+        (4, ): ObjectType.float4,
 
         (2, 2): ObjectType.matrix2x2,
         (2, 3): ObjectType.matrix2x3,
@@ -47,17 +47,17 @@ DTYPE_TO_OBJECT_TYPE = {
     },
 
     numpy.dtype(numpy.int32): {
-        1: ObjectType.int,
-        2: ObjectType.int2,
-        3: ObjectType.int3,
-        4: ObjectType.int4,
+        (1, ): ObjectType.int,
+        (2, ): ObjectType.int2,
+        (3, ): ObjectType.int3,
+        (4, ): ObjectType.int4,
     },
 
     numpy.dtype(numpy.uint32): {
-        1: ObjectType.unsigned_int,
-        2: ObjectType.unsigned_int2,
-        3: ObjectType.unsigned_int3,
-        4: ObjectType.unsigned_int4,
+        (1, ): ObjectType.unsigned_int,
+        (2, ): ObjectType.unsigned_int2,
+        (3, ): ObjectType.unsigned_int3,
+        (4, ): ObjectType.unsigned_int4,
     },
 
     'default': ObjectType.user,
@@ -199,17 +199,17 @@ BUFFER_STRING_TO_OPTIX_ENUM = {
 
 
 def get_dtype_from_object_type(object_type):
-    if object_type in OBJECT_TYPE_TO_DTYPE:
-        return OBJECT_TYPE_TO_DTYPE[object_type]
+    if object_type in OBJECT_TYPE_TO_DTYPE_SHAPE:
+        return OBJECT_TYPE_TO_DTYPE_SHAPE[object_type]
     else:
         return None, None
 
 
-def get_object_type_from_dtype(dtype, type_size):
-    if dtype in DTYPE_TO_OBJECT_TYPE and type_size in DTYPE_TO_OBJECT_TYPE[dtype]:
-        return DTYPE_TO_OBJECT_TYPE[dtype][type_size]
+def get_object_type_from_dtype(dtype, shape):
+    if dtype in DTYPE_SHAPE_TO_OBJECT_TYPE and shape in DTYPE_SHAPE_TO_OBJECT_TYPE[dtype]:
+        return DTYPE_SHAPE_TO_OBJECT_TYPE[dtype][shape]
     else:
-        return DTYPE_TO_OBJECT_TYPE['default']
+        return DTYPE_SHAPE_TO_OBJECT_TYPE['default']
 
 
 def get_format_from_dtype(dtype, type_size):

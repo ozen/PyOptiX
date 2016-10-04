@@ -37,9 +37,3 @@ class ScopedMixin(object):
 
     def __contains__(self, item):
         return item in self._variables
-
-    def get_scope(self):
-        dict_ = {}
-        for key, variable in self._variables.items():
-            dict_[key] = variable.value
-        return dict_

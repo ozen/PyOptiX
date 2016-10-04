@@ -7,8 +7,8 @@ from pyoptix.types import convert_buffer_type, get_format_from_dtype
 class Buffer(NativeBufferWrapper):
     def __init__(self, buffer_type='io'):
         self._context = current_context()
-        native = self._context._create_buffer(convert_buffer_type(buffer_type))
-        NativeBufferWrapper.__init__(self, native)
+        self._native = self._context._create_buffer(convert_buffer_type(buffer_type))
+        NativeBufferWrapper.__init__(self, self._native)
 
         self._numpy_dtype = None
         self._numpy_shape = None

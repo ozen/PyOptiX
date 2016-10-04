@@ -1,9 +1,10 @@
 from pyoptix._driver import NativeGroupWrapper
 from pyoptix.context import current_context
+from pyoptix.mixins.graphnode import GraphNodeMixin
 from pyoptix.mixins.parent import ParentMixin
 
 
-class Group(NativeGroupWrapper, ParentMixin):
+class Group(NativeGroupWrapper, GraphNodeMixin, ParentMixin):
     def __init__(self, children=None):
         from pyoptix.acceleration import Acceleration
         from pyoptix.geometry_group import GeometryGroup
@@ -11,8 +12,9 @@ class Group(NativeGroupWrapper, ParentMixin):
         from pyoptix.transform import Transform
 
         self._context = current_context()
-        native = self._context._create_group()
-        NativeGroupWrapper.__init__(self, native)
+        self._native = self._context._create_group()
+        NativeGroupWrapper.__init__(self, self._native)
+        GraphNodeMixin.__init__(self)
         ParentMixin.__init__(self,
                              [GeometryGroup, Group, Selector, Transform, Acceleration],
                              children)

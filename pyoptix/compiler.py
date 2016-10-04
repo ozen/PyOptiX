@@ -1,6 +1,7 @@
 import logging
 import re
 import os
+import sys
 import shlex
 import fnmatch
 import six
@@ -19,9 +20,11 @@ class CompilerMeta(type):
     def __new__(cls, name, parents, dct):
         dct['nvcc_command'] = 'nvcc'
 
-        if os.path.exists('/etc/pyoptix.conf'):
+        config_path = os.path.join(os.path.dirname(sys.executable), 'pyoptix.conf')
+
+        if os.path.exists(config_path):
             config = ConfigParser()
-            config.read('/etc/pyoptix.conf')
+            config.read(config_path)
             nvcc_command = config.get('pyoptix', 'nvcc_command')
             if nvcc_command is not None:
                 dct['nvcc_command'] = nvcc_command

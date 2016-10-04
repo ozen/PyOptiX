@@ -1,18 +1,20 @@
 import numpy
 from pyoptix._driver import NativeTransformWrapper
 from pyoptix.context import current_context
+from pyoptix.mixins.graphnode import GraphNodeMixin
 from pyoptix.mixins.parent import ParentMixin
 
 
-class Transform(NativeTransformWrapper, ParentMixin):
+class Transform(NativeTransformWrapper, GraphNodeMixin, ParentMixin):
     def __init__(self, children=None):
         from pyoptix.geometry_group import GeometryGroup
         from pyoptix.group import Group
         from pyoptix.selector import Selector
 
         self._context = current_context()
-        native = self._context._create_transform()
-        NativeTransformWrapper.__init__(self, native)
+        self._native = self._context._create_transform()
+        NativeTransformWrapper.__init__(self, self._native)
+        GraphNodeMixin.__init__(self)
         ParentMixin.__init__(self, [GeometryGroup, Group, Selector, Transform], children)
 
         self._transpose = False
