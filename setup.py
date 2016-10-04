@@ -1,7 +1,7 @@
 import sys
 import os
 import fnmatch
-from subprocess import check_call, check_output
+from subprocess import check_call, check_output, CalledProcessError
 from tempfile import NamedTemporaryFile
 from setuptools import setup, Extension, find_packages
 
@@ -20,10 +20,24 @@ BOOST_PYTHON_FILENAMES = {'lib%s.so' % libname: libname for libname in BOOST_PYT
 ld_paths = None
 
 
+def check_call_sudo_if_fails(cmd):
+    try:
+        return check_call(cmd)
+    except CalledProcessError as e:
+        return check_call(['sudo'] + cmd)
+
+
+def check_output_sudo_if_fails(cmd):
+    try:
+        return check_output(cmd)
+    except CalledProcessError as e:
+        return check_output(['sudo'] + cmd)
+
+
 def populate_ld_paths():
     global ld_paths
     ld_paths = []
-    for line in check_output(['sudo', 'ldconfig', '-v']).decode('utf8').splitlines():
+    for line in check_output_sudo_if_fails(['ldconfig', '-vNX']).decode('utf8').splitlines():
         if line.startswith('/'):
             ld_paths.append(line[:line.find(':')])
     ld_paths.extend(os.environ["LD_LIBRARY_PATH"].split(os.pathsep))
@@ -120,8 +134,8 @@ def main():
         config.write(tmp)
         tmp.close()
         config_path = os.path.join(os.path.dirname(sys.executable), 'pyoptix.conf')
-        check_call(['sudo', 'cp', tmp.name, config_path])
-        check_call(['sudo', 'chmod', '444', config_path])
+        check_call_sudo_if_fails(['cp', tmp.name, config_path])
+        check_call_sudo_if_fails(['chmod', '644', config_path])
     except Exception as e:
         print("nvcc configuration could not be saved. When you use PyOptiX Compiler, "
               "nvcc path must be in PATH and OptiX library paths must be in LD_LIBRARY_PATH")
