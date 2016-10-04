@@ -6,13 +6,14 @@ PyOptiX lets you access Nvidia's OptiX Ray Tracing Engine from Python.
 
 #### Prerequisites
 
-* Install the necessary libraries. For Ubuntu, the install command will look like this:
+* Install the necessary libraries: Python dev package, Boost.Python, setuptools.
+For Ubuntu, the install command will look like this:
 
         sudo apt-get install -y build-essential python-dev python-setuptools python3-dev python3-setuptools libboost-python-dev
 
 * CUDA and OptiX SDK's must be installed before installing PyOptiX.
 * `nvcc` must be in PATH.
-* CUDA and OptiX library paths must be either added to ldconfig or `LD_LIBRARY_PATH` on Linux and to `PATH` on Windows.
+* CUDA, OptiX, and Boost.Python library paths must be in either ldconfig or `LD_LIBRARY_PATH` on Linux and `PATH` on Windows.
 
 
 #### Using pip
