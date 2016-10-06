@@ -4,7 +4,6 @@ import os
 import sys
 import shlex
 import fnmatch
-import six
 from subprocess import check_call, CalledProcessError
 from pyoptix.utils import glob_recursive, find_sub_path
 
@@ -16,26 +15,9 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-class CompilerMeta(type):
-    def __new__(cls, name, parents, dct):
-        dct['nvcc_command'] = 'nvcc'
-
-        config_path = os.path.join(os.path.dirname(sys.executable), 'pyoptix.conf')
-
-        if os.path.exists(config_path):
-            config = ConfigParser()
-            config.read(config_path)
-            nvcc_command = config.get('pyoptix', 'nvcc_command')
-            if nvcc_command is not None:
-                dct['nvcc_command'] = nvcc_command
-
-        if not os.path.exists(dct['output_path']):
-            os.makedirs(dct['output_path'])
-
-        return super(CompilerMeta, cls).__new__(cls, name, parents, dct)
-
-
-class Compiler(six.with_metaclass(CompilerMeta, object)):
+class Compiler:
+    nvcc_path = 'nvcc'
+    flags = []
     program_directories = []
     output_path = '/tmp/pyoptix/ptx'
     use_fast_math = True
@@ -95,7 +77,8 @@ class Compiler(six.with_metaclass(CompilerMeta, object)):
                 os.remove(output_ptx_path)
 
             logger.info("Compiling {0}".format(source_path))
-            bash_command = cls.nvcc_command + " " + source_path
+            bash_command = cls.nvcc_path + " "
+            bash_command += " ".join(cls.flags)
             bash_command += " -ptx"
             bash_command += " -arch=" + cls.arch
             if cls.use_fast_math:
@@ -103,6 +86,7 @@ class Compiler(six.with_metaclass(CompilerMeta, object)):
             for include_path in cls.program_directories:
                 if os.path.exists(include_path):
                     bash_command += " -I=" + include_path
+            bash_command += " " + source_path
             bash_command += " -o=" + output_ptx_path
             logger.debug("Executing: {0}".format(bash_command))
             try:
@@ -150,3 +134,20 @@ class Compiler(six.with_metaclass(CompilerMeta, object)):
                 return abs_path
             else:
                 raise ValueError('File not found')
+
+
+try:
+    config_path = os.path.join(os.path.dirname(sys.executable), 'pyoptix.conf')
+    config = ConfigParser()
+    config.read(config_path)
+    nvcc_path = config.get('pyoptix', 'nvcc_path')
+    flags = config.get('pyoptix', 'flags')
+    if nvcc_path is not None:
+        Compiler.nvcc_path = nvcc_path
+    if flags is not None:
+        Compiler.flags = [flag for flag in flags.split(os.pathsep)]
+except Exception as e:
+    logger.warning("Could not load pyoptix.conf: {0}".format(e))
+
+if not os.path.exists(Compiler.output_path):
+    os.makedirs(Compiler.output_path)

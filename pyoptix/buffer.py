@@ -15,7 +15,7 @@ class Buffer(NativeBufferWrapper):
         self._last_dim_dropped = False
 
     @property
-    def shape(self):
+    def numpy_shape(self):
         return self._numpy_shape
 
     @property
@@ -25,7 +25,7 @@ class Buffer(NativeBufferWrapper):
     @classmethod
     def empty(cls, shape, dtype=numpy.float32, buffer_type='io', drop_last_dim=False):
         instance = cls(buffer_type=buffer_type)
-        instance.reset_buffer(shape, dtype, drop_last_dim)
+        instance._reset_buffer(shape, dtype, drop_last_dim)
         return instance
 
     @classmethod
@@ -57,7 +57,7 @@ class Buffer(NativeBufferWrapper):
 
         self._set_format(_format)
 
-    def reset_buffer(self, numpy_shape, dtype=numpy.float32, drop_last_dim=False):
+    def _reset_buffer(self, numpy_shape, dtype=numpy.float32, drop_last_dim=False):
         self._numpy_dtype = numpy.dtype(dtype)
         self._numpy_shape = numpy_shape
 
@@ -73,14 +73,14 @@ class Buffer(NativeBufferWrapper):
 
         self.set_format(dtype=dtype, type_size=type_size)
         if self.get_format() == RTformat.RT_FORMAT_USER:
-            self._set_element_size(item_size)
+            self.set_element_size(item_size)
 
         # convert numpy dim to optix dim (inverting shape)
         temp_shape = temp_shape[::-1]
-        self._set_size(list(temp_shape))
+        self.set_size(list(temp_shape))
 
     def _restructure_according_to_numpy_array(self, numpy_array, drop_last_dim=False):
-        self.reset_buffer(numpy_shape=numpy_array.shape, dtype=numpy_array.dtype, drop_last_dim=drop_last_dim)
+        self._reset_buffer(numpy_shape=numpy_array.shape, dtype=numpy_array.dtype, drop_last_dim=drop_last_dim)
 
     def _restructure_and_copy_from_numpy_array(self, numpy_array, drop_last_dim=False):
         self._restructure_according_to_numpy_array(numpy_array, drop_last_dim)
@@ -92,13 +92,13 @@ class Buffer(NativeBufferWrapper):
         return numpy_array
 
     def copy_to_array(self, numpy_array):
-        if numpy_array.nbytes != self._get_size_in_bytes():
+        if numpy_array.nbytes != self.get_size_in_bytes():
             raise BufferError("Arrays size must be equal!")
 
         self._copy_into_array(numpy_array)
 
     def copy_from_array(self, numpy_array):
-        if numpy_array.nbytes != self._get_size_in_bytes():
+        if numpy_array.nbytes != self.get_size_in_bytes():
             raise BufferError("Arrays size must be equal!")
 
         self._copy_from_array(numpy_array)

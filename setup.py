@@ -74,62 +74,55 @@ def search_on_path(filenames):
 
 
 def main():
-    lib64 = os.path.join('lib', 'x64') if sys.platform.startswith('win') else 'lib64'
-
     nvcc_path = search_on_path(['nvcc', 'nvcc.exe'])
     if nvcc_path is None:
         raise OSError('nvcc is not in PATH')
 
     cuda_root = os.path.dirname(os.path.dirname(nvcc_path))
     cuda_include = os.path.join(cuda_root, 'include')
-    cuda_libs = [
-        os.path.join(cuda_root, 'lib'),
-        os.path.join(cuda_root, lib64),
+    cuda_lib_dirs = [
+        os.path.join(cuda_root, 'lib64'),
         os.path.join(cuda_root, 'bin'),
     ]
 
-    if sys.platform.startswith('win'):
-        optix_lib_path = search_on_path(['optix.1.dll'])
-    else:
-        optix_lib_path = search_library(['liboptix.so'])
+    optix_lib_path = search_library(['liboptix.so'])
 
     if optix_lib_path is None:
-        raise OSError('OptiX Library not found. '
-                      'Add its path to ldconfig or LD_LIBRARY_PATH on Linux and to PATH on Windows.')
+        raise OSError('OptiX Library not found. Add its path to ldconfig or LD_LIBRARY_PATH.')
 
     optix_root = os.path.dirname(os.path.dirname(optix_lib_path))
     optix_include = os.path.join(optix_root, 'include')
-    optix_libs = [
-        os.path.join(optix_root, 'lib'),
-        os.path.join(optix_root, lib64),
+    optix_lib_dirs = [
+        os.path.join(optix_root, 'lib64'),
         os.path.join(optix_root, 'bin'),
     ]
 
-    if sys.platform.startswith('win'):
-        boost_python_lib_file = search_on_path(['boost_python.dll'])
-    else:
-        boost_python_lib_file = search_library(BOOST_PYTHON_FILENAMES)
+    boost_python_lib_file = search_library(BOOST_PYTHON_FILENAMES)
 
     if boost_python_lib_file is None:
-        raise OSError('Boost.Python library not found. '
-                      'Add its path to ldconfig or LD_LIBRARY_PATH on Linux and to PATH on Windows.')
+        raise OSError('Boost.Python library not found. Add its path to ldconfig or LD_LIBRARY_PATH.')
 
     boost_python_lib_dir, boost_python_lib_name = os.path.split(boost_python_lib_file)
 
     sources = glob_recursive('driver', '*.cpp')
     include_dirs = [x[0] for x in os.walk('driver')] + [cuda_include, optix_include]
-    library_dirs = cuda_libs + optix_libs + [boost_python_lib_dir]
+    library_dirs = cuda_lib_dirs + optix_lib_dirs + [boost_python_lib_dir]
     libraries = ['optix', 'optixu', 'cudart', BOOST_PYTHON_FILENAMES[boost_python_lib_name]]
 
     try:
         config = ConfigParser()
         config.add_section('pyoptix')
-        nvcc_command = '{0} -I{1} -I{2} -loptix -loptixu -lcudart {3}'.format(
-            nvcc_path, cuda_include, optix_include, ' '.join(['-L' + lib for lib in cuda_libs + optix_libs]))
-        config.set('pyoptix', 'nvcc_command', nvcc_command)
+
+        flags = [
+            '-I%s' % cuda_include, '-I%s' % optix_include, '-I%s' % optix_include, '-loptix', '-loptixu', '-lcudart',
+        ] + ['-L%s' % lib for lib in cuda_lib_dirs + optix_lib_dirs]
+
+        config.set('pyoptix', 'nvcc_path', nvcc_path)
+        config.set('pyoptix', 'flags', os.pathsep.join(flags))
         config.set('pyoptix', 'include_dirs', os.pathsep.join(include_dirs))
         config.set('pyoptix', 'library_dirs', os.pathsep.join(library_dirs))
         config.set('pyoptix', 'libraries', os.pathsep.join(libraries))
+
         tmp = NamedTemporaryFile(mode='w+', delete=False)
         config.write(tmp)
         tmp.close()
@@ -137,8 +130,9 @@ def main():
         check_call_sudo_if_fails(['cp', tmp.name, config_path])
         check_call_sudo_if_fails(['chmod', '644', config_path])
     except Exception as e:
-        print("nvcc configuration could not be saved. When you use PyOptiX Compiler, "
-              "nvcc path must be in PATH and OptiX library paths must be in LD_LIBRARY_PATH")
+        print("PyOptiX configuration could not be saved. When you use pyoptix.Compiler, "
+              "nvcc path must be in PATH, OptiX library paths must be in LD_LIBRARY_PATH, and pyoptix.Compiler "
+              "attributes should be set manually.")
 
     setup(
         name='pyoptix',
@@ -169,6 +163,7 @@ def main():
             'Programming Language :: Python :: 3.5',
         ],
     )
+
 
 if __name__ == '__main__':
     main()
