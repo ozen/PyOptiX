@@ -2,6 +2,7 @@
 
 PyOptiX lets you access Nvidia's OptiX Ray Tracing Engine from Python.
 
+
 ## What's Inside
 
 PyOptiX wraps OptiX C++ API using an extension that uses Boost.Python library. Python API is similar to C++ API.
@@ -22,6 +23,13 @@ generation program and an optional exception program; and they can be launched l
 `Compiler` class compiles program source files to ptx files. If you pass a source file when creating a `Program` object,
 `Compiler` is automatically used to compile the source.
 
+
+### Supported Platforms
+
+Only Linux is supported. PyOptiX can work on other platforms but you may need to modify setup.py and set
+`Compiler.nvcc_path` and `Compiler.flags` parameters manually during run time.
+
+
 ## Installation
 
 #### Prerequisites
@@ -40,11 +48,13 @@ For Ubuntu, the install command will look like this:
 
     pip install pyoptix
 
+
 #### From source
 
     git clone https://github.com/ozen/PyOptiX.git
     cd pyoptix
     python setup.py install
+
 
 #### pyoptix.conf file
 
@@ -53,13 +63,15 @@ class uses `pyoptix.conf` to determine `nvcc` path and flags when compiling sour
 If `pyoptix.conf` creation somehow fails, you need to set `Compiler.nvcc_path` and `Compiler.flags` attributes manually
 during run time before compiling any programs.
 
+
 ## API Reference
 
-### pyoptix.current_context()
-
-Returns currently active (at the top of the stack) `Context` object.
 
 ### pyoptix.Context
+
+#### pyoptix.current_context()
+
+Returns currently active (at the top of the stack) `Context` object.
 
 ### pyoptix.Compiler
 
