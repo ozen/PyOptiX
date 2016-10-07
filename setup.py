@@ -136,7 +136,7 @@ def main():
 
     setup(
         name='pyoptix',
-        version='1.0.0a1',
+        version='0.9.0',
         description='Python wrapper for NVIDIA OptiX',
         author='Yigit Ozen',
         author_email='ozen@computer.org',
