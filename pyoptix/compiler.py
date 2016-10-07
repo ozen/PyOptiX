@@ -18,11 +18,21 @@ logger = logging.getLogger(__name__)
 class Compiler:
     nvcc_path = 'nvcc'
     flags = []
-    program_directories = []
+    _program_directories = []
     output_path = '/tmp/pyoptix/ptx'
     use_fast_math = True
     dynamic_programs = False
     arch = 'sm_21'
+
+    @classmethod
+    def add_program_directory(cls, directory):
+        if directory not in cls._program_directories:
+            cls._program_directories.append(directory)
+
+    @classmethod
+    def remove_program_directory(cls, directory):
+        if directory in cls._program_directories:
+            cls._program_directories.remove(directory)
 
     @classmethod
     def is_compile_required(cls, source_path, ptx_path):
@@ -50,7 +60,7 @@ class Compiler:
         with open(file_path) as f:
             content = f.read()
             for included_path in re.findall(include_pattern, content):
-                for compiler_include_path in cls.program_directories:
+                for compiler_include_path in cls._program_directories:
                     included_file_path = os.path.join(compiler_include_path, included_path)
                     if not os.path.exists(included_file_path):
                         continue
@@ -83,7 +93,7 @@ class Compiler:
             bash_command += " -arch=" + cls.arch
             if cls.use_fast_math:
                 bash_command += " --use_fast_math"
-            for include_path in cls.program_directories:
+            for include_path in cls._program_directories:
                 if os.path.exists(include_path):
                     bash_command += " -I=" + include_path
             bash_command += " " + source_path
@@ -105,7 +115,7 @@ class Compiler:
 
     @classmethod
     def compile_all_directories(cls, source_extension='.cu'):
-        for program_dir in cls.program_directories:
+        for program_dir in cls._program_directories:
             for program_path in glob_recursive(program_dir, '*' + source_extension):
                 Compiler.compile(os.path.abspath(program_path))
 
@@ -129,7 +139,7 @@ class Compiler:
         if os.path.exists(file_path):
             return file_path
         else:
-            abs_path = find_sub_path(file_path, cls.program_directories)
+            abs_path = find_sub_path(file_path, cls._program_directories)
             if os.path.exists(abs_path):
                 return abs_path
             else:
