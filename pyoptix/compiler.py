@@ -148,16 +148,22 @@ class Compiler:
 
 try:
     config_path = os.path.join(os.path.dirname(sys.executable), 'pyoptix.conf')
+
+    if not os.path.exists(config_path):
+        config_path = '/etc/pyoptix.conf'
+
     config = ConfigParser()
     config.read(config_path)
     nvcc_path = config.get('pyoptix', 'nvcc_path')
     flags = config.get('pyoptix', 'flags')
+
     if nvcc_path is not None:
         Compiler.nvcc_path = nvcc_path
     if flags is not None:
         Compiler.flags = [flag for flag in flags.split(os.pathsep)]
+
 except Exception as e:
-    logger.warning("Could not load pyoptix.conf: {0}".format(e))
+    logger.warning("Could not load pyoptix.conf")
 
 if not os.path.exists(Compiler.output_path):
     os.makedirs(Compiler.output_path)

@@ -73,6 +73,31 @@ def search_on_path(filenames):
                 return os.path.abspath(os.path.join(path, filename))
 
 
+def save_pyoptix_conf(nvcc_path, flags, include_dirs, library_dirs, libraries):
+    try:
+        config = ConfigParser()
+        config.add_section('pyoptix')
+
+        config.set('pyoptix', 'nvcc_path', nvcc_path)
+        config.set('pyoptix', 'flags', os.pathsep.join(flags))
+        config.set('pyoptix', 'include_dirs', os.pathsep.join(include_dirs))
+        config.set('pyoptix', 'library_dirs', os.pathsep.join(library_dirs))
+        config.set('pyoptix', 'libraries', os.pathsep.join(libraries))
+
+        tmp = NamedTemporaryFile(mode='w+', delete=False)
+        config.write(tmp)
+        tmp.close()
+        config_path = os.path.join(os.path.dirname(sys.executable), 'pyoptix.conf')
+        check_call_sudo_if_fails(['cp', tmp.name, config_path])
+        check_call_sudo_if_fails(['cp', tmp.name, '/etc/pyoptix.conf'])
+        check_call_sudo_if_fails(['chmod', '644', config_path])
+        check_call_sudo_if_fails(['chmod', '644', '/etc/pyoptix.conf'])
+    except Exception as e:
+        print("PyOptiX configuration could not be saved. When you use pyoptix.Compiler, "
+              "nvcc path must be in PATH, OptiX library paths must be in LD_LIBRARY_PATH, and pyoptix.Compiler "
+              "attributes should be set manually.")
+
+
 def main():
     nvcc_path = search_on_path(['nvcc', 'nvcc.exe'])
     if nvcc_path is None:
@@ -109,34 +134,16 @@ def main():
     library_dirs = cuda_lib_dirs + optix_lib_dirs + [boost_python_lib_dir]
     libraries = ['optix', 'optixu', 'cudart', BOOST_PYTHON_FILENAMES[boost_python_lib_name]]
 
-    try:
-        config = ConfigParser()
-        config.add_section('pyoptix')
+    flags = [
+        '-I%s' % cuda_include, '-I%s' % optix_include, '-I%s' % optix_include, '-loptix', '-loptixu',
+        '-lcudart',
+    ] + ['-L%s' % lib for lib in cuda_lib_dirs + optix_lib_dirs]
 
-        flags = [
-            '-I%s' % cuda_include, '-I%s' % optix_include, '-I%s' % optix_include, '-loptix', '-loptixu', '-lcudart',
-        ] + ['-L%s' % lib for lib in cuda_lib_dirs + optix_lib_dirs]
-
-        config.set('pyoptix', 'nvcc_path', nvcc_path)
-        config.set('pyoptix', 'flags', os.pathsep.join(flags))
-        config.set('pyoptix', 'include_dirs', os.pathsep.join(include_dirs))
-        config.set('pyoptix', 'library_dirs', os.pathsep.join(library_dirs))
-        config.set('pyoptix', 'libraries', os.pathsep.join(libraries))
-
-        tmp = NamedTemporaryFile(mode='w+', delete=False)
-        config.write(tmp)
-        tmp.close()
-        config_path = os.path.join(os.path.dirname(sys.executable), 'pyoptix.conf')
-        check_call_sudo_if_fails(['cp', tmp.name, config_path])
-        check_call_sudo_if_fails(['chmod', '644', config_path])
-    except Exception as e:
-        print("PyOptiX configuration could not be saved. When you use pyoptix.Compiler, "
-              "nvcc path must be in PATH, OptiX library paths must be in LD_LIBRARY_PATH, and pyoptix.Compiler "
-              "attributes should be set manually.")
+    save_pyoptix_conf(nvcc_path, flags, include_dirs, library_dirs, libraries)
 
     setup(
         name='pyoptix',
-        version='0.9.1',
+        version='0.9.2',
         description='Python wrapper for NVIDIA OptiX',
         author='Yigit Ozen',
         author_email='ozen@computer.org',
