@@ -39,9 +39,9 @@ For Ubuntu, the install command will look like this:
 
         sudo apt-get install -y build-essential python-dev python-setuptools python3-dev python3-setuptools libboost-python-dev
 
-* CUDA and OptiX SDK's must be installed before installing PyOptiX.
-* `nvcc` must be in PATH.
-* CUDA, OptiX, and Boost.Python library paths must be in either ldconfig or `LD_LIBRARY_PATH`.
+* `CUDA` and `OptiX` SDK's must be installed before installing PyOptiX.
+* `nvcc` must be in `PATH`.
+* `CUDA`, `OptiX`, and `Boost.Python` library paths must be in either `ldconfig` or `LD_LIBRARY_PATH`.
 
 
 #### Using pip
@@ -58,10 +58,17 @@ For Ubuntu, the install command will look like this:
 
 #### pyoptix.conf file
 
-Setup script creates `pyoptix.conf` file next to the python binary that is used by setup script. `pyoptix.Compiler`
-class uses `pyoptix.conf` to determine `nvcc` path and flags when compiling sources to ptx files in run time.
-If `pyoptix.conf` creation somehow fails, you need to set `Compiler.nvcc_path` and `Compiler.flags` attributes manually
-during run time before compiling any programs.
+Setup script creates two `pyoptix.conf` files, one next to the python binary that was used to execute the setup script,
+and one in `/etc`. `pyoptix.Compiler` class uses `pyoptix.conf` to determine `nvcc` path and flags when compiling
+sources to ptx files in run time. If `pyoptix.conf` creation somehow fails, you need to set `Compiler.nvcc_path`
+and `Compiler.flags` attributes manually during run time before compiling any programs.
+
+Please note that pip creates wheel distribution of the package and caches it during installation.
+Subsequent pip install commands for the same version of the package will use the cached wheel,
+therefore setup.py script won't be executed and pyoptix.conf file won't be created. To prevent this you can use
+the following command:
+
+    pip install pyoptix --no-binary pyoptix
 
 
 ## API Reference
