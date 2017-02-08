@@ -6,6 +6,8 @@ from pyoptix.mixins.scoped import ScopedMixin
 
 
 class Program(NativeProgramWrapper, ScopedMixin):
+    dynamic_programs = False
+
     def __init__(self, file_path, function_name, output_ptx_name=None):
         self._context = current_context()
         self._function_name = function_name
@@ -22,6 +24,8 @@ class Program(NativeProgramWrapper, ScopedMixin):
         self._native = self._context._create_program_from_file(self._ptx_path, self._function_name)
         NativeProgramWrapper.__init__(self, self._native)
         ScopedMixin.__init__(self)
+
+        self._context.program_cache[(file_path, function_name)] = self
 
     @property
     def name(self):
@@ -44,7 +48,7 @@ class Program(NativeProgramWrapper, ScopedMixin):
         if cache_key not in context.program_cache:
             # create new if it does not exist in cache
             context.program_cache[cache_key] = cls(file_path, function_name)
-        elif not Compiler.is_ptx(file_path) and Compiler.dynamic_programs:
+        elif not Compiler.is_ptx(file_path) and Program.dynamic_programs:
             # check if the source file was changed. it is compiled if it was changed
             ptx_path, is_compiled = Compiler.compile(file_path)
 

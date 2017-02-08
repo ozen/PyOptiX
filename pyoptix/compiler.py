@@ -21,7 +21,6 @@ class Compiler:
     _program_directories = []
     output_path = '/tmp/pyoptix/ptx'
     use_fast_math = True
-    dynamic_programs = False
     arch = 'sm_30'
 
     @classmethod
