@@ -40,7 +40,8 @@ def populate_ld_paths():
     for line in check_output_sudo_if_fails(['ldconfig', '-vNX']).decode('utf8').splitlines():
         if line.startswith('/'):
             ld_paths.append(line[:line.find(':')])
-    ld_paths.extend(os.environ["LD_LIBRARY_PATH"].split(os.pathsep))
+    if "LD_LIBRARY_PATH" in os.environ:
+        ld_paths.extend(os.environ["LD_LIBRARY_PATH"].split(os.pathsep))
 
 
 def glob_recursive(path, pattern):

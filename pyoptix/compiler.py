@@ -22,7 +22,7 @@ class Compiler:
     output_path = '/tmp/pyoptix/ptx'
     use_fast_math = True
     dynamic_programs = False
-    arch = 'sm_21'
+    arch = 'sm_30'
 
     @classmethod
     def add_program_directory(cls, directory):

@@ -5,7 +5,7 @@ from pyoptix.mixins.graphnode import GraphNodeMixin
 
 
 class Acceleration(NativeAccelerationWrapper, GraphNodeMixin):
-    def __init__(self, builder, traverser, **kwargs):
+    def __init__(self, builder="NoAccel", traverser="NoAccel", **kwargs):
         self._context = current_context()
         self._native = self._context._create_accelerator(builder, traverser)
         NativeAccelerationWrapper.__init__(self, self._native)

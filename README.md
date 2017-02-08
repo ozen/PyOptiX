@@ -109,3 +109,22 @@ Returns currently active (at the top of the stack) `Context` object.
 ### pyoptix.enums
 
 #### pyoptix.enums.Format
+
+
+## Using Docker Image
+
+1. Copy OptiX SDK files into ./optix directory. This is needed to build a docker image with OptiX. Example command:
+
+        cp -R /usr/local/NVIDIA-OptiX-SDK-4.0.2-linux64/ PyOptiX/optix/
+
+2. Build a docker image using the Dockerfile provided in the source directory:
+
+        cd PyOptiX
+        docker build -t pyoptix .
+
+3. Run an example in a docker container using the image. Use [nvidia-docker] to be able to use the GPU in the container.
+
+        nvidia-docker run -it pyoptix python3 ./examples/simple/simple.py
+
+
+[nvidia-docker]: https://github.com/NVIDIA/nvidia-docker
