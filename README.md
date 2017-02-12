@@ -77,20 +77,20 @@ to NumPy array with proper dtype.
 If it isn't, PyOptiX cannot deduce the type, therefore the user must cast the value to NumPy array with proper dtype.
 The conversion between NumPy arrays and OptiX vector types are as follows:
 
-| dtype | Size | OptiX C++ Type |
+| Array dtype | Array Shape | OptiX C++ Type |
 |---|---|---|
-| float32 | 1 | float |
-| float32 | 2 | float2 |
-| float32 | 3 | float3 |
-| float32 | 4 | float4 |
-| int32 | 1 | int |
-| int32 | 2 | int2 |
-| int32 | 3 | int3 |
-| int32 | 4 | int4 |
-| uint32 | 1 | unsigned_int |
-| uint32 | 2 | unsigned_int2 |
-| uint32 | 3 | unsigned_int3 |
-| uint32 | 4 | unsigned_int4 |
+| float32 | (1, ) | float |
+| float32 | (2, ) | float2 |
+| float32 | (3, ) | float3 |
+| float32 | (4, ) | float4 |
+| int32 | (1, ) | int |
+| int32 | (2, ) | int2 |
+| int32 | (3, ) | int3 |
+| int32 | (4, ) | int4 |
+| uint32 | (1, ) | unsigned_int |
+| uint32 | (2, ) | unsigned_int2 |
+| uint32 | (3, ) | unsigned_int3 |
+| uint32 | (4, ) | unsigned_int4 |
 | float32 | (2, 2) | matrix2x2 |
 | float32 | (2, 3) | matrix2x3 |
 | float32 | (2, 4) | matrix2x4 |
@@ -116,39 +116,47 @@ INPUT, OUTPUT, and INPUT_OUTPUT formats.
 drop_last_dim is a boolean that indicates that the array holds or will hold a vector type whose length is the
 size of the last dimension of the array. For example, for 2D float4 buffer, the NumPy array's shape will be
 (height, width, 4) and dtype is float32. All possible conversions between NumPy arrays and buffers can be found
-in the table below. If size of the last dimension is greater than 1, drop_last_dim must be True.
+in the following table.
 
-| dtype | Size of the Last Dimension | Buffer Format |
-|---|---|---|
-| float32 | 1 | float |
-| float32 | 2 | float2 |
-| float32 | 3 | float3 |
-| float32 | 4 | float4 |
-| int32 | 1 | int |
-| int32 | 2 | int2 |
-| int32 | 3 | int3 |
-| int32 | 4 | int4 |
-| uint32 | 1 | unsigned_int |
-| uint32 | 2 | unsigned_int2 |
-| uint32 | 3 | unsigned_int3 |
-| uint32 | 4 | unsigned_int4 |
-| int16 | 1 | short |
-| int16 | 2 | short2 |
-| int16 | 3 | short3 |
-| int16 | 4 | short4 |
-| uint16 | 1 | unsigned_short |
-| uint16 | 2 | unsigned_short2 |
-| uint16 | 3 | unsigned_short3 |
-| uint16 | 4 | unsigned_short4 |
-| int8 | 1 | byte |
-| int8 | 2 | byte2 |
-| int8 | 3 | byte3 |
-| int8 | 4 | byte4 |
-| uint8 | 1 | unsigned_byte |
-| uint8 | 2 | unsigned_byte2 |
-| uint8 | 3 | unsigned_byte3 |
-| uint8 | 4 | unsigned_byte4 |
-| custom | varies | user |
+| Array dtype | Array Shape | drop_last_dim | Buffer Format | Buffer Shape |
+|---|---|---|---|---|
+| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | float | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 1) | True | float | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 2) | True | float2 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 3) | True | float3 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 4) | True | float4 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| int32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | int | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| int32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 1) | True | int | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| int32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 2) | True | int2 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| int32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 3) | True | int3 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| int32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 4) | True | int4 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | float | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| uint32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | unsigned_int | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| uint32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 1) | True | unsigned_int | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| uint32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 2) | True | unsigned_int2 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| uint32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 3) | True | unsigned_int3 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| uint32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 4) | True | unsigned_int4 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | float | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| int16 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | short | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| int16 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 1) | True | short | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| int16 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 2) | True | short2 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| int16 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 3) | True | short3 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| int16 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 4) | True | short4 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | float | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| uint16 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | unsigned_short | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| uint16 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 1) | True | unsigned_short | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| uint16 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 2) | True | unsigned_short2 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| uint16 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 3) | True | unsigned_short3 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| uint16 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 4) | True | unsigned_short4 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | float | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| int8 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | byte | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| int8 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 1) | True | byte | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| int8 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 2) | True | byte2 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| int8 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 3) | True | byte3 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| int8 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 4) | True | byte4 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | float | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| uint8 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | unsigned_byte | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| uint8 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 1) | True | unsigned_byte | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| uint8 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 2) | True | unsigned_byte2 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| uint8 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 3) | True | unsigned_byte3 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+| uint8 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, 4) | True | unsigned_byte4 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)| float32 | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>) | False | float | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n</sub>)
+| custom | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>, x) | True | user | (d<sub>0</sub>, d<sub>1</sub>, ..., d<sub>n-1</sub>)
+
 
 The content of Buffer object can be converted to/from Numpy array using `Buffer.copy_from_array(numpy_array)` and
 `Buffer.to_array()` instance methods.
