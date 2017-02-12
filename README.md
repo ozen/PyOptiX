@@ -12,10 +12,15 @@ Only Linux is supported. PyOptiX can work on other platforms but you may need to
 `Compiler.nvcc_path` and `Compiler.flags` parameters manually during run time.
 
 
-## Concepts
+## Features
 
-Since PyOptiX wraps OptiX C++ API, the API is almost the same. PyOptiX adds couple of new concepts.
+Since PyOptiX wraps OptiX C++ API, the API is almost the same. PyOptiX adds couple of new features.
 Let's talk about them.
+
+### Garbage Collection
+
+Lifetime of OptiX objects are tied to lifetime of PyOptiX objects.
+When Python objects get garbage collected, OptiX objects are destroyed automatically.
 
 ### Context Stack
 
