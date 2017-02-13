@@ -37,15 +37,15 @@ optix::GeometryGroup NativeGeometryGroupWrapper::get_native() {
     return this->geometry_group;
 }
 
-void NativeGeometryGroupWrapper::export_for_python() {
+void NativeGeometryGroupWrapper::boost_python_expose() {
     boost::python::class_<NativeGeometryGroupWrapper, boost::python::bases<NativeDestroyableWrapper> >(
                 "NativeGeometryGroupWrapper",
-                "NativeGeometryGroupWrapper docstring",
-                boost::python::init<optix::GeometryGroup>())
+                "Wraps optix::GeometryGroup class",
+                boost::python::no_init)
 
-            .def("_set_acceleration", &NativeGeometryGroupWrapper::set_acceleration)
-            .def("_set_child_count", &NativeGeometryGroupWrapper::set_child_count)
+            .def("set_acceleration", &NativeGeometryGroupWrapper::set_acceleration)
+            .def("set_child_count", &NativeGeometryGroupWrapper::set_child_count)
             .def("get_child_count", &NativeGeometryGroupWrapper::get_child_count)
-            .def("_set_child_geometry_instance", &NativeGeometryGroupWrapper::set_child_geometry_instance)
-            .def("_remove_child", &NativeGeometryGroupWrapper::remove_child);
+            .def("set_child_geometry_instance", &NativeGeometryGroupWrapper::set_child_geometry_instance)
+            .def("remove_child", &NativeGeometryGroupWrapper::remove_child);
 }

@@ -49,17 +49,17 @@ optix::Selector NativeSelectorWrapper::get_native() {
     return this->selector;
 }
 
-void NativeSelectorWrapper::export_for_python() {
+void NativeSelectorWrapper::boost_python_expose() {
     boost::python::class_<NativeSelectorWrapper, boost::python::bases<NativeDestroyableWrapper> >(
                 "NativeSelectorWrapper",
-                "NativeSelectorWrapper docstring",
-                boost::python::init<optix::Selector>())
+                "Wraps optix::Selector class",
+                boost::python::no_init)
 
-            .def("_set_visit_program", &NativeSelectorWrapper::set_visit_program)
-            .def("_set_child_count", &NativeSelectorWrapper::set_child_count)
+            .def("set_visit_program", &NativeSelectorWrapper::set_visit_program)
+            .def("set_child_count", &NativeSelectorWrapper::set_child_count)
             .def("get_child_count", &NativeSelectorWrapper::get_child_count)
-            .def("_set_child_geometry_group", &NativeSelectorWrapper::set_child_geometry_group)
-            .def("_set_child_group", &NativeSelectorWrapper::set_child_group)
-            .def("_set_child_selector", &NativeSelectorWrapper::set_child_selector)
-            .def("_remove_child", &NativeSelectorWrapper::remove_child);
+            .def("set_child_geometry_group", &NativeSelectorWrapper::set_child_geometry_group)
+            .def("set_child_group", &NativeSelectorWrapper::set_child_group)
+            .def("set_child_selector", &NativeSelectorWrapper::set_child_selector)
+            .def("remove_child", &NativeSelectorWrapper::remove_child);
 }

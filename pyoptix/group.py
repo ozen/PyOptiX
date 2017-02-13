@@ -1,10 +1,9 @@
-from pyoptix._driver import NativeGroupWrapper
 from pyoptix.context import current_context
 from pyoptix.mixins.graphnode import GraphNodeMixin
 from pyoptix.mixins.parent import ParentMixin
 
 
-class Group(NativeGroupWrapper, GraphNodeMixin, ParentMixin):
+class Group(GraphNodeMixin, ParentMixin):
     def __init__(self, children=None):
         from pyoptix.acceleration import Acceleration
         from pyoptix.geometry_group import GeometryGroup
@@ -13,16 +12,20 @@ class Group(NativeGroupWrapper, GraphNodeMixin, ParentMixin):
 
         self._context = current_context()
         self._native = self._context._create_group()
-        NativeGroupWrapper.__init__(self, self._native)
-        GraphNodeMixin.__init__(self)
-        ParentMixin.__init__(self,
+        GraphNodeMixin.__init__(self, self._native)
+        ParentMixin.__init__(self, self._native
                              [GeometryGroup, Group, Selector, Transform, Acceleration],
                              children)
 
         self._acceleration = None
 
     def set_acceleration(self, acceleration):
-        self._set_acceleration(acceleration)
+        try:
+            acceleration.validate()
+        except Exception as e:
+            raise RuntimeError('Acceleration could not be validated')
+
+        self._native.set_acceleration(acceleration._native)
         self._acceleration = acceleration
 
     def get_acceleration(self):

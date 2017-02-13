@@ -22,7 +22,6 @@ private:
 public:
     NativeContextWrapper();
     ~NativeContextWrapper();
-    optix::Variable get_assignable_variable(const std::string& variable_name);
     unsigned int get_ray_type_count();
     unsigned int get_entry_point_count();
     void set_ray_type_count(unsigned int ray_type_count);
@@ -52,16 +51,16 @@ public:
     bool get_print_enabled();
     void set_print_buffer_size(int buffer_size_bytes);
     int get_print_buffer_size();
-    optix::Program create_program_from_file(std::string file_name, std::string function_name);
-    optix::Buffer create_buffer(int buffer_type);
-    optix::TextureSampler create_texture_sampler();
-    optix::Geometry create_geometry();
-    optix::Material create_material();
-    optix::GeometryInstance create_geometry_instance();
-    optix::Group create_group();
-    optix::GeometryGroup create_geometry_group();
-    optix::Transform create_transform();
-    optix::Selector create_selector();
-    optix::Acceleration create_accelerator(std::string builder, std::string traverser);
-    static void export_for_python();
+    NativeProgramWrapper* create_program_from_file(std::string file_name, std::string function_name);
+    NativeBufferWrapper* create_buffer(int buffer_type);
+    NativeTextureSamplerWrapper* create_texture_sampler();
+    NativeGeometryWrapper* create_geometry();
+    NativeMaterialWrapper* create_material();
+    NativeGeometryInstanceWrapper* create_geometry_instance();
+    NativeGroupWrapper* create_group();
+    NativeGeometryGroupWrapper* create_geometry_group();
+    NativeTransformWrapper* create_transform();
+    NativeSelectorWrapper* create_selector();
+    NativeAccelerationWrapper* create_accelerator(std::string builder, std::string traverser);
+    static void boost_python_expose();
 };

@@ -14,5 +14,5 @@ public:
     void set_closest_hit_program(unsigned int ray_type_index, NativeProgramWrapper* program);
     void set_any_hit_program(unsigned int ray_type_index, NativeProgramWrapper* program);
     optix::Material get_native();
-    static void export_for_python();
+    static void boost_python_expose();
 };

@@ -29,17 +29,17 @@ unsigned int NativeScopedWrapper::get_variable_count() {
     return this->scoped_object->getVariableCount();
 }
 
-void NativeScopedWrapper::export_for_python() {
+void NativeScopedWrapper::boost_python_expose() {
     namespace bp = boost::python;
 
     bp::class_<NativeScopedWrapper, bp::bases<NativeDestroyableWrapper> >(
                 "NativeScopedWrapper",
-                "NativeScopedWrapper docstring",
+                "Wraps optix::Scoped class",
                 bp::no_init)
 
-            .def("_declare_variable", &NativeScopedWrapper::declare_variable, bp::return_value_policy<bp::manage_new_object>())
-            .def("_query_variable", &NativeScopedWrapper::query_variable, bp::return_value_policy<bp::manage_new_object>())
-            .def("_get_variable", &NativeScopedWrapper::get_variable, bp::return_value_policy<bp::manage_new_object>())
-            .def("_remove_variable", &NativeScopedWrapper::remove_variable)
+            .def("declare_variable", &NativeScopedWrapper::declare_variable, bp::return_value_policy<bp::manage_new_object>())
+            .def("query_variable", &NativeScopedWrapper::query_variable, bp::return_value_policy<bp::manage_new_object>())
+            .def("get_variable", &NativeScopedWrapper::get_variable, bp::return_value_policy<bp::manage_new_object>())
+            .def("remove_variable", &NativeScopedWrapper::remove_variable)
             .def("get_variable_count", &NativeScopedWrapper::get_variable_count);
 }

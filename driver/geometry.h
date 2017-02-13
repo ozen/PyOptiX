@@ -21,5 +21,5 @@ public:
     void set_bounding_box_program(NativeProgramWrapper* program);
     void set_intersection_program(NativeProgramWrapper* program);
     optix::Geometry get_native();
-    static void export_for_python();
+    static void boost_python_expose();
 };

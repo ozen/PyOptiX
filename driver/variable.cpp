@@ -147,11 +147,11 @@ optix::Variable NativeVariableWrapper::get_native() {
     return variable;
 }
 
-void NativeVariableWrapper::export_for_python() {
+void NativeVariableWrapper::boost_python_expose() {
     boost::python::class_<NativeVariableWrapper>(
                 "NativeVariableWrapper",
-                "NativeVariableWrapper docstring",
-                 boost::python::init<optix::Variable>())
+                "Wraps optix::Variable class",
+                boost::python::no_init)
 
             .add_property("name", &NativeVariableWrapper::get_name)
             .add_property("annotation", &NativeVariableWrapper::get_annotation)
@@ -159,12 +159,12 @@ void NativeVariableWrapper::export_for_python() {
             .add_property("nbytes", &NativeVariableWrapper::get_size_in_bytes)
             .add_property("_native", &NativeVariableWrapper::get_native)
             .def("is_valid", &NativeVariableWrapper::is_valid)
-            .def("_set_buffer", &NativeVariableWrapper::set_buffer)
-            .def("_set_texture", &NativeVariableWrapper::set_texture)
-            .def("_set_program_id_with_program", &NativeVariableWrapper::set_program_id_with_program)
-            .def("_set_group", &NativeVariableWrapper::set_group)
-            .def("_set_geometry_group", &NativeVariableWrapper::set_geometry_group)
-            .def("_set_transform", &NativeVariableWrapper::set_transform)
-            .def("_set_selector", &NativeVariableWrapper::set_selector)
-            .def("_set_from_array", &NativeVariableWrapper::set_from_array);
+            .def("set_buffer", &NativeVariableWrapper::set_buffer)
+            .def("set_texture", &NativeVariableWrapper::set_texture)
+            .def("set_program_id_with_program", &NativeVariableWrapper::set_program_id_with_program)
+            .def("set_group", &NativeVariableWrapper::set_group)
+            .def("set_geometry_group", &NativeVariableWrapper::set_geometry_group)
+            .def("set_transform", &NativeVariableWrapper::set_transform)
+            .def("set_selector", &NativeVariableWrapper::set_selector)
+            .def("set_from_array", &NativeVariableWrapper::set_from_array);
 }

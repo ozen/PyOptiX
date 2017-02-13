@@ -20,5 +20,5 @@ public:
     void set_child_geometry_instance(unsigned int index, NativeGeometryInstanceWrapper* geometry_instance);
     void remove_child(unsigned int index);
     optix::GeometryGroup get_native();
-    static void export_for_python();
+    static void boost_python_expose();
 };

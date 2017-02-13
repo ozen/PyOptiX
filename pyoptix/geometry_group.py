@@ -1,25 +1,28 @@
-from pyoptix._driver import NativeGeometryGroupWrapper
 from pyoptix.context import current_context
 from pyoptix.mixins.graphnode import GraphNodeMixin
 from pyoptix.mixins.parent import ParentMixin
 
 
-class GeometryGroup(NativeGeometryGroupWrapper, GraphNodeMixin, ParentMixin):
+class GeometryGroup(GraphNodeMixin, ParentMixin):
     def __init__(self, children=None):
         from pyoptix.acceleration import Acceleration
         from pyoptix.geometry_instance import GeometryInstance
 
         self._context = current_context()
         self._native = self._context._create_geometry_group()
-        NativeGeometryGroupWrapper.__init__(self, self._native)
         GraphNodeMixin.__init__(self)
-        ParentMixin.__init__(self, [Acceleration, GeometryInstance], children)
+        ParentMixin.__init__(self, self._native,
+                             [Acceleration, GeometryInstance], children)
 
         self._acceleration = None
 
     def set_acceleration(self, acceleration):
-        acceleration.validate()
-        self._set_acceleration(acceleration)
+        try:
+            acceleration.validate()
+        except Exception as e:
+            raise RuntimeError('Acceleration could not be validated')
+
+        self._native.set_acceleration(acceleration._native)
         self._acceleration = acceleration
 
     def get_acceleration(self):

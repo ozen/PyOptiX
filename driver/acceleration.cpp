@@ -33,11 +33,11 @@ optix::Acceleration NativeAccelerationWrapper::get_native() {
     return acceleration;
 }
 
-void NativeAccelerationWrapper::export_for_python() {
+void NativeAccelerationWrapper::boost_python_expose() {
     boost::python::class_<NativeAccelerationWrapper, boost::python::bases<NativeDestroyableWrapper> >(
                 "NativeAccelerationWrapper",
-                "NativeAccelerationWrapper docstring",
-                boost::python::init<optix::Acceleration>())
+                "Wraps optix::Acceleration class",
+                boost::python::no_init)
 
             .def("set_property", &NativeAccelerationWrapper::set_property)
             .def("get_property", &NativeAccelerationWrapper::get_property)

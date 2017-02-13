@@ -18,5 +18,5 @@ public:
     unsigned int get_material_count();
     void set_material(unsigned int idx, NativeMaterialWrapper* material);
     optix::GeometryInstance get_native();
-    static void export_for_python();
+    static void boost_python_expose();
 };

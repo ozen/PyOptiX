@@ -120,11 +120,11 @@ optix::TextureSampler NativeTextureSamplerWrapper::get_native() {
     return this->texture_sampler;
 }
 
-void NativeTextureSamplerWrapper::export_for_python() {
+void NativeTextureSamplerWrapper::boost_python_expose() {
     boost::python::class_<NativeTextureSamplerWrapper, boost::python::bases<NativeDestroyableWrapper> >(
                 "NativeTextureSamplerWrapper",
-                "NativeTextureSamplerWrapper docstring",
-                boost::python::init<optix::TextureSampler>())
+                "Wraps optix::TextureSampler class",
+                boost::python::no_init)
 
             .def("get_id", &NativeTextureSamplerWrapper::get_id)
             .def("set_mip_level_clamp", &NativeTextureSamplerWrapper::set_mip_level_clamp)
@@ -137,12 +137,12 @@ void NativeTextureSamplerWrapper::export_for_python() {
             .def("get_mip_level_count", &NativeTextureSamplerWrapper::get_mip_level_count)
             .def("set_array_size", &NativeTextureSamplerWrapper::set_array_size)
             .def("get_array_size", &NativeTextureSamplerWrapper::get_array_size)
-            .def("_set_wrap_mode", &NativeTextureSamplerWrapper::set_wrap_mode)
+            .def("set_wrap_mode", &NativeTextureSamplerWrapper::set_wrap_mode)
             .def("get_wrap_mode", &NativeTextureSamplerWrapper::get_wrap_mode)
-            .def("_set_read_mode", &NativeTextureSamplerWrapper::set_read_mode)
+            .def("set_read_mode", &NativeTextureSamplerWrapper::set_read_mode)
             .def("get_read_mode", &NativeTextureSamplerWrapper::get_read_mode)
-            .def("_set_indexing_mode", &NativeTextureSamplerWrapper::set_indexing_mode)
+            .def("set_indexing_mode", &NativeTextureSamplerWrapper::set_indexing_mode)
             .def("get_indexing_mode", &NativeTextureSamplerWrapper::get_indexing_mode)
-            .def("_set_filtering_modes", &NativeTextureSamplerWrapper::set_filtering_modes)
-            .def("_set_buffer", &NativeTextureSamplerWrapper::set_buffer);
+            .def("set_filtering_modes", &NativeTextureSamplerWrapper::set_filtering_modes)
+            .def("set_buffer", &NativeTextureSamplerWrapper::set_buffer);
 }

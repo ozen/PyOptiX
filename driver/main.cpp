@@ -16,29 +16,45 @@
 #include "geometry_instance.h"
 
 
+template<class T>
+struct VectorToList
+{
+    static PyObject* convert(const std::vector<T>& vec)
+    {
+        boost::python::list* l = new boost::python::list();
+        for(size_t i = 0; i < vec.size(); i++)
+            (*l).append(vec[i]);
+
+        return l->ptr();
+    }
+};
+
+
 BOOST_PYTHON_MODULE(_driver)
 {
     Py_Initialize();
+
+    boost::python::to_python_converter<std::vector<int,class std::allocator<int> >, VectorToList<int> >();
 
     /*
     *   CORE
     */
     boost::python::scope().attr("OPTIX_VERSION") = OPTIX_VERSION;
-    NativeDestroyableWrapper::export_for_python();
-    NativeVariableWrapper::export_for_python();
-    NativeScopedWrapper::export_for_python();
-    NativeProgramWrapper::export_for_python();
-    NativeContextWrapper::export_for_python();
-    NativeAccelerationWrapper::export_for_python();
-    NativeBufferWrapper::export_for_python();
-    NativeTextureSamplerWrapper::export_for_python();
-    NativeGeometryWrapper::export_for_python();
-    NativeMaterialWrapper::export_for_python();
-    NativeSelectorWrapper::export_for_python();
-    NativeTransformWrapper::export_for_python();
-    NativeGeometryGroupWrapper::export_for_python();
-    NativeGroupWrapper::export_for_python();
-    NativeGeometryInstanceWrapper::export_for_python();
+    NativeDestroyableWrapper::boost_python_expose();
+    NativeVariableWrapper::boost_python_expose();
+    NativeScopedWrapper::boost_python_expose();
+    NativeProgramWrapper::boost_python_expose();
+    NativeContextWrapper::boost_python_expose();
+    NativeAccelerationWrapper::boost_python_expose();
+    NativeBufferWrapper::boost_python_expose();
+    NativeTextureSamplerWrapper::boost_python_expose();
+    NativeGeometryWrapper::boost_python_expose();
+    NativeMaterialWrapper::boost_python_expose();
+    NativeSelectorWrapper::boost_python_expose();
+    NativeTransformWrapper::boost_python_expose();
+    NativeGeometryGroupWrapper::boost_python_expose();
+    NativeGroupWrapper::boost_python_expose();
+    NativeGeometryInstanceWrapper::boost_python_expose();
 
     /*
     *   ENUMs
@@ -150,22 +166,4 @@ BOOST_PYTHON_MODULE(_driver)
         .value("RT_OBJECTTYPE_UNSIGNED_INT4", RT_OBJECTTYPE_UNSIGNED_INT4)
         .value("RT_OBJECTTYPE_USER", RT_OBJECTTYPE_USER)
         .value("RT_OBJECTTYPE_PROGRAM", RT_OBJECTTYPE_PROGRAM);
-
-
-    /*
-    *   NATIVES
-    */
-    boost::python::class_<optix::Acceleration>("_Acceleration", "_Acceleration docstring", boost::python::no_init);
-    boost::python::class_<optix::Buffer>("_Buffer", "_Buffer docstring", boost::python::no_init);
-    boost::python::class_<optix::Context>("_Context", "_Context docstring", boost::python::no_init);
-    boost::python::class_<optix::Geometry>("_Geometry", "_Geometry docstring", boost::python::no_init);
-    boost::python::class_<optix::GeometryGroup>("_GeometryGroup", "_GeometryGroup docstring", boost::python::no_init);
-    boost::python::class_<optix::GeometryInstance>("_GeometryInstance", "_GeometryInstance docstring", boost::python::no_init);
-    boost::python::class_<optix::Group>("_Group", "_Group docstring", boost::python::no_init);
-    boost::python::class_<optix::Material>("_Material", "_Material docstring", boost::python::no_init);
-    boost::python::class_<optix::Program>("_Program", "_Program docstring", boost::python::no_init);
-    boost::python::class_<optix::Selector>("_Selector", "_Selector docstring", boost::python::no_init);
-    boost::python::class_<optix::TextureSampler>("_TextureSampler", "_TextureSampler docstring", boost::python::no_init);
-    boost::python::class_<optix::Transform>("_Transform", "_Transform docstring", boost::python::no_init);
-    boost::python::class_<optix::Variable>("_Variable", "_Variable docstring", boost::python::no_init);
 }

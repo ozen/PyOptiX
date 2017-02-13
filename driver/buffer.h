@@ -29,5 +29,5 @@ public:
     void set_mip_level_count(unsigned int level_count);
     std::vector<int> get_mip_level_size(unsigned int level);
     optix::Buffer get_native_buffer();
-    static void export_for_python();
+    static void boost_python_expose();
 };

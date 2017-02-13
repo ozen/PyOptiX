@@ -1,24 +1,38 @@
 import numpy
-from pyoptix._driver import NativeVariableWrapper
-from pyoptix.enums import ObjectType
-from pyoptix.types import get_object_type_from_dtype, get_dtype_from_object_type, \
+from pyoptix.enums import ObjectType, get_object_type_from_dtype, get_dtype_from_object_type, \
     get_object_type_from_pyoptix_class
 
 OBJECT_TYPE_TO_SET_FUNCTION = {
-    ObjectType.buffer: '_set_buffer',
-    ObjectType.texture_sampler: '_set_texture',
-    ObjectType.program: '_set_program_id_with_program',
-    ObjectType.group: '_set_group',
-    ObjectType.geometry_group: '_set_geometry_group',
-    ObjectType.selector: '_set_selector',
-    ObjectType.transform: '_set_transform',
+    ObjectType.buffer: 'set_buffer',
+    ObjectType.texture_sampler: 'set_texture',
+    ObjectType.program: 'set_program_id_with_program',
+    ObjectType.group: 'set_group',
+    ObjectType.geometry_group: 'set_geometry_group',
+    ObjectType.selector: 'set_selector',
+    ObjectType.transform: 'set_transform',
 }
 
 
-class Variable(NativeVariableWrapper):
+class Variable(object):
     def __init__(self, wrapped_variable):
-        NativeVariableWrapper.__init__(self, wrapped_variable._native)
+        self._native = wrapped_variable
         self._value = None
+
+    @property
+    def name(self):
+        return self._native.name
+
+    @property
+    def type(self):
+        return self._native.type
+
+    @property
+    def annotation(self):
+        return self._native.annotation
+
+    @property
+    def nbytes(self):
+        return self._native.nbytes
 
     @property
     def value(self):
@@ -36,7 +50,7 @@ class Variable(NativeVariableWrapper):
                 raise TypeError("Variable type is {0}, but {1} was given".format(self.type, type(value)))
 
             # call the respective set function of the optix type of the variable
-            getattr(self, OBJECT_TYPE_TO_SET_FUNCTION[class_object_type])(value)
+            getattr(self._native, OBJECT_TYPE_TO_SET_FUNCTION[class_object_type])(value)
             self._value = value
 
         elif optix_has_type:
@@ -56,7 +70,7 @@ class Variable(NativeVariableWrapper):
                 if value.shape != shape:
                     raise TypeError("Array shape does not match to the shape of {0}.".format(self.type))
 
-                self._set_from_array(value, self.type)
+                self._native.set_from_array(value, self.type)
                 self._value = value
 
             except (ValueError, AttributeError):
@@ -69,7 +83,7 @@ class Variable(NativeVariableWrapper):
                 value = value.reshape(1)
 
             object_type = get_object_type_from_dtype(value.dtype, value.shape)
-            self._set_from_array(value, object_type)
+            self._native.set_from_array(value, object_type)
             self._value = value
 
         else:

@@ -49,11 +49,11 @@ optix::Geometry NativeGeometryWrapper::get_native() {
     return this->geometry;
 }
 
-void NativeGeometryWrapper::export_for_python() {
+void NativeGeometryWrapper::boost_python_expose() {
     boost::python::class_<NativeGeometryWrapper, boost::python::bases<NativeScopedWrapper> >(
                 "NativeGeometryWrapper",
-                "NativeGeometryWrapper docstring",
-                boost::python::init<optix::Geometry>())
+                "Wraps optix::Geometry class",
+                boost::python::no_init)
 
             .def("mark_dirty", &NativeGeometryWrapper::mark_dirty)
             .def("is_dirty", &NativeGeometryWrapper::is_dirty)
@@ -61,6 +61,6 @@ void NativeGeometryWrapper::export_for_python() {
             .def("get_primitive_count", &NativeGeometryWrapper::get_primitive_count)
             .def("set_primitive_index_offset", &NativeGeometryWrapper::set_primitive_index_offset)
             .def("get_primitive_index_offset", &NativeGeometryWrapper::get_primitive_index_offset)
-            .def("_set_bounding_box_program", &NativeGeometryWrapper::set_bounding_box_program)
-            .def("_set_intersection_program", &NativeGeometryWrapper::set_intersection_program);
+            .def("set_bounding_box_program", &NativeGeometryWrapper::set_bounding_box_program)
+            .def("set_intersection_program", &NativeGeometryWrapper::set_intersection_program);
 }

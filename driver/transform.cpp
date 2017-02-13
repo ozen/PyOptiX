@@ -66,16 +66,16 @@ optix::Transform NativeTransformWrapper::get_native() {
     return this->transform;
 }
 
-void NativeTransformWrapper::export_for_python() {
+void NativeTransformWrapper::boost_python_expose() {
     boost::python::class_<NativeTransformWrapper, boost::python::bases<NativeDestroyableWrapper> >(
                 "NativeTransformWrapper",
-                "NativeTransformWrapper docstring",
-                boost::python::init<optix::Transform>())
+                "Wraps optix::Transform class",
+                boost::python::no_init)
 
-            .def("_set_matrix", &NativeTransformWrapper::set_matrix)
-            .def("_get_matrix", &NativeTransformWrapper::get_matrix)
-            .def("_set_child_geometry_group", &NativeTransformWrapper::set_child_geometry_group)
-            .def("_set_child_group", &NativeTransformWrapper::set_child_group)
-            .def("_set_child_selector", &NativeTransformWrapper::set_child_selector)
-            .def("_set_child_transform", &NativeTransformWrapper::set_child_transform);
+            .def("set_matrix", &NativeTransformWrapper::set_matrix)
+            .def("get_matrix", &NativeTransformWrapper::get_matrix)
+            .def("set_child_geometry_group", &NativeTransformWrapper::set_child_geometry_group)
+            .def("set_child_group", &NativeTransformWrapper::set_child_group)
+            .def("set_child_selector", &NativeTransformWrapper::set_child_selector)
+            .def("set_child_transform", &NativeTransformWrapper::set_child_transform);
 }

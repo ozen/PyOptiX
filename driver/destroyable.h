@@ -13,5 +13,5 @@ public:
     void set_destroyable_object(optix::DestroyableObj* object);
     void validate();
     void set_destroyed();
-    static void export_for_python();
+    static void boost_python_expose();
 };

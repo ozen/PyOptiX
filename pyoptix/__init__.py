@@ -12,3 +12,4 @@ from .program import Program
 from .selector import Selector
 from .texture_sampler import TextureSampler
 from .transform import Transform
+from ._driver import OPTIX_VERSION

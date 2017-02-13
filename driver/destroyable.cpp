@@ -17,12 +17,12 @@ void NativeDestroyableWrapper::set_destroyed() {
     is_destroyed = true;
 }
 
-void NativeDestroyableWrapper::export_for_python() {
+void NativeDestroyableWrapper::boost_python_expose() {
     boost::python::class_<NativeDestroyableWrapper >(
                 "NativeDestroyableWrapper",
-                "NativeDestroyableWrapper docstring",
+                "Wraps optix::Destroyable class",
                 boost::python::no_init)
 
             .def("validate", &NativeDestroyableWrapper::validate)
-            .def("_set_destroyed", &NativeDestroyableWrapper::set_destroyed);
+            .def("set_destroyed", &NativeDestroyableWrapper::set_destroyed);
 }

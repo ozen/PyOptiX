@@ -1,5 +1,6 @@
 class ScopedMixin(object):
-    def __init__(self):
+    def __init__(self, native):
+        self._native = native
         self._variables = {}
 
     def __setitem__(self, key, value):
@@ -7,9 +8,9 @@ class ScopedMixin(object):
 
         added_variable_to_optix = False
 
-        wrapped_variable = self._query_variable(key)
+        wrapped_variable = self._native.query_variable(key)
         if not wrapped_variable.is_valid():
-            wrapped_variable = self._declare_variable(key)
+            wrapped_variable = self._native.declare_variable(key)
             added_variable_to_optix = True
 
         try:
@@ -18,7 +19,7 @@ class ScopedMixin(object):
             self._variables[key] = optix_variable
         except Exception as e:
             if added_variable_to_optix:
-                self._remove_variable(wrapped_variable)
+                self._native.remove_variable(wrapped_variable)
             raise e
 
     def __getitem__(self, key):
@@ -28,11 +29,11 @@ class ScopedMixin(object):
         return len(self._variables)
 
     def __delitem__(self, key):
-        wrapped_variable = self._query_variable(key)
+        wrapped_variable = self._native.query_variable(key)
         if not wrapped_variable.is_valid():
             raise ValueError("Variable not found")
 
-        self._remove_variable(wrapped_variable)
+        self._native.remove_variable(wrapped_variable)
         del self._variables[key]
 
     def __contains__(self, item):

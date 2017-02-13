@@ -13,10 +13,6 @@ NativeContextWrapper::~NativeContextWrapper() {
     }
 }
 
-optix::Variable NativeContextWrapper::get_assignable_variable(const std::string& variable_name) {
-    return this->context[variable_name];
-}
-
 unsigned int NativeContextWrapper::get_ray_type_count() {
     return this->context->getRayTypeCount();
 }
@@ -136,70 +132,57 @@ int NativeContextWrapper::get_print_buffer_size() {
     return this->context->getPrintBufferSize();
 }
 
-optix::Program NativeContextWrapper::create_program_from_file(std::string file_name, std::string program_name) {
-    return this->context->createProgramFromPTXFile(file_name, program_name);
+NativeProgramWrapper* NativeContextWrapper::create_program_from_file(std::string file_name, std::string program_name) {
+    return new NativeProgramWrapper(this->context->createProgramFromPTXFile(file_name, program_name));
 }
 
-optix::Buffer NativeContextWrapper::create_buffer(int buffer_type) {
-    return this->context->createBuffer(buffer_type);
+NativeBufferWrapper* NativeContextWrapper::create_buffer(int buffer_type) {
+    return new NativeBufferWrapper(this->context->createBuffer(buffer_type));
 }
 
-optix::TextureSampler NativeContextWrapper::create_texture_sampler() {
-    return this->context->createTextureSampler();
+NativeTextureSamplerWrapper* NativeContextWrapper::create_texture_sampler() {
+    return new NativeTextureSamplerWrapper(this->context->createTextureSampler());
 }
 
-optix::Geometry NativeContextWrapper::create_geometry() {
-    return this->context->createGeometry();
+NativeGeometryWrapper* NativeContextWrapper::create_geometry() {
+    return new NativeGeometryWrapper(this->context->createGeometry());
 }
 
-optix::Material NativeContextWrapper::create_material() {
-    return this->context->createMaterial();
+NativeMaterialWrapper* NativeContextWrapper::create_material() {
+    return new NativeMaterialWrapper(this->context->createMaterial());
 }
 
-optix::GeometryInstance NativeContextWrapper::create_geometry_instance() {
-    return this->context->createGeometryInstance();
+NativeGeometryInstanceWrapper* NativeContextWrapper::create_geometry_instance() {
+    return new NativeGeometryInstanceWrapper(this->context->createGeometryInstance());
 }
 
-optix::Group NativeContextWrapper::create_group() {
-    return this->context->createGroup();
+NativeGroupWrapper* NativeContextWrapper::create_group() {
+    return new NativeGroupWrapper(this->context->createGroup());
 }
 
-optix::GeometryGroup NativeContextWrapper::create_geometry_group() {
-    return this->context->createGeometryGroup();
+NativeGeometryGroupWrapper* NativeContextWrapper::create_geometry_group() {
+    return new NativeGeometryGroupWrapper(this->context->createGeometryGroup());
 }
 
-optix::Transform NativeContextWrapper::create_transform() {
-    return this->context->createTransform();
+NativeTransformWrapper* NativeContextWrapper::create_transform() {
+    return new NativeTransformWrapper(this->context->createTransform());
 }
 
-optix::Selector NativeContextWrapper::create_selector() {
-    return this->context->createSelector();
+NativeSelectorWrapper* NativeContextWrapper::create_selector() {
+    return new NativeSelectorWrapper(this->context->createSelector());
 }
 
-optix::Acceleration NativeContextWrapper::create_accelerator(std::string builder, std::string traverser) {
-    return this->context->createAcceleration(builder.c_str(), traverser.c_str());
+NativeAccelerationWrapper* NativeContextWrapper::create_accelerator(std::string builder, std::string traverser) {
+    return new NativeAccelerationWrapper(this->context->createAcceleration(builder.c_str(), traverser.c_str()));
 }
 
-template<class T>
-struct VecToList
-{
-    static PyObject* convert(const std::vector<T>& vec)
-    {
-        boost::python::list* l = new boost::python::list();
-        for(size_t i = 0; i < vec.size(); i++)
-            (*l).append(vec[i]);
+void NativeContextWrapper::boost_python_expose() {
+    namespace bp = boost::python;
 
-        return l->ptr();
-    }
-};
-
-void NativeContextWrapper::export_for_python() {
-    boost::python::to_python_converter<std::vector<int,class std::allocator<int> >, VecToList<int> >();
-
-    boost::python::class_<NativeContextWrapper, boost::python::bases<NativeScopedWrapper> >(
+    bp::class_<NativeContextWrapper, bp::bases<NativeScopedWrapper> >(
                 "NativeContextWrapper",
-                "NativeContextWrapper docstring",
-                boost::python::init<>())
+                "Wraps optix::Context class",
+                bp::init<>())
 
             .def("get_ray_type_count", &NativeContextWrapper::get_ray_type_count)
             .def("set_ray_type_count", &NativeContextWrapper::set_ray_type_count)
@@ -225,20 +208,20 @@ void NativeContextWrapper::export_for_python() {
             .def("set_print_buffer_size", &NativeContextWrapper::set_print_buffer_size)
             .def("set_ray_generation_program", &NativeContextWrapper::set_ray_generation_program)
             .def("set_exception_program", &NativeContextWrapper::set_exception_program)
+            .def("set_miss_program", &NativeContextWrapper::set_miss_program)
             .def("compile", &NativeContextWrapper::compile)
-            .def("_create_program_from_file", &NativeContextWrapper::create_program_from_file)
-            .def("_create_buffer", &NativeContextWrapper::create_buffer)
-            .def("_create_texture_sampler", &NativeContextWrapper::create_texture_sampler)
-            .def("_create_geometry", &NativeContextWrapper::create_geometry)
-            .def("_create_material", &NativeContextWrapper::create_material)
-            .def("_create_geometry_instance", &NativeContextWrapper::create_geometry_instance)
-            .def("_create_group", &NativeContextWrapper::create_group)
-            .def("_create_geometry_group", &NativeContextWrapper::create_geometry_group)
-            .def("_create_transform", &NativeContextWrapper::create_transform)
-            .def("_create_selector", &NativeContextWrapper::create_selector)
-            .def("_create_accelerator", &NativeContextWrapper::create_accelerator)
-            .def("_set_miss_program", &NativeContextWrapper::set_miss_program)
-            .def("_launch_1d", &NativeContextWrapper::launch_1d)
-            .def("_launch_2d", &NativeContextWrapper::launch_2d)
-            .def("_launch_3d", &NativeContextWrapper::launch_3d);
+            .def("create_program_from_file", &NativeContextWrapper::create_program_from_file, bp::return_value_policy<bp::manage_new_object>())
+            .def("create_buffer", &NativeContextWrapper::create_buffer, bp::return_value_policy<bp::manage_new_object>())
+            .def("create_texture_sampler", &NativeContextWrapper::create_texture_sampler, bp::return_value_policy<bp::manage_new_object>())
+            .def("create_geometry", &NativeContextWrapper::create_geometry, bp::return_value_policy<bp::manage_new_object>())
+            .def("create_material", &NativeContextWrapper::create_material, bp::return_value_policy<bp::manage_new_object>())
+            .def("create_geometry_instance", &NativeContextWrapper::create_geometry_instance, bp::return_value_policy<bp::manage_new_object>())
+            .def("create_group", &NativeContextWrapper::create_group, bp::return_value_policy<bp::manage_new_object>())
+            .def("create_geometry_group", &NativeContextWrapper::create_geometry_group, bp::return_value_policy<bp::manage_new_object>())
+            .def("create_transform", &NativeContextWrapper::create_transform, bp::return_value_policy<bp::manage_new_object>())
+            .def("create_selector", &NativeContextWrapper::create_selector, bp::return_value_policy<bp::manage_new_object>())
+            .def("create_accelerator", &NativeContextWrapper::create_accelerator, bp::return_value_policy<bp::manage_new_object>())
+            .def("launch_1d", &NativeContextWrapper::launch_1d)
+            .def("launch_2d", &NativeContextWrapper::launch_2d)
+            .def("launch_3d", &NativeContextWrapper::launch_3d);
 }

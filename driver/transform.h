@@ -22,5 +22,5 @@ public:
     void set_child_selector(unsigned int index, NativeSelectorWrapper* child);
     void set_child_transform(unsigned int index, NativeGeometryGroupWrapper* child);
     optix::Transform get_native();
-    static void export_for_python();
+    static void boost_python_expose();
 };

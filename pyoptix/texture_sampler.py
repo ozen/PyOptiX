@@ -1,20 +1,19 @@
-from pyoptix._driver import NativeTextureSamplerWrapper, OPTIX_VERSION
-from pyoptix.enums import FilterMode
+from pyoptix._driver import OPTIX_VERSION
+from pyoptix.enums import FilterMode, convert_filtering_mode, convert_wrap_mode, convert_read_mode, \
+    convert_indexing_mode
 from pyoptix.context import current_context
-from pyoptix.types import convert_filtering_mode, convert_wrap_mode, convert_read_mode, convert_indexing_mode
 
 
-class TextureSampler(NativeTextureSamplerWrapper):
+class TextureSampler(object):
     def __init__(self, buffer, wrap_mode=None, indexing_mode=None,
                  read_mode=None, filter_mode=None, max_anisotropy=1):
         self._context = current_context()
         self._native = self._context._create_texture_sampler()
-        NativeTextureSamplerWrapper.__init__(self, self._native)
 
-        self.buffer = None
-        self.filtering_mode_minification = None
-        self.filtering_mode_magnification = None
-        self.filtering_mode_mipmapping = None
+        self._buffer = None
+        self._filtering_mode_minification = None
+        self._filtering_mode_magnification = None
+        self._filtering_mode_mipmapping = None
 
         if indexing_mode is not None:
             self.set_indexing_mode(indexing_mode)
@@ -33,21 +32,28 @@ class TextureSampler(NativeTextureSamplerWrapper):
             else:
                 self.set_filtering_modes(filter_mode, filter_mode, FilterMode.none)
 
-        self.set_max_anisotropy(max_anisotropy)
+        self._native.set_max_anisotropy(max_anisotropy)
 
         if OPTIX_VERSION < 3090:
             # required with OptiX < 3.9.0
-            self.set_mip_level_count(1)
-            self.set_array_size(1)
+            self._native.set_mip_level_count(1)
+            self._native.set_array_size(1)
 
         self.set_buffer(0, 0, buffer)
 
+    @property
+    def id(self):
+        return self.get_id()
+
+    def get_id(self):
+        return self._native.get_id()
+
     def set_buffer(self, texture_array_idx, mip_level, buffer):
-        self.buffer = buffer
-        self._set_buffer(texture_array_idx, mip_level, buffer)
+        self._buffer = buffer
+        self._native.set_buffer(texture_array_idx, mip_level, buffer._native)
 
     def get_buffer(self):
-        return self.buffer
+        return self._buffer
 
     def set_filtering_modes(self, minification=None, magnification=None, mipmapping=None):
         minification = convert_filtering_mode(minification)
@@ -63,23 +69,50 @@ class TextureSampler(NativeTextureSamplerWrapper):
         if mipmapping is None:
             mipmapping = FilterMode.none
 
-        self.filtering_mode_minification = minification
-        self.filtering_mode_magnification = magnification
-        self.filtering_mode_mipmapping = mipmapping
+        self._filtering_mode_minification = minification
+        self._filtering_mode_magnification = magnification
+        self._filtering_mode_mipmapping = mipmapping
 
-        self._set_filtering_modes(minification, magnification, mipmapping)
+        self._native.set_filtering_modes(minification, magnification, mipmapping)
 
     def get_filtering_modes(self):
-        return self.filtering_mode_minification, self.filtering_mode_magnification, self.filtering_mode_mipmapping
+        return self._filtering_mode_minification, self._filtering_mode_magnification, self._filtering_mode_mipmapping
 
     def set_wrap_mode(self, dim, mode):
         mode = convert_wrap_mode(mode)
-        self._set_wrap_mode(dim, mode)
+        self._native.set_wrap_mode(dim, mode)
+
+    def get_wrap_mode(self):
+        return self._native.get_wrap_mode()
 
     def set_read_mode(self, mode):
         mode = convert_read_mode(mode)
-        self._set_read_mode(mode)
+        self._native.set_read_mode(mode)
+
+    def get_read_mode(self):
+        return self._native.get_read_mode()
 
     def set_indexing_mode(self, mode):
         mode = convert_indexing_mode(mode)
-        self._set_indexing_mode(mode)
+        self._native.set_indexing_mode(mode)
+
+    def get_indexing_mode(self):
+        return self._native.get_indexing_mode()
+
+    def set_max_anisotropy(self, max_anisotropy):
+        self._native.set_max_anisotropy(max_anisotropy)
+
+    def get_max_anisotropy(self):
+        return self._native.get_max_anisotropy()
+
+    def set_mip_level_clamp(self, mip_level_clamp):
+        self._native.set_mip_level_clamp(mip_level_clamp)
+
+    def get_mip_level_clamp(self):
+        return self._native.get_mip_level_clamp()
+
+    def set_mip_level_bias(self, mip_level_bias):
+        self._native.set_mip_level_bias(mip_level_bias)
+
+    def get_mip_level_bias(self):
+        return self._native.get_mip_level_bias()

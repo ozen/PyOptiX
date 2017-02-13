@@ -31,5 +31,5 @@ public:
     void set_selector(NativeSelectorWrapper* selector_wrapper);
     void set_from_array(PyObject* array, RTobjecttype object_type);
     optix::Variable get_native();
-    static void export_for_python();
+    static void boost_python_expose();
 };

@@ -1,11 +1,10 @@
 import os
-from pyoptix._driver import NativeProgramWrapper
 from pyoptix.compiler import Compiler
 from pyoptix.context import current_context
 from pyoptix.mixins.scoped import ScopedMixin
 
 
-class Program(NativeProgramWrapper, ScopedMixin):
+class Program(ScopedMixin):
     dynamic_programs = False
 
     def __init__(self, file_path, function_name, output_ptx_name=None):
@@ -22,10 +21,13 @@ class Program(NativeProgramWrapper, ScopedMixin):
 
         # Create program object from compiled file
         self._native = self._context._create_program_from_file(self._ptx_path, self._function_name)
-        NativeProgramWrapper.__init__(self, self._native)
-        ScopedMixin.__init__(self)
+        ScopedMixin.__init__(self, self._native)
 
         self._context.program_cache[(file_path, function_name)] = self
+
+    @property
+    def id(self):
+        return self.get_id()
 
     @property
     def name(self):
@@ -38,6 +40,9 @@ class Program(NativeProgramWrapper, ScopedMixin):
     @property
     def function_name(self):
         return self._function_name
+
+    def get_id(self):
+        return self._native.get_id()
 
     @classmethod
     def get_or_create(cls, file_path, function_name):

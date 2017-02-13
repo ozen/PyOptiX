@@ -21,11 +21,11 @@ optix::Program NativeProgramWrapper::get_native() {
     return this->program;
 }
 
-void NativeProgramWrapper::export_for_python() {
+void NativeProgramWrapper::boost_python_expose() {
     boost::python::class_<NativeProgramWrapper, boost::python::bases<NativeScopedWrapper> >(
                 "NativeProgramWrapper",
-                "NativeProgramWrapper docstring",
-                boost::python::init<optix::Program>())
+                "Wraps optix::Program class",
+                boost::python::no_init)
 
             .def("get_id", &NativeProgramWrapper::get_id);
 }

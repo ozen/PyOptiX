@@ -1,5 +1,6 @@
 class ParentMixin(object):
-    def __init__(self, allowed_children, children=None):
+    def __init__(self, native, allowed_children, children=None):
+        self._native = native
         self._children = []
         self._allowed_children = allowed_children
 
@@ -15,14 +16,14 @@ class ParentMixin(object):
             raise TypeError(
                 "You can not add {0} to {1} as a child".format(child.__class__.__name__, self.__class__.__name__))
 
-        total_child_count = self.get_child_count()
-        self._set_child_count(total_child_count + 1)
+        total_child_count = self._native.get_child_count()
+        self._native.set_child_count(total_child_count + 1)
 
         try:
             self._set_optix_child(total_child_count, child)
         except Exception as e:
-            total_child_count = self.get_child_count()
-            self._set_child_count(total_child_count - 1)
+            total_child_count = self._native.get_child_count()
+            self._native.set_child_count(total_child_count - 1)
             raise e
 
         child._add_parent(self)
@@ -40,21 +41,21 @@ class ParentMixin(object):
         from pyoptix.transform import Transform
 
         if isinstance(child, Acceleration):
-            self._set_child_acceleration(index, child)
+            self._native.set_child_acceleration(index, child._native)
         elif isinstance(child, Transform):
-            self._set_child_transform(index, child)
+            self._native.set_child_transform(index, child._native)
         elif isinstance(child, GeometryGroup):
-            self._set_child_geometry_group(index, child)
+            self._native.set_child_geometry_group(index, child._native)
         elif isinstance(child, Selector):
-            self._set_child_selector(index, child)
+            self._native.set_child_selector(index, child._native)
         elif isinstance(child, Group):
-            self._set_child_group(index, child)
+            self._native.set_child_group(index, child._native)
         elif isinstance(child, GeometryInstance):
-            self._set_child_geometry_instance(index, child)
+            self._native.set_child_geometry_instance(index, child._native)
         elif isinstance(child, Geometry):
-            self._set_child_geometry(index, child)
+            self._native.set_child_geometry(index, child._native)
         elif isinstance(child, Material):
-            self._set_child_material(index, child)
+            self._native.set_child_material(index, child._native)
         else:
             raise TypeError(
                 "You can not add {0} to {1} as a child".format(child.__class__.__name__, self.__class__.__name__))
@@ -71,7 +72,7 @@ class ParentMixin(object):
 
     def _remove_last_child(self):
         self._children[-1]._remove_parent(self)
-        self._remove_child(len(self._children)-1)
+        self._native.remove_child(len(self._children)-1)
         self._children.pop()
 
     def get_children(self):

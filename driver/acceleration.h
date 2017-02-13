@@ -15,5 +15,5 @@ public:
     void mark_dirty();
     bool is_dirty();
     optix::Acceleration get_native();
-    static void export_for_python();
+    static void boost_python_expose();
 };

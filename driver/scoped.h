@@ -17,5 +17,5 @@ public:
     NativeVariableWrapper* get_variable(int index);
     void remove_variable(NativeVariableWrapper* variable_wrapper);
     unsigned int get_variable_count();
-    static void export_for_python();
+    static void boost_python_expose();
 };

@@ -25,12 +25,12 @@ optix::Material NativeMaterialWrapper::get_native() {
     return this->material;
 }
 
-void NativeMaterialWrapper::export_for_python() {
+void NativeMaterialWrapper::boost_python_expose() {
     boost::python::class_<NativeMaterialWrapper, boost::python::bases<NativeScopedWrapper> >(
                 "NativeMaterialWrapper",
-                "NativeMaterialWrapper docstring",
-                boost::python::init<optix::Material>())
+                "Wraps optix::Material class",
+                boost::python::no_init)
 
-            .def("_set_closest_hit_program", &NativeMaterialWrapper::set_closest_hit_program)
-            .def("_set_any_hit_program", &NativeMaterialWrapper::set_any_hit_program);
+            .def("set_closest_hit_program", &NativeMaterialWrapper::set_closest_hit_program)
+            .def("set_any_hit_program", &NativeMaterialWrapper::set_any_hit_program);
 }

@@ -33,14 +33,14 @@ optix::GeometryInstance NativeGeometryInstanceWrapper::get_native() {
     return geometry_instance;
 }
 
-void NativeGeometryInstanceWrapper::export_for_python() {
+void NativeGeometryInstanceWrapper::boost_python_expose() {
     boost::python::class_<NativeGeometryInstanceWrapper, boost::python::bases<NativeScopedWrapper> >(
                 "NativeGeometryInstanceWrapper",
-                "NativeGeometryInstanceWrapper docstring",
-                boost::python::init<optix::GeometryInstance>())
+                "Wraps optix::GeometryInstance class",
+                boost::python::no_init)
 
-            .def("_set_geometry", &NativeGeometryInstanceWrapper::set_geometry)
-            .def("_set_material_count", &NativeGeometryInstanceWrapper::set_material_count)
-            .def("_get_material_count", &NativeGeometryInstanceWrapper::get_material_count)
-            .def("_set_material", &NativeGeometryInstanceWrapper::set_material);
+            .def("set_geometry", &NativeGeometryInstanceWrapper::set_geometry)
+            .def("set_material_count", &NativeGeometryInstanceWrapper::set_material_count)
+            .def("get_material_count", &NativeGeometryInstanceWrapper::get_material_count)
+            .def("set_material", &NativeGeometryInstanceWrapper::set_material);
 }

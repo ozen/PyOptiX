@@ -27,5 +27,5 @@ public:
     void set_child_acceleration(unsigned int index, NativeAccelerationWrapper* child);
     void remove_child(unsigned int index);
     optix::Group get_native();
-    static void export_for_python();
+    static void boost_python_expose();
 };

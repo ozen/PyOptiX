@@ -55,20 +55,20 @@ optix::Group NativeGroupWrapper::get_native() {
     return this->group;
 }
 
-void NativeGroupWrapper::export_for_python()
+void NativeGroupWrapper::boost_python_expose()
 {
     boost::python::class_<NativeGroupWrapper, boost::python::bases<NativeDestroyableWrapper> >(
                 "NativeGroupWrapper",
-                "NativeGroupWrapper docstring",
-                boost::python::init<optix::Group>())
+                "Wraps optix::Group class",
+                boost::python::no_init)
 
-            .def("_set_acceleration", &NativeGroupWrapper::set_acceleration)
-            .def("_set_child_count", &NativeGroupWrapper::set_child_count)
+            .def("set_acceleration", &NativeGroupWrapper::set_acceleration)
+            .def("set_child_count", &NativeGroupWrapper::set_child_count)
             .def("get_child_count", &NativeGroupWrapper::get_child_count)
-            .def("_set_child_geometry_group", &NativeGroupWrapper::set_child_geometry_group)
-            .def("_set_child_group", &NativeGroupWrapper::set_child_group)
-            .def("_set_child_selector", &NativeGroupWrapper::set_child_selector)
-            .def("_set_child_transform", &NativeGroupWrapper::set_child_transform)
-            .def("_set_child_acceleration", &NativeGroupWrapper::set_child_acceleration)
-            .def("_remove_child", &NativeGroupWrapper::remove_child);
+            .def("set_child_geometry_group", &NativeGroupWrapper::set_child_geometry_group)
+            .def("set_child_group", &NativeGroupWrapper::set_child_group)
+            .def("set_child_selector", &NativeGroupWrapper::set_child_selector)
+            .def("set_child_transform", &NativeGroupWrapper::set_child_transform)
+            .def("set_child_acceleration", &NativeGroupWrapper::set_child_acceleration)
+            .def("remove_child", &NativeGroupWrapper::remove_child);
 }

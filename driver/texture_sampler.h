@@ -32,5 +32,5 @@ public:
     void set_filtering_modes(RTfiltermode minification, RTfiltermode magnification, RTfiltermode mipmapping);
     void set_buffer(unsigned int texture_array_idx, unsigned int mip_level, NativeBufferWrapper* buffer);
     optix::TextureSampler get_native();
-    static void export_for_python();
+    static void boost_python_expose();
 };

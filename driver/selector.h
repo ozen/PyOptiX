@@ -25,5 +25,5 @@ public:
     void set_child_transform(unsigned int index, NativeTransformWrapper* child);
     void remove_child(unsigned int index);
     optix::Selector get_native();
-    static void export_for_python();
+    static void boost_python_expose();
 };

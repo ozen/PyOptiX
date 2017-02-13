@@ -190,26 +190,26 @@ optix::Buffer NativeBufferWrapper::get_native_buffer() {
     return this->buffer;
 }
 
-void NativeBufferWrapper::export_for_python() {
+void NativeBufferWrapper::boost_python_expose() {
     boost::python::class_<NativeBufferWrapper, boost::python::bases<NativeDestroyableWrapper> >(
                 "NativeBufferWrapper",
-                "NativeBufferWrapper docstring",
-                boost::python::init<optix::Buffer>())
+                "Wraps optix::Buffer class",
+                boost::python::no_init)
 
             .def("get_id", &NativeBufferWrapper::get_id)
             .def("mark_dirty", &NativeBufferWrapper::mark_dirty)
-            .def("_set_format", &NativeBufferWrapper::set_format)
+            .def("set_format", &NativeBufferWrapper::set_format)
             .def("get_format", &NativeBufferWrapper::get_format)
             .def("set_size", &NativeBufferWrapper::set_size)
             .def("get_size", &NativeBufferWrapper::get_size)
             .def("get_size_in_bytes", &NativeBufferWrapper::get_buffer_size_in_bytes)
             .def("set_element_size", &NativeBufferWrapper::set_element_size)
             .def("get_element_size", &NativeBufferWrapper::get_element_size)
-            .def("_copy_into_array", &NativeBufferWrapper::copy_into_array)
-            .def("_copy_from_array", &NativeBufferWrapper::copy_from_array)
-            .def("_copy_mip_level_from_array", &NativeBufferWrapper::copy_mip_level_from_array)
+            .def("copy_into_array", &NativeBufferWrapper::copy_into_array)
+            .def("copy_from_array", &NativeBufferWrapper::copy_from_array)
+            .def("copy_mip_level_from_array", &NativeBufferWrapper::copy_mip_level_from_array)
             .def("set_mip_level_count", &NativeBufferWrapper::set_mip_level_count)
             .def("get_mip_level_count", &NativeBufferWrapper::get_mip_level_count)
             .def("get_mip_level_size", &NativeBufferWrapper::get_mip_level_size)
-            .def("_get_mip_level_size_in_bytes", &NativeBufferWrapper::get_mip_level_size_in_bytes);
+            .def("get_mip_level_size_in_bytes", &NativeBufferWrapper::get_mip_level_size_in_bytes);
 }
