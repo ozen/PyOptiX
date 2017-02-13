@@ -6,14 +6,16 @@ void NativeScopedWrapper::set_scoped_object(optix::ScopedObj* scoped_object) {
     this->set_destroyable_object(scoped_object);
 }
 
-NativeVariableWrapper* NativeScopedWrapper::query_variable(const std::string name) {
+NativeVariableWrapper* NativeScopedWrapper::query_variable(const std::string& name) {
     optix::Variable variable = this->scoped_object->queryVariable(name);
-    return new NativeVariableWrapper(variable);
+    if (variable == 0)
+        return nullptr;
+    else
+        return new NativeVariableWrapper(variable);
 }
 
-NativeVariableWrapper* NativeScopedWrapper::declare_variable(const std::string name) {
-    optix::Variable variable = this->scoped_object->declareVariable(name);
-    return new NativeVariableWrapper(variable);
+NativeVariableWrapper* NativeScopedWrapper::declare_variable(const std::string& name) {
+    return new NativeVariableWrapper(this->scoped_object->declareVariable(name));
 }
 
 NativeVariableWrapper* NativeScopedWrapper::get_variable(int index) {

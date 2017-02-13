@@ -2,15 +2,15 @@ from pyoptix.context import current_context
 from pyoptix.geometry import Geometry
 from pyoptix.material import Material
 from pyoptix.mixins.graphnode import GraphNodeMixin
-from pyoptix.mixins.scoped import ScopedMixin
+from pyoptix.mixins.scoped import ScopedObject
+from pyoptix.mixins.hascontext import HasContextMixin
 
 
-class GeometryInstance(GraphNodeMixin, ScopedMixin):
+class GeometryInstance(GraphNodeMixin, ScopedObject, HasContextMixin):
     def __init__(self, geometry=None, materials=None):
-        self._context = current_context()
-        self._native = self._context._create_geometry_instance()
+        HasContextMixin.__init__(self, current_context())
+        ScopedObject.__init__(self, self._safe_context._create_geometry_instance())
         GraphNodeMixin.__init__(self)
-        ScopedMixin.__init__(self, self._native)
 
         self._geometry = None
         self._materials = []
@@ -26,13 +26,16 @@ class GeometryInstance(GraphNodeMixin, ScopedMixin):
             if not isinstance(materials, list):
                 raise TypeError('materials parameter must be a list')
 
-            self._native.set_material_count(len(materials))
+            self._safe_native.set_material_count(len(materials))
             for idx, material in enumerate(materials):
                 self.set_material(idx, material)
 
+    def validate(self):
+        self._safe_native.validate()
+
     def add_material(self, material):
-        self._native.set_material_count(len(self._materials))
-        self._native.set_material(len(self._materials), material._native)
+        self._safe_native.set_material_count(len(self._materials))
+        self._safe_native.set_material(len(self._materials), material._safe_native)
 
     def set_material(self, idx, material):
         if not isinstance(material, Material):
@@ -46,8 +49,8 @@ class GeometryInstance(GraphNodeMixin, ScopedMixin):
         else:
             self._materials[idx] = material
 
-        self._native.set_material_count(len(self._materials))
-        self._native.set_material(idx, material._native)
+        self._safe_native.set_material_count(len(self._materials))
+        self._safe_native.set_material(idx, material._safe_native)
 
     def get_material(self, idx=0):
         if idx < len(self._materials):
@@ -66,7 +69,7 @@ class GeometryInstance(GraphNodeMixin, ScopedMixin):
             raise TypeError('Parameter geometry is not of type Geometry')
 
         self._geometry = geometry
-        self._native.set_geometry(geometry._native)
+        self._safe_native.set_geometry(geometry._safe_native)
 
     def get_geometry(self):
         return self._geometry

@@ -1,25 +1,28 @@
-class ScopedMixin(object):
+from pyoptix.mixins.destroyable import DestroyableObject
+
+
+class ScopedObject(DestroyableObject):
     def __init__(self, native):
-        self._native = native
+        DestroyableObject.__init__(self, native)
         self._variables = {}
 
     def __setitem__(self, key, value):
         from pyoptix.variable import Variable
 
-        added_variable_to_optix = False
+        variable_wrapper = self._safe_native.query_variable(key)
+        declared = False
 
-        wrapped_variable = self._native.query_variable(key)
-        if not wrapped_variable.is_valid():
-            wrapped_variable = self._native.declare_variable(key)
-            added_variable_to_optix = True
+        if variable_wrapper is None:
+            variable_wrapper = self._safe_native.declare_variable(key)
+            declared = True
 
         try:
-            optix_variable = Variable(wrapped_variable)
+            optix_variable = Variable(variable_wrapper)
             optix_variable.value = value
             self._variables[key] = optix_variable
         except Exception as e:
-            if added_variable_to_optix:
-                self._native.remove_variable(wrapped_variable)
+            if declared:
+                self._safe_native.remove_variable(variable_wrapper)
             raise e
 
     def __getitem__(self, key):
@@ -29,11 +32,11 @@ class ScopedMixin(object):
         return len(self._variables)
 
     def __delitem__(self, key):
-        wrapped_variable = self._native.query_variable(key)
+        wrapped_variable = self._safe_native.query_variable(key)
         if not wrapped_variable.is_valid():
             raise ValueError("Variable not found")
 
-        self._native.remove_variable(wrapped_variable)
+        self._safe_native.remove_variable(wrapped_variable)
         del self._variables[key]
 
     def __contains__(self, item):

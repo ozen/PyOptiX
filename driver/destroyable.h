@@ -10,8 +10,9 @@ protected:
     bool is_destroyed;
 public:
     NativeDestroyableWrapper();
+    ~NativeDestroyableWrapper();
     void set_destroyable_object(optix::DestroyableObj* object);
     void validate();
-    void set_destroyed();
+    void mark_destroyed();
     static void boost_python_expose();
 };

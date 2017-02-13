@@ -7,10 +7,7 @@ NativeAccelerationWrapper::NativeAccelerationWrapper(optix::Acceleration acceler
 }
 
 NativeAccelerationWrapper::~NativeAccelerationWrapper() {
-    if (!is_destroyed) {
-        this->acceleration->destroy();
-        is_destroyed = true;
-    }
+    if (!is_destroyed) this->acceleration->destroy();
 }
 
 void NativeAccelerationWrapper::set_property(const std::string& name, const std::string& value) {

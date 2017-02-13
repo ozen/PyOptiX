@@ -17,11 +17,6 @@ Only Linux is supported. PyOptiX can work on other platforms but you may need to
 Since PyOptiX wraps OptiX C++ API, the API is almost the same. PyOptiX adds couple of new features.
 Let's talk about them.
 
-### Garbage Collection
-
-Lifetime of OptiX objects are tied to lifetime of PyOptiX objects.
-When Python objects get garbage collected, OptiX objects are destroyed automatically.
-
 ### Context Stack
 
 PyOptiX implements a Context Stack. `Acceleration`, `Buffer`, `Geometry`, `GeometryGroup`, `GeometryInstance`,
@@ -34,6 +29,21 @@ Whenever a new Context object is instantiated, it is pushed to the stack automat
 `Context.pop()` instance method pops the context from the stack, so the next context in the stack becomes active.
 You can keep the popped context in a variable, then push it to the stack again using `Context.push()` instance method,
 making it active. The same Context may occur multiple times in the stack.
+
+### Garbage Collection
+
+Lifetime of OptiX objects are tied to lifetime of PyOptiX objects.
+When Python objects get garbage collected, OptiX objects are destroyed automatically.
+
+In OptiX, a context is destroyed along with all other types of objects in it, such as buffers and programs.
+So it's possible in PyOptiX for a wrapper object such as `pyoptix.Buffer` to become invalid because its underlying
+object was destroyed, but remain accessible.
+This situation is tracked by PyOptiX and operations on invalid wrapper objects result in RuntimeError. It is the
+user's responsibility to use only valid wrapper objects.
+
+Remember that Python implements reference counting and objects are garbage collected onlu when reference counts is zero.
+The Context Stack holds strong references to Contexts.
+So, a Context would never get garbage collected when it is in the stack.
 
 ### PTX Generation
 

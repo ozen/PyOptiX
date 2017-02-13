@@ -50,7 +50,7 @@ class Variable(object):
                 raise TypeError("Variable type is {0}, but {1} was given".format(self.type, type(value)))
 
             # call the respective set function of the optix type of the variable
-            getattr(self._native, OBJECT_TYPE_TO_SET_FUNCTION[class_object_type])(value)
+            getattr(self._native, OBJECT_TYPE_TO_SET_FUNCTION[class_object_type])(value._native)
             self._value = value
 
         elif optix_has_type:

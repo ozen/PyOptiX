@@ -1,30 +1,15 @@
 import weakref
+import atexit
 from pyoptix._driver import NativeContextWrapper
 from pyoptix.enums import ExceptionType
 from pyoptix.compiler import Compiler
-from pyoptix.mixins.scoped import ScopedMixin
-
-_context_stack = []
+from pyoptix.mixins.scoped import ScopedObject
 
 
-def current_context():
-    return _context_stack[-1]
-
-
-def _push_context(ctx):
-    if not isinstance(ctx, Context):
-        raise TypeError('context must be an instance of Context')
-    _context_stack.append(ctx)
-
-
-def _pop_context():
-    return _context_stack.pop()
-
-
-class Context(ScopedMixin):
+class Context(ScopedObject):
     def __init__(self):
         self._native = NativeContextWrapper()
-        ScopedMixin.__init__(self, self._native)
+        ScopedObject.__init__(self, self._native)
         self._program_cache = {}
         self._ray_gen_programs = {}
         self._exception_programs = {}
@@ -37,9 +22,12 @@ class Context(ScopedMixin):
         Compiler.arch = "sm_{0}{1}".format(sm_major, sm_minor)
 
     def __del__(self):
+        self._mark_all_objects_destroyed()
+
+    def _mark_all_objects_destroyed(self):
         for destroyable in self._destroyables:
             if destroyable() is not None:
-                destroyable()._set_destroyed()
+                destroyable().mark_destroyed()
 
     @property
     def program_cache(self):
@@ -159,11 +147,11 @@ class Context(ScopedMixin):
     def get_available_devices_count(self):
         return self._native.get_available_devices_count()
 
-    def get_device_name(self):
-        return self._native.get_device_name()
+    def get_device_name(self, device_id):
+        return self._native.get_device_name(device_id)
 
-    def get_device_compute_capability(self):
-        return self._native.get_device_compute_capability()
+    def get_device_compute_capability(self, device_id):
+        return self._native.get_device_compute_capability(device_id)
 
     def get_enabled_device_count(self):
         return self._native.get_enabled_device_count()
@@ -177,8 +165,8 @@ class Context(ScopedMixin):
     def get_used_host_memory(self):
         return self._native.get_used_host_memory()
 
-    def get_available_device_memory(self):
-        return self._native.get_available_device_memory()
+    def get_available_device_memory(self, device_id):
+        return self._native.get_available_device_memory(device_id)
 
     def get_exception_enabled(self, exception_type):
         if not isinstance(exception_type, ExceptionType):
@@ -230,6 +218,38 @@ class Context(ScopedMixin):
 
     def set_all_exceptions_enabled(self, is_enabled):
         self._native.set_exception_enabled(ExceptionType.all, is_enabled)
+
+    def validate(self):
+        self._native.validate()
+
+    def compile(self):
+        self._native.compile()
+
+
+_context_stack = []
+
+
+def current_context() -> Context:
+    return _context_stack[-1]
+
+
+def _push_context(ctx):
+    if not isinstance(ctx, Context):
+        raise TypeError('ctx must be an instance of Context')
+    _context_stack.append(ctx)
+
+
+def _pop_context():
+    return _context_stack.pop()
+
+
+def _clear_context_stack():
+    while len(_context_stack) > 0:
+        ctx = _context_stack.pop()
+        ctx._mark_all_objects_destroyed()
+
+
+atexit.register(_clear_context_stack)
 
 # Create a context automatically
 Context()

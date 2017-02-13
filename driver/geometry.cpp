@@ -7,10 +7,7 @@ NativeGeometryWrapper::NativeGeometryWrapper(optix::Geometry geometry) {
 }
 
 NativeGeometryWrapper::~NativeGeometryWrapper() {
-    if (!is_destroyed) {
-        this->geometry->destroy();
-        is_destroyed = true;
-    }
+    if (!is_destroyed) this->geometry->destroy();
 }
 
 void NativeGeometryWrapper::mark_dirty() {

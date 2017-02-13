@@ -12,6 +12,9 @@ NativeVariableWrapper::NativeVariableWrapper(optix::Variable variable) {
     this->variable = variable;
 }
 
+NativeVariableWrapper::~NativeVariableWrapper() {
+}
+
 bool NativeVariableWrapper::is_valid() {
     if (this->variable == 0)
         return false;

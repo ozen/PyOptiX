@@ -9,10 +9,7 @@ NativeGroupWrapper::NativeGroupWrapper(optix::Group group) {
 }
 
 NativeGroupWrapper::~NativeGroupWrapper() {
-    if (!is_destroyed) {
-        this->group->destroy();
-        is_destroyed = true;
-    }
+    if (!is_destroyed) this->group->destroy();
 }
 
 void NativeGroupWrapper::set_acceleration(NativeAccelerationWrapper* acceleration) {

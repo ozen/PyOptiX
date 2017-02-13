@@ -1,20 +1,21 @@
 import numpy
 from pyoptix.context import current_context
+from pyoptix.mixins.destroyable import DestroyableObject
 from pyoptix.mixins.graphnode import GraphNodeMixin
 from pyoptix.mixins.parent import ParentMixin
+from pyoptix.mixins.hascontext import HasContextMixin
 
 
-class Transform(GraphNodeMixin, ParentMixin):
+class Transform(GraphNodeMixin, ParentMixin, HasContextMixin, DestroyableObject):
     def __init__(self, children=None):
         from pyoptix.geometry_group import GeometryGroup
         from pyoptix.group import Group
         from pyoptix.selector import Selector
 
-        self._context = current_context()
-        self._native = self._context._create_transform()
+        HasContextMixin.__init__(self, current_context())
+        DestroyableObject.__init__(self, self._safe_context._create_transform())
         GraphNodeMixin.__init__(self)
-        ParentMixin.__init__(self, self._native,
-                             [GeometryGroup, Group, Selector, Transform], children)
+        ParentMixin.__init__(self, [GeometryGroup, Group, Selector, Transform], children)
 
         self._transpose = False
 
@@ -42,7 +43,10 @@ class Transform(GraphNodeMixin, ParentMixin):
         if matrix.shape != (4, 4):
             raise ValueError('Transformation matrix must be 4 by 4')
 
-        self._native.set_matrix(transpose, matrix.tolist())
+        self._safe_native.set_matrix(transpose, matrix.tolist())
 
     def get_matrix(self, transpose):
-        return numpy.array(self._native.get_matrix(transpose), dtype=numpy.float32)
+        return numpy.array(self._safe_native.get_matrix(transpose), dtype=numpy.float32)
+
+    def validate(self):
+        self._safe_native.validate()

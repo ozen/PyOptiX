@@ -7,10 +7,7 @@ NativeProgramWrapper::NativeProgramWrapper(optix::Program program) {
 }
 
 NativeProgramWrapper::~NativeProgramWrapper() {
-    if (!is_destroyed) {
-        this->program->destroy();
-        is_destroyed = true;
-    }
+    if (!is_destroyed) this->program->destroy();
 }
 
 int NativeProgramWrapper::get_id() {

@@ -7,10 +7,7 @@ NativeGeometryInstanceWrapper::NativeGeometryInstanceWrapper(optix::GeometryInst
 }
 
 NativeGeometryInstanceWrapper::~NativeGeometryInstanceWrapper() {
-    if (!is_destroyed) {
-        this->geometry_instance->destroy();
-        is_destroyed = true;
-    }
+    if (!is_destroyed) this->geometry_instance->destroy();
 }
 
 void NativeGeometryInstanceWrapper::set_geometry(NativeGeometryWrapper* geometry) {

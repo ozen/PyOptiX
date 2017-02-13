@@ -12,8 +12,8 @@ protected:
     void set_scoped_object(optix::ScopedObj* scoped_object);
 
 public:
-    NativeVariableWrapper* query_variable(const std::string name);
-    NativeVariableWrapper* declare_variable(const std::string name);
+    NativeVariableWrapper* query_variable(const std::string& name);
+    NativeVariableWrapper* declare_variable(const std::string& name);
     NativeVariableWrapper* get_variable(int index);
     void remove_variable(NativeVariableWrapper* variable_wrapper);
     unsigned int get_variable_count();

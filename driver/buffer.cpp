@@ -7,10 +7,7 @@ NativeBufferWrapper::NativeBufferWrapper(optix::Buffer buffer) {
 }
 
 NativeBufferWrapper::~NativeBufferWrapper() {
-    if (!is_destroyed) {
-        this->buffer->destroy();
-        is_destroyed = true;
-    }
+    if (!is_destroyed) this->buffer->destroy();
 }
 
 int NativeBufferWrapper::get_id() {

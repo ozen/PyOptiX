@@ -1,14 +1,15 @@
 import os
 from pyoptix.compiler import Compiler
 from pyoptix.context import current_context
-from pyoptix.mixins.scoped import ScopedMixin
+from pyoptix.mixins.scoped import ScopedObject
+from pyoptix.mixins.hascontext import HasContextMixin
 
 
-class Program(ScopedMixin):
+class Program(ScopedObject, HasContextMixin):
     dynamic_programs = False
 
     def __init__(self, file_path, function_name, output_ptx_name=None):
-        self._context = current_context()
+        HasContextMixin.__init__(self, current_context())
         self._function_name = function_name
 
         file_path = Compiler.get_abs_program_path(file_path)
@@ -20,10 +21,9 @@ class Program(ScopedMixin):
             self._ptx_path, _ = Compiler.compile(file_path, output_ptx_name)
 
         # Create program object from compiled file
-        self._native = self._context._create_program_from_file(self._ptx_path, self._function_name)
-        ScopedMixin.__init__(self, self._native)
+        ScopedObject.__init__(self, self._safe_context._create_program_from_file(self._ptx_path, self._function_name))
 
-        self._context.program_cache[(file_path, function_name)] = self
+        self._safe_context.program_cache[(file_path, function_name)] = self
 
     @property
     def id(self):
@@ -42,7 +42,10 @@ class Program(ScopedMixin):
         return self._function_name
 
     def get_id(self):
-        return self._native.get_id()
+        return self._safe_native.get_id()
+
+    def validate(self):
+        self._safe_native.validate()
 
     @classmethod
     def get_or_create(cls, file_path, function_name):

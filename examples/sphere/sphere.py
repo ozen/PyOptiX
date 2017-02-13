@@ -23,10 +23,13 @@ def main():
     result_image = Image.fromarray(result_array)
     ImageWindow(result_image)
 
+    context.pop()
+
 
 def create_context():
     context = Context()
     Compiler.arch = "sm_52"
+    Compiler.add_program_directory(dirname(__file__))
     context.set_ray_type_count(1)
 
     context['radiance_ray_type'] = np.array(0, dtype=np.uint32)

@@ -7,10 +7,7 @@ NativeSelectorWrapper::NativeSelectorWrapper(optix::Selector selector){
 }
 
 NativeSelectorWrapper::~NativeSelectorWrapper() {
-    if (!is_destroyed) {
-        this->selector->destroy();
-        is_destroyed = true;
-    }
+    if (!is_destroyed) this->selector->destroy();
 }
 
 void NativeSelectorWrapper::set_visit_program(NativeProgramWrapper* program) {

@@ -10,10 +10,7 @@ NativeTransformWrapper::NativeTransformWrapper(optix::Transform transform) {
 }
 
 NativeTransformWrapper::~NativeTransformWrapper() {
-    if (!is_destroyed) {
-        this->transform->destroy();
-        is_destroyed = true;
-    }
+    if (!is_destroyed) this->transform->destroy();
 }
 
 void NativeTransformWrapper::set_matrix(bool transpose, boost::python::list& matrix) {

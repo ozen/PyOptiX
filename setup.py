@@ -153,7 +153,7 @@ def main():
         packages=find_packages(),
         ext_modules=[Extension(name='pyoptix._driver', sources=sources, include_dirs=include_dirs,
                                library_dirs=library_dirs, runtime_library_dirs=library_dirs, libraries=libraries,
-                               language='c++')],
+                               language='c++', extra_compile_args=['-std=c++11'])],
         install_requires=['six', 'numpy'],
         classifiers=[
             'Development Status :: 5 - Production/Stable',

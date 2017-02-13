@@ -1,14 +1,14 @@
 from pyoptix.context import current_context
 from pyoptix.mixins.graphnode import GraphNodeMixin
-from pyoptix.mixins.scoped import ScopedMixin
+from pyoptix.mixins.scoped import ScopedObject
+from pyoptix.mixins.hascontext import HasContextMixin
 
 
-class Geometry(GraphNodeMixin, ScopedMixin):
+class Geometry(GraphNodeMixin, ScopedObject, HasContextMixin):
     def __init__(self, bounding_box_program, intersection_program):
-        self._context = current_context()
-        self._native = self._context._create_geometry()
+        HasContextMixin.__init__(self, current_context())
+        ScopedObject.__init__(self, self._safe_context._create_geometry())
         GraphNodeMixin.__init__(self)
-        ScopedMixin.__init__(self, self._native)
 
         self._bounding_box_program = None
         self._intersection_program = None
@@ -53,3 +53,6 @@ class Geometry(GraphNodeMixin, ScopedMixin):
 
     def get_intersection_program(self):
         return self._intersection_program
+
+    def validate(self):
+        self._native.validate()

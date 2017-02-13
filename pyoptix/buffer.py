@@ -1,12 +1,14 @@
 import numpy
 from pyoptix.enums import Format, convert_buffer_type, get_format_from_dtype
 from pyoptix.context import current_context
+from pyoptix.mixins.destroyable import DestroyableObject
+from pyoptix.mixins.hascontext import HasContextMixin
 
 
-class Buffer(object):
+class Buffer(HasContextMixin, DestroyableObject):
     def __init__(self, buffer_type='io'):
-        self._context = current_context()
-        self._native = self._context._create_buffer(convert_buffer_type(buffer_type))
+        HasContextMixin.__init__(self, current_context())
+        DestroyableObject.__init__(self, self._safe_context._create_buffer(convert_buffer_type(buffer_type)))
 
         self._numpy_dtype = None
         self._numpy_shape = None
@@ -22,7 +24,7 @@ class Buffer(object):
 
     @property
     def shape(self):
-        return self._native.get_size()
+        return self._safe_native.get_size()
 
     @property
     def dtype(self):
@@ -30,11 +32,11 @@ class Buffer(object):
 
     @property
     def size(self):
-        return self._native.get_size_in_bytes()
+        return self._safe_native.get_size_in_bytes()
 
     @property
     def element_size(self):
-        return self._native.get_element_size()
+        return self._safe_native.get_element_size()
 
     @classmethod
     def empty(cls, shape, dtype=numpy.float32, buffer_type='io', drop_last_dim=False):
@@ -55,19 +57,19 @@ class Buffer(object):
         return instance
 
     def get_id(self):
-        return self._native.get_id()
+        return self._safe_native.get_id()
 
     def mark_dirty(self):
-        self._native.mark_dirty()
+        self._safe_native.mark_dirty()
 
     def get_element_size(self):
-        return self._native.get_element_size()
+        return self._safe_native.get_element_size()
 
     def get_size(self):
-        return self._native.get_size()
+        return self._safe_native.get_size()
 
     def get_size_in_bytes(self):
-        return self._native.get_size_in_bytes()
+        return self._safe_native.get_size_in_bytes()
 
     def set_format(self, format=None, dtype=None, type_size=1):
         _format = None
@@ -84,7 +86,7 @@ class Buffer(object):
             except TypeError:
                 raise ValueError('Invalid dtype argument')
 
-        self._native.set_format(_format)
+        self._safe_native.set_format(_format)
 
     def _reset_buffer(self, numpy_shape, dtype=numpy.float32, drop_last_dim=False):
         self._numpy_dtype = numpy.dtype(dtype)
@@ -101,12 +103,12 @@ class Buffer(object):
             self._last_dim_dropped = True
 
         self.set_format(dtype=dtype, type_size=type_size)
-        if self._native.get_format() == Format.user:
-            self._native.set_element_size(item_size)
+        if self._safe_native.get_format() == Format.user:
+            self._safe_native.set_element_size(item_size)
 
         # convert numpy dim to optix dim (inverting shape)
         temp_shape = temp_shape[::-1]
-        self._native.set_size(list(temp_shape))
+        self._safe_native.set_size(list(temp_shape))
 
     def _restructure_according_to_numpy_array(self, numpy_array, drop_last_dim=False):
         self._reset_buffer(numpy_shape=numpy_array.shape, dtype=numpy_array.dtype, drop_last_dim=drop_last_dim)
@@ -121,36 +123,39 @@ class Buffer(object):
         return numpy_array
 
     def copy_to_array(self, numpy_array):
-        if numpy_array.nbytes != self._native.get_size_in_bytes():
+        if numpy_array.nbytes != self._safe_native.get_size_in_bytes():
             raise BufferError("Arrays size must be equal!")
 
-        self._native.copy_into_array(numpy_array)
+        self._safe_native.copy_into_array(numpy_array)
 
     def copy_from_array(self, numpy_array):
-        if numpy_array.nbytes != self._native.get_size_in_bytes():
+        if numpy_array.nbytes != self._safe_native.get_size_in_bytes():
             raise BufferError("Arrays size must be equal!")
 
-        self._native.copy_from_array(numpy_array)
+        self._safe_native.copy_from_array(numpy_array)
 
     def set_mip_level_count(self, level_count):
-        self._native.set_mip_level_count(level_count)
+        self._safe_native.set_mip_level_count(level_count)
 
     def get_mip_level_count(self):
-        return self._native.get_mip_level_count()
+        return self._safe_native.get_mip_level_count()
 
     def get_mip_level_size(self):
-        return self._native.get_mip_level_size()
+        return self._safe_native.get_mip_level_size()
 
     def get_mip_level_size_in_bytes(self):
-        return self._native.get_mip_level_size_in_bytes()
+        return self._safe_native.get_mip_level_size_in_bytes()
 
     def copy_level_from_array(self, level, numpy_array):
-        if numpy_array.nbytes != self._native.get_mip_level_size_in_bytes(level):
+        if numpy_array.nbytes != self._safe_native.get_mip_level_size_in_bytes(level):
             raise BufferError("Arrays size must be equal!")
 
-        self._native.copy_mip_level_from_array(level, numpy_array)
+        self._safe_native.copy_mip_level_from_array(level, numpy_array)
 
     def copy_level_from_buffer(self, level, buffer):
         if not isinstance(buffer, Buffer):
             raise TypeError('buffer is not of type Buffer')
         self.copy_level_from_array(self, level, buffer.to_array())
+
+    def validate(self):
+        self._safe_native.validate()

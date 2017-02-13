@@ -2,11 +2,12 @@ import logging
 from pyoptix.context import current_context
 from pyoptix.program import Program
 from pyoptix.utils import is_2_string_tuple
+from pyoptix.mixins.hascontext import HasContextMixin
 
 logger = logging.getLogger(__name__)
 
 
-class EntryPoint(object):
+class EntryPoint(HasContextMixin):
     __default_exception_program = None
 
     @classmethod
@@ -14,7 +15,7 @@ class EntryPoint(object):
         cls.__default_exception_program = (file_path, function_name)
 
     def __init__(self, ray_generation_program, exception_program=None, size=None):
-        self.context = current_context()
+        HasContextMixin.__init__(self, current_context())
 
         if is_2_string_tuple(ray_generation_program):
             self.ray_generation_program = Program(*ray_generation_program)
@@ -55,7 +56,7 @@ class EntryPoint(object):
             size = self.size
 
         if context is None:
-            context = self.context
+            context = self._safe_context
 
         context.set_entry_point_count(1)
         context.set_ray_generation_program(0, self.ray_generation_program)

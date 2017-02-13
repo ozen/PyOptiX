@@ -7,10 +7,7 @@ NativeContextWrapper::NativeContextWrapper(): NativeScopedWrapper() {
 }
 
 NativeContextWrapper::~NativeContextWrapper() {
-    if (!is_destroyed) {
-        this->context->destroy();
-        is_destroyed = true;
-    }
+    this->context->destroy();
 }
 
 unsigned int NativeContextWrapper::get_ray_type_count() {

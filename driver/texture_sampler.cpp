@@ -7,10 +7,7 @@ NativeTextureSamplerWrapper::NativeTextureSamplerWrapper(optix::TextureSampler t
 }
 
 NativeTextureSamplerWrapper::~NativeTextureSamplerWrapper() {
-    if (!is_destroyed) {
-        this->texture_sampler->destroy();
-        is_destroyed = true;
-    }
+    if (!is_destroyed) this->texture_sampler->destroy();
 }
 
 void NativeTextureSamplerWrapper::set_mip_level_clamp(float min_level, float max_level) {
