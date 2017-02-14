@@ -74,13 +74,13 @@ def search_on_path(filenames):
                 return os.path.abspath(os.path.join(path, filename))
 
 
-def save_pyoptix_conf(nvcc_path, flags, include_dirs, library_dirs, libraries):
+def save_pyoptix_conf(nvcc_path, compile_args, include_dirs, library_dirs, libraries):
     try:
         config = ConfigParser()
         config.add_section('pyoptix')
 
         config.set('pyoptix', 'nvcc_path', nvcc_path)
-        config.set('pyoptix', 'flags', os.pathsep.join(flags))
+        config.set('pyoptix', 'compile_args', os.pathsep.join(compile_args))
         config.set('pyoptix', 'include_dirs', os.pathsep.join(include_dirs))
         config.set('pyoptix', 'library_dirs', os.pathsep.join(library_dirs))
         config.set('pyoptix', 'libraries', os.pathsep.join(libraries))
@@ -135,12 +135,12 @@ def main():
     library_dirs = cuda_lib_dirs + optix_lib_dirs + [boost_python_lib_dir]
     libraries = ['optix', 'optixu', 'cudart', BOOST_PYTHON_FILENAMES[boost_python_lib_name]]
 
-    flags = [
+    compile_args = [
         '-I%s' % cuda_include, '-I%s' % optix_include, '-I%s' % optix_include, '-loptix', '-loptixu',
         '-lcudart',
     ] + ['-L%s' % lib for lib in cuda_lib_dirs + optix_lib_dirs]
 
-    save_pyoptix_conf(nvcc_path, flags, include_dirs, library_dirs, libraries)
+    save_pyoptix_conf(nvcc_path, compile_args, include_dirs, library_dirs, libraries)
 
     setup(
         name='pyoptix',

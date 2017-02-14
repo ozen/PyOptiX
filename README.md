@@ -58,10 +58,14 @@ same directory with Python executable that was used to execute the setup script.
 need to set Compiler flags manually.
 
 `Compiler.nvcc_path` must be a valid path to nvcc binary.
-`Compiler.flags` is a list of optional flags passed to nvcc during PTX compilation.
-`Compiler.arch` will be the value of -arch flag of nvcc. Read nvcc documentation for more information.
+
+`Compiler.extra_compile_args` is a list of arguments passed to nvcc during PTX compilation.
+
+`Compiler.use_fast_math` is a boolean that adds `--use_fast_math` flag to compile command if is set to True.
+
 `Compiler.add_program_directory(directory)` method adds the directory to the list of directories in which the file paths
 given to Program objects will be searched.
+
 `Compiler.remove_program_directory(directory)` removes the directory from the list it previously added to.
 
 If the source file given to `pyoptix.Compiler` was compiled to PTX before, Compiler checks if the source file or
@@ -86,10 +90,11 @@ for variable assignment, actual variable declaration and value assignments are h
 
 If the value that is being assigned is an API object, the operation is straightforward. For other types of values,
 PyOptiX transfers the value to the C++ backend using NumPy arrays. Since NumPy is ubiquitous in Python circles,
-PyOptiX doesn't abstract away the usage of NumPy arrays. If the variable is being attached to the program object whose
+PyOptiX doesn't abstract away the usage of NumPy arrays.
+
+If the variable is being attached to the program object whose
 device code has the variable's declaration, PyOptiX deduces the type of the variable and casts the value
-to NumPy array with proper dtype.
-If it isn't, PyOptiX cannot deduce the type, therefore the user must cast the value to NumPy array with proper dtype.
+to NumPy array with proper dtype. If it isn't, PyOptiX cannot deduce the type, therefore the user must cast the value to NumPy array with proper dtype.
 The conversion between NumPy arrays and OptiX vector types are as follows:
 
 | Array dtype | Array Shape | OptiX C++ Type |
@@ -125,9 +130,12 @@ PyOptiX doesn't abstract away the usage of NumPy arrays.
 Buffer objects can be created using `Buffer.from_array(numpy_array, buffer_type_ drop_last_dim)` static method.
 A buffer object without copying data can be created using `Buffer.empty(shape, dtype, buffer_type, drop_last_dim)`
 static method.
+
 dtype must be a NumPy dtype.
+
 buffer_type is either one of 'i', 'o', or 'io', corresponding to
 INPUT, OUTPUT, and INPUT_OUTPUT formats.
+
 drop_last_dim is a boolean that indicates that the array holds or will hold a vector type whose length is the
 size of the last dimension of the array. For example, for 2D float4 buffer, the NumPy array's shape will be
 (height, width, 4) and dtype is float32. All possible conversions between NumPy arrays and buffers can be found

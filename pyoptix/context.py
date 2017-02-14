@@ -18,9 +18,6 @@ class Context(ScopedObject):
 
         _push_context(self)
 
-        sm_major, sm_minor = self._native.get_device_compute_capability(0)
-        Compiler.arch = "sm_{0}{1}".format(sm_major, sm_minor)
-
     def __del__(self):
         self._mark_all_objects_destroyed()
 

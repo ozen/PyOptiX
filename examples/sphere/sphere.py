@@ -28,10 +28,10 @@ def main():
 
 def create_context():
     context = Context()
-    Compiler.arch = "sm_52"
-    Compiler.add_program_directory(dirname(__file__))
-    context.set_ray_type_count(1)
 
+    Compiler.add_program_directory(dirname(__file__))
+
+    context.set_ray_type_count(1)
     context['radiance_ray_type'] = np.array(0, dtype=np.uint32)
     context['scene_epsilon'] = np.array(1e-4, dtype=np.float32)
     context['output_buffer'] = Buffer.empty((height, width, 4), dtype=np.uint8, buffer_type='o', drop_last_dim=True)

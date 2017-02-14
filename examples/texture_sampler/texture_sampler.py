@@ -16,7 +16,6 @@ def main():
     trace_height = 384
 
     context = Context()
-    Compiler.arch = 'sm_52'
 
     tex_data = []
     for j in range(tex_height):

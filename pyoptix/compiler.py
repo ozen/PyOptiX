@@ -17,11 +17,11 @@ logger = logging.getLogger(__name__)
 
 class Compiler:
     nvcc_path = 'nvcc'
-    flags = []
-    _program_directories = []
+    extra_compile_args = []
     output_path = '/tmp/pyoptix/ptx'
     use_fast_math = True
-    arch = 'sm_30'
+    _compile_args = []
+    _program_directories = []
 
     @classmethod
     def add_program_directory(cls, directory):
@@ -87,9 +87,9 @@ class Compiler:
 
             logger.info("Compiling {0}".format(source_path))
             bash_command = cls.nvcc_path + " "
-            bash_command += " ".join(cls.flags)
+            bash_command += " ".join(cls._compile_args)
+            bash_command += " ".join(cls.extra_compile_args)
             bash_command += " -ptx"
-            bash_command += " -arch=" + cls.arch
             if cls.use_fast_math:
                 bash_command += " --use_fast_math"
             for include_path in cls._program_directories:
@@ -154,12 +154,12 @@ try:
     config = ConfigParser()
     config.read(config_path)
     nvcc_path = config.get('pyoptix', 'nvcc_path')
-    flags = config.get('pyoptix', 'flags')
+    compile_args = config.get('pyoptix', 'compile_args')
 
     if nvcc_path is not None:
         Compiler.nvcc_path = nvcc_path
-    if flags is not None:
-        Compiler.flags = [flag for flag in flags.split(os.pathsep)]
+    if compile_args is not None:
+        Compiler._compile_args = [arg for arg in compile_args.split(os.pathsep)]
 
 except Exception as e:
     logger.warning("Could not load pyoptix.conf")

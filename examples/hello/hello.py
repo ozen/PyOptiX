@@ -18,7 +18,6 @@ def main():
 
     context['result_buffer'] = Buffer.empty((height, width, 4), buffer_type='o', dtype=np.float32, drop_last_dim=True)
 
-    Compiler.arch = 'sm_30'
     Compiler.add_program_directory(dirname(__file__))
 
     ray_gen_program = Program('draw_color.cu', 'draw_solid_color')
