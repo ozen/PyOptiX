@@ -8,6 +8,9 @@ from pyoptix import Context, Compiler, Buffer, Program, EntryPoint, TextureSampl
 from examples.common import ImageWindow
 
 
+Compiler.add_program_directory(dirname(__file__))
+
+
 def main():
     tex_width = 64
     tex_height = 64

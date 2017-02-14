@@ -11,6 +11,8 @@ from examples.common import ImageWindow, calculate_camera_variables
 width = 1024
 height = 768
 
+Compiler.add_program_directory(dirname(__file__))
+
 
 def main():
     context, entry_point = create_context()
@@ -28,8 +30,6 @@ def main():
 
 def create_context():
     context = Context()
-
-    Compiler.add_program_directory(dirname(__file__))
 
     context.set_ray_type_count(1)
     context['radiance_ray_type'] = np.array(0, dtype=np.uint32)
