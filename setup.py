@@ -3,7 +3,7 @@ import os
 import fnmatch
 from subprocess import check_call, check_output, CalledProcessError
 from tempfile import NamedTemporaryFile
-from setuptools import setup, Extension, find_packages
+from setuptools import setup, Extension
 
 try:
     from configparser import ConfigParser
@@ -99,7 +99,7 @@ def save_pyoptix_conf(nvcc_path, compile_args, include_dirs, library_dirs, libra
               "attributes should be set manually.")
 
 
-def main():
+def extension_prebuild():
     nvcc_path = search_on_path(['nvcc', 'nvcc.exe'])
     if nvcc_path is None:
         raise OSError('nvcc is not in PATH')
@@ -142,6 +142,21 @@ def main():
 
     save_pyoptix_conf(nvcc_path, compile_args, include_dirs, library_dirs, libraries)
 
+    return sources, include_dirs, library_dirs, libraries
+
+
+def main():
+    building_extension = False
+
+    for arg in sys.argv:
+        if arg in ['build', 'build_ext', 'install', 'install_lib']:
+            building_extension = True
+
+    if building_extension:
+        sources, include_dirs, library_dirs, libraries = extension_prebuild()
+    else:
+        sources = include_dirs = library_dirs = libraries = []
+
     setup(
         name='pyoptix',
         version='0.10.0',
@@ -150,7 +165,7 @@ def main():
         author_email='ozen@computer.org',
         license="MIT",
         url='http://github.com/ozen/pyoptix',
-        packages=find_packages(),
+        packages=['pyoptix', 'pyoptix.mixins'],
         ext_modules=[Extension(name='pyoptix._driver', sources=sources, include_dirs=include_dirs,
                                library_dirs=library_dirs, runtime_library_dirs=library_dirs, libraries=libraries,
                                language='c++', extra_compile_args=['-std=c++11'])],
@@ -169,6 +184,7 @@ def main():
             'Programming Language :: Python :: 3.3',
             'Programming Language :: Python :: 3.4',
             'Programming Language :: Python :: 3.5',
+            'Programming Language :: Python :: 3.6',
         ],
     )
 

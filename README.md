@@ -11,6 +11,10 @@ PyOptiX documentation does not include anything about OptiX, so you should alrea
 Only Linux is supported. PyOptiX can work on other platforms but you may need to modify setup.py and set
 `Compiler.nvcc_path` and `Compiler.flags` parameters manually during run time.
 
+### Supported OptiX Versions
+
+PyOptiX was tested with OptiX 3.9.x and 4.0.x.
+
 
 ## Features
 
