@@ -4,6 +4,7 @@ import os
 import sys
 import shlex
 import fnmatch
+from stat import S_IRUSR, S_IWUSR, S_IRGRP, S_IWGRP, S_IROTH, S_IWOTH, S_IXUSR, S_IXGRP, S_IXOTH
 from subprocess import check_call, CalledProcessError
 from pyoptix.utils import glob_recursive, find_sub_path
 
@@ -78,6 +79,9 @@ class Compiler:
         if output_ptx_name is None:
             output_ptx_name = cls.get_ptx_name(source_path)
 
+        if not os.path.isdir(cls.output_path):
+            raise RuntimeError('Compiler.output_path is not a directory.')
+
         output_ptx_path = os.path.join(cls.output_path, output_ptx_name)
         is_compiled = True
 
@@ -106,6 +110,9 @@ class Compiler:
             if not os.path.exists(output_ptx_path):
                 logger.error("Could not compile {0}".format(source_path))
                 raise RuntimeError("Could not compile {0}".format(source_path))
+            else:
+                os.chmod(output_ptx_path, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH)
+
         else:
             logger.debug("No compiling required for {0}".format(source_path))
             is_compiled = False
@@ -166,3 +173,4 @@ except Exception as e:
 
 if not os.path.exists(Compiler.output_path):
     os.makedirs(Compiler.output_path)
+    os.chmod(Compiler.output_path, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP | S_IROTH | S_IWOTH | S_IXOTH)

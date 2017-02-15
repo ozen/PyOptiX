@@ -33,7 +33,7 @@ making it active. The same Context may occur multiple times in the stack.
 ### Garbage Collection
 
 Lifetime of OptiX objects are tied to lifetime of PyOptiX objects.
-When Python objects get garbage collected, OptiX objects are destroyed automatically.
+When Python objects get garbage-collected, OptiX objects are destroyed automatically.
 
 In OptiX, a context is destroyed along with all other types of objects in it, such as buffers and programs.
 So it's possible in PyOptiX for a wrapper object such as `pyoptix.Buffer` to become invalid because its underlying
@@ -41,9 +41,16 @@ object was destroyed, but remain accessible.
 This situation is tracked by PyOptiX and operations on invalid wrapper objects result in RuntimeError. It is the
 user's responsibility to use only valid wrapper objects.
 
-Remember that Python implements reference counting and objects are garbage collected onlu when reference counts is zero.
+Remember that Python implements reference counting and objects are garbage-collected only when reference counts is zero.
 The Context Stack holds strong references to Contexts.
-So, a Context would never get garbage collected when it is in the stack.
+So, a Context would never get garbage-collected when it is in the stack.
+
+All graph nodes hold strong references to their parents and children. Therefore, graph nodes connected to other nodes
+are not garbage-collected even if no references remain in user's code.
+
+Programs, Buffers and Texture Samplers can be bindless, i.e. there can be accessed using their IDs in device code.
+`Program`, `Buffer` and `TextureSampler` classes have a property named `bindless`, which when set to True prevents
+destruction of the underlying OptiX object even if PyOptiX object gets garbage-collected.
 
 ### PTX Generation
 
@@ -58,6 +65,10 @@ same directory with Python executable that was used to execute the setup script.
 need to set Compiler flags manually.
 
 `Compiler.nvcc_path` must be a valid path to nvcc binary.
+
+`Compiler.output_path` is where PTX files will be saved. Default is `/tmp/pyoptix/ptx/`. Default path is created
+automatically if it doesn't exist when module is imported.
+Custom paths are NOT created automatically, so the user must create it before using.
 
 `Compiler.extra_compile_args` is a list of arguments passed to nvcc during PTX compilation.
 
@@ -127,7 +138,7 @@ The conversion between NumPy arrays and OptiX vector types are as follows:
 Data is transferred to Buffers using NumPy arrays. Since NumPy is ubiquitous in Python circles,
 PyOptiX doesn't abstract away the usage of NumPy arrays.
 
-Buffer objects can be created using `Buffer.from_array(numpy_array, buffer_type_ drop_last_dim)` static method.
+Buffer objects can be created using `Buffer.from_array(numpy_array, buffer_type, drop_last_dim)` static method.
 A buffer object without copying data can be created using `Buffer.empty(shape, dtype, buffer_type, drop_last_dim)`
 static method.
 
@@ -137,9 +148,9 @@ buffer_type is either one of 'i', 'o', or 'io', corresponding to
 INPUT, OUTPUT, and INPUT_OUTPUT formats.
 
 drop_last_dim is a boolean that indicates that the array holds or will hold a vector type whose length is the
-size of the last dimension of the array. For example, for 2D float4 buffer, the NumPy array's shape will be
-(height, width, 4) and dtype is float32. All possible conversions between NumPy arrays and buffers can be found
-in the following table.
+size of the last dimension of the array. For example for a 2D float4 buffer, the NumPy array's shape will be
+(height, width, 4) and its dtype will be float32. All possible conversions between NumPy arrays and buffers can be
+found in the following table.
 
 | Array dtype | Array Shape | drop_last_dim | Buffer Format | Buffer Shape |
 |---|---|---|---|---|

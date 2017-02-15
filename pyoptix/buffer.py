@@ -1,14 +1,16 @@
 import numpy
 from pyoptix.enums import Format, convert_buffer_type, get_format_from_dtype
 from pyoptix.context import current_context
+from pyoptix.mixins.bindless import BindlessMixin
 from pyoptix.mixins.destroyable import DestroyableObject
 from pyoptix.mixins.hascontext import HasContextMixin
 
 
-class Buffer(HasContextMixin, DestroyableObject):
+class Buffer(HasContextMixin, DestroyableObject, BindlessMixin):
     def __init__(self, buffer_type='io'):
         HasContextMixin.__init__(self, current_context())
         DestroyableObject.__init__(self, self._safe_context._create_buffer(convert_buffer_type(buffer_type)))
+        BindlessMixin.__init__(self)
 
         self._numpy_dtype = None
         self._numpy_shape = None

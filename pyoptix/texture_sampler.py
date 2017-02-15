@@ -2,15 +2,17 @@ from pyoptix._driver import OPTIX_VERSION
 from pyoptix.enums import FilterMode, convert_filtering_mode, convert_wrap_mode, convert_read_mode, \
     convert_indexing_mode
 from pyoptix.context import current_context
+from pyoptix.mixins.bindless import BindlessMixin
 from pyoptix.mixins.destroyable import DestroyableObject
 from pyoptix.mixins.hascontext import HasContextMixin
 
 
-class TextureSampler(HasContextMixin, DestroyableObject):
+class TextureSampler(HasContextMixin, DestroyableObject, BindlessMixin):
     def __init__(self, buffer, wrap_mode=None, indexing_mode=None,
                  read_mode=None, filter_mode=None, max_anisotropy=1):
         HasContextMixin.__init__(self, current_context())
         DestroyableObject.__init__(self, self._safe_context._create_texture_sampler())
+        BindlessMixin.__init__(self)
 
         self._buffer = None
         self._filtering_mode_minification = None

@@ -1,11 +1,12 @@
 import os
 from pyoptix.compiler import Compiler
 from pyoptix.context import current_context
+from pyoptix.mixins.bindless import BindlessMixin
 from pyoptix.mixins.scoped import ScopedObject
 from pyoptix.mixins.hascontext import HasContextMixin
 
 
-class Program(ScopedObject, HasContextMixin):
+class Program(ScopedObject, HasContextMixin, BindlessMixin):
     dynamic_programs = False
 
     def __init__(self, file_path, function_name, output_ptx_name=None):
@@ -22,6 +23,7 @@ class Program(ScopedObject, HasContextMixin):
 
         # Create program object from compiled file
         ScopedObject.__init__(self, self._safe_context._create_program_from_file(self._ptx_path, self._function_name))
+        BindlessMixin.__init__(self)
 
         self._safe_context.program_cache[(file_path, function_name)] = self
 

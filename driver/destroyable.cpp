@@ -3,6 +3,7 @@
 
 NativeDestroyableWrapper::NativeDestroyableWrapper() {
     is_destroyed = false;
+    auto_destroy = true;
     object = nullptr;
 }
 
@@ -22,6 +23,14 @@ void NativeDestroyableWrapper::mark_destroyed() {
     is_destroyed = true;
 }
 
+bool NativeDestroyableWrapper::get_auto_destroy() {
+    return auto_destroy;
+}
+
+void NativeDestroyableWrapper::set_auto_destroy(bool destroy) {
+    auto_destroy = destroy;
+}
+
 void NativeDestroyableWrapper::boost_python_expose() {
     boost::python::class_<NativeDestroyableWrapper >(
                 "NativeDestroyableWrapper",
@@ -29,6 +38,7 @@ void NativeDestroyableWrapper::boost_python_expose() {
                 boost::python::no_init)
 
             .add_property("is_destroyed", &NativeDestroyableWrapper::is_destroyed)
+            .add_property("auto_destroy", &NativeDestroyableWrapper::get_auto_destroy, &NativeDestroyableWrapper::set_auto_destroy)
             .def("validate", &NativeDestroyableWrapper::validate)
             .def("mark_destroyed", &NativeDestroyableWrapper::mark_destroyed);
 }

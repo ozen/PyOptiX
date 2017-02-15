@@ -52,7 +52,7 @@ def create_context():
 
     context['bad_color'] = np.array([1.0, 0.0, 1.0], dtype=np.float32)
     context.set_miss_program(0, Program('constantbg.cu', 'miss'))
-    context['bg_color'] = np.array([0.3, 0.1, 0.2], dtype=np.float32)
+    context['bg_color'] = np.array([0.2, 0.1, 0.3], dtype=np.float32)
 
     return context, entry_point
 
