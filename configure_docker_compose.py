@@ -3,6 +3,7 @@ import argparse
 import yaml
 import json
 import sys
+import os
 import re
 
 if sys.version_info[0] == 3:
@@ -41,17 +42,27 @@ version: "2"
 services:
   pyoptix:
     image: {0}
+    volumes:
+    - /home/{1}:/home/{1}
+    - /etc/group:/etc/group:ro
+    - /etc/passwd:/etc/passwd:ro
+    - /etc/shadow:/etc/shadow:ro
+    - /etc/sudoers:/etc/sudoers:ro
+    - /etc/sudoers.d:/etc/sudoers.d:ro
+    - /tmp/.X11-unix:/tmp/.X11-unix:rw
+    environment:
+    - DISPLAY={2}
+    user: '{3}'
 volumes:
-  {1}:
+  {4}:
     external: true
-""".format(args.image, volume))
+""".format(args.image, os.getlogin(), os.environ['DISPLAY'], os.getuid(), volume))
 
-for service, sconf in config['services'].items():
-    sconf.setdefault('volumes', []).extend(cuda_config['Volumes'])
-    devices = sconf.setdefault('devices', [])
-    if not any(gdev in devices for gdev in gpu_devices):
-        devices.extend(gpu_devices)
-    devices.extend(support_devices)
+config['services']['pyoptix']['volumes'].extend(cuda_config['Volumes'])
+devices = config['services']['pyoptix'].setdefault('devices', [])
+if not any(gdev in devices for gdev in gpu_devices):
+    devices.extend(gpu_devices)
+devices.extend(support_devices)
 
 with open('docker-compose.yml', 'w') as f:
     yaml.safe_dump(config, f, default_flow_style=False)
