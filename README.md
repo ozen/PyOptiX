@@ -290,4 +290,14 @@ Following command will also make the container able to access host machine's X11
             pyoptix python3 /usr/src/PyOptiX/examples/hello/hello.py
 
 
+## Using PyCharm with Docker
+
+JetBrains's PyCharm IDE supports Docker, but as of this writing using it with nvidia-docker wrapper is not easy.
+The solution I prefer is using Docker Compose plugin of PyCharm.
+Use `configure_docker_compose.py` script included in this repo to generate `docker-compose.yml`.
+The script connects to `nvidia-docker-plugin` to get necessary GPU info and generates configuration file which will let
+the container access the GPUs. The script is adapted from [nvidia-docker-compose]. PyCharm's Docker Compose
+configuration will be straightforward and won't include anything concerning nvidia-docker.
+
 [nvidia-docker]: https://github.com/NVIDIA/nvidia-docker
+[nvidia-docker-compose]: https://github.com/eywalker/nvidia-docker-compose

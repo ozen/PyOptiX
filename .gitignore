@@ -5,13 +5,9 @@
 *.egg-info/
 .idea
 dist
-pip-log.txt
-test.py
 build
-PyOptixCppProject-build
-tests
-PyOptix/compiler/compiled_ptxs
-**/CMakeLists.txt.user
+pip-log.txt
+docker-compose.yml
 
 # virtual environment
 venv

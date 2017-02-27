@@ -2,21 +2,21 @@ import weakref
 import atexit
 from pyoptix._driver import NativeContextWrapper
 from pyoptix.enums import ExceptionType
-from pyoptix.compiler import Compiler
 from pyoptix.mixins.scoped import ScopedObject
 
 
 class Context(ScopedObject):
     def __init__(self):
-        self._native = NativeContextWrapper()
-        ScopedObject.__init__(self, self._native)
         self._program_cache = {}
         self._ray_gen_programs = {}
         self._exception_programs = {}
         self._miss_programs = {}
         self._destroyables = []
 
-        _push_context(self)
+        self._native = NativeContextWrapper()
+        ScopedObject.__init__(self, self._native)
+
+        push_context(self)
 
     def __del__(self):
         self._mark_all_objects_destroyed()
@@ -34,11 +34,11 @@ class Context(ScopedObject):
         if current_context() == self:
             raise RuntimeError("Cannot push: Context is already at the top of the stack")
         else:
-            _push_context(self)
+            push_context(self)
 
     def pop(self):
         if current_context() == self:
-            _pop_context()
+            pop_context()
         else:
             raise RuntimeError("Cannot pop: Context is not at the top of the stack")
 
@@ -226,17 +226,17 @@ class Context(ScopedObject):
 _context_stack = []
 
 
-def current_context() -> Context:
+def current_context():
     return _context_stack[-1]
 
 
-def _push_context(ctx):
+def push_context(ctx):
     if not isinstance(ctx, Context):
         raise TypeError('ctx must be an instance of Context')
     _context_stack.append(ctx)
 
 
-def _pop_context():
+def pop_context():
     return _context_stack.pop()
 
 
