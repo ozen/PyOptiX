@@ -257,11 +257,6 @@ When you want to prevent this you can use --no-binary flag:
     pip install pyoptix --no-binary pyoptix
 
 
-## API Reference
-
-Work In Progress
-
-
 ## Using the Docker Image
 
 1. Copy OptiX SDK files into ./optix directory. This is needed to build a docker image with OptiX. Example command:
@@ -276,7 +271,8 @@ Work In Progress
 3. Run an example in a docker container using the image. Use [nvidia-docker] to be able to use the GPU in the container.
 Following command will also make the container able to access host machine's X11 server, so you will be able to see the result window.
 
-        nvidia-docker run -it --rm \
+
+        docker run --runtime=nvidia -it --rm \
             --volume="/home/$USER:/home/$USER" \
             --volume=/etc/group:/etc/group:ro \
             --volume=/etc/passwd:/etc/passwd:ro \
@@ -288,16 +284,6 @@ Following command will also make the container able to access host machine's X11
             --env="DISPLAY" \
             --workdir="/home/$USER" \
             pyoptix python3 /usr/src/PyOptiX/examples/hello/hello.py
-
-
-## Using PyCharm with Docker
-
-JetBrains's PyCharm IDE supports Docker, but as of this writing using it with nvidia-docker wrapper is not easy.
-The solution I prefer is using Docker Compose plugin of PyCharm.
-Use `configure_docker_compose.py` script included in this repo to generate `docker-compose.yml`.
-The script connects to `nvidia-docker-plugin` to get necessary GPU info and generates configuration file which will let
-the container access the GPUs. The script is adapted from [nvidia-docker-compose]. PyCharm's Docker Compose
-configuration will be straightforward and won't include anything concerning nvidia-docker.
+            
 
 [nvidia-docker]: https://github.com/NVIDIA/nvidia-docker
-[nvidia-docker-compose]: https://github.com/eywalker/nvidia-docker-compose
