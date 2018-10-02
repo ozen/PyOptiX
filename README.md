@@ -13,7 +13,7 @@ Only Linux is supported. PyOptiX can work on other platforms but you may need to
 
 ### Supported OptiX Versions
 
-PyOptiX was tested with OptiX 3.9.x and 4.0.x.
+PyOptiX was tested with: OptiX `3.9.x`, `4.x.x`, `5.0.x`, and `5.1.0`.
 
 
 ## Features
@@ -259,21 +259,18 @@ When you want to prevent this you can use --no-binary flag:
 
 ## Using the Docker Image
 
-1. Copy OptiX SDK files into ./optix directory. This is needed to build a docker image with OptiX. Example command:
+1. Check out [optix-docker] to build an OptiX-enabled Docker image.
 
-        cp -R /usr/local/NVIDIA-OptiX-SDK-4.0.2-linux64/ PyOptiX/optix/
-
-2. Build a docker image using the Dockerfile provided in the source directory:
+2. Build a PyOptiX image on top of the OptiX image using the Dockerfile provided in the source directory of PyOptiX. You can specify the name of the OptiX-enabled Docker image using --build-args command. The default name is `optix`.
 
         cd PyOptiX
-        docker build -t pyoptix .
+        docker build -t pyoptix --build-args OPTIX_IMAGE=optix .
 
 3. Run an example in a docker container using the image. Use [nvidia-docker] to be able to use the GPU in the container.
 Following command will also make the container able to access host machine's X11 server, so you will be able to see the result window.
 
 
         docker run --runtime=nvidia -it --rm \
-            --volume="/home/$USER:/home/$USER" \
             --volume=/etc/group:/etc/group:ro \
             --volume=/etc/passwd:/etc/passwd:ro \
             --volume=/etc/shadow:/etc/shadow:ro \
@@ -282,8 +279,8 @@ Following command will also make the container able to access host machine's X11
             --volume=/tmp/.X11-unix:/tmp/.X11-unix:rw \
             --user=$(id -u) \
             --env="DISPLAY" \
-            --workdir="/home/$USER" \
             pyoptix python3 /usr/src/PyOptiX/examples/hello/hello.py
             
 
 [nvidia-docker]: https://github.com/NVIDIA/nvidia-docker
+[optix-docker]: https://github.com/ozen/optix-docker
