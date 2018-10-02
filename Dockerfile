@@ -1,8 +1,8 @@
-FROM nvidia/cuda:7.5-devel-ubuntu14.04
+ARG OPTIX_IMAGE=optix
+FROM $OPTIX_IMAGE
 MAINTAINER Yigit Ozen
 
-ADD optix /usr/local/optix
-ENV LD_LIBRARY_PATH /usr/local/optix/lib64:${LD_LIBRARY_PATH}
+ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
         build-essential software-properties-common pkg-config \
