@@ -1,3 +1,6 @@
+> **⚠️ This project is not maintained and only works with older versions of PyOptiX.**
+> For an up-to-date Python binding to Nvidia OptiX, see: [https://github.com/NVIDIA/otk-pyoptix](https://github.com/NVIDIA/otk-pyoptix)
+
 # PyOptiX
 
 PyOptiX lets you access Nvidia's OptiX Ray Tracing Engine from Python.
@@ -234,7 +237,7 @@ For Ubuntu, the install command will look like this:
 
 #### Using pip
 
-    pip install pyoptix
+> **Note:** PyOptiX was formerly installable using `pip` via the `pyoptix` package on PyPI. The `pyoptix` PyPI repository has since been transferred to the [otk-pyoptix](https://github.com/NVIDIA/otk-pyoptix) project.
 
 
 #### From source
@@ -248,14 +251,6 @@ For Ubuntu, the install command will look like this:
 
 pyoptix.conf file is explained in Concepts > PTX Generation section. pyoptix.Compiler cannot work out of the box
 if pyoptix.conf file creation fails during installation.
-
-Please note that pip creates wheel distribution of the package and caches it during installation.
-Subsequent pip install commands for the same version of the package will use the cached wheel,
-therefore setup.py script won't be executed and pyoptix.conf file won't be created.
-When you want to prevent this you can use --no-binary flag:
-
-    pip install pyoptix --no-binary pyoptix
-
 
 ## Using the Docker Image
 
