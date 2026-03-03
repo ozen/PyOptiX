@@ -1,4 +1,4 @@
-> **⚠️ This project is not maintained and only works with older versions of PyOptiX.**
+> **⚠️ This project is not maintained and only works with older versions of Nvidia OptiX.**
 > For an up-to-date Python binding to Nvidia OptiX, see: [https://github.com/NVIDIA/otk-pyoptix](https://github.com/NVIDIA/otk-pyoptix)
 
 # PyOptiX
